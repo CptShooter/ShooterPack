@@ -10,11 +10,11 @@ import java.util.logging.Logger;
 class Download extends Observable implements Runnable {
 
 // Max size of download buffer.
-private static final int MAX_BUFFER_SIZE = 2048;
+private static final int MAX_BUFFER_SIZE = 4096;
 
 // These are the status names.
 public static final String STATUSES[] = {"Downloading",
-"Paused", "Complete", "Cancelled", "Error"};
+"Paused", "Complete", "Cancelled", "Error", "Unziped"};
 
 // These are the status codes.
 public static final int DOWNLOADING = 0;
@@ -22,6 +22,7 @@ public static final int PAUSED = 1;
 public static final int COMPLETE = 2;
 public static final int CANCELLED = 3;
 public static final int ERROR = 4;
+public static final int UNZIPED =5;
 
 private URL url; // download URL
 private int size; // size of download in bytes
@@ -35,13 +36,13 @@ public Download(URL url) throws FileNotFoundException, IOException {
     size = -1;
     downloaded = 0;
     status = DOWNLOADING;
-    destination = "C:/ShooterPack/";
+    String dataFolder = System.getenv("APPDATA");
+    destination = dataFolder+"\\.ShooterPack";
     File folder = new File(destination);
     if(!folder.exists()){
         folder.mkdir();
+        folder.setWritable(true);
     }
-    // Begin the download.
-    download();
 }
 
 // Get this download's URL.
@@ -79,7 +80,7 @@ public void pause() {
 public void resume() {
     status = DOWNLOADING;
     stateChanged();
-    download();
+    start();
 }
 
 // Cancel this download.
@@ -95,7 +96,7 @@ private void error() {
 }
 
 // Start or resume downloading.
-private void download() {
+public void start() {
     Thread thread = new Thread(this);
     thread.start();
 }
@@ -172,10 +173,11 @@ public void run() {
      reached because downloading has finished. */
         if (status == DOWNLOADING) {
             status = COMPLETE;
-            stateChanged();           
+            stateChanged();
         }       
 
-    } catch (Exception e) {
+    } catch (Exception ex) {
+        Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         error();
     } finally {
         // Close file.
@@ -195,21 +197,27 @@ public void run() {
             } catch (Exception ex) {
                 Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }        
     }
 }
 
 public void openzip(){
     if (status == COMPLETE) {
-        String fileInput = "D:/Shooter/Bukkit/ShooterPack/dist/tapety.zip";
-        UnZip zip = new UnZip();
-        zip.extract(new File(fileInput),new File(destination));
+        String fileInput = "D:/Shooter/Bukkit/ShooterPack/tapety.zip";
+        File fileZip = new File(fileInput);
+        UnZip zip = new UnZip(fileInput, destination);
+        if(zip.extract()){
+            status = UNZIPED;
+            stateChanged();  
+            fileZip.delete();
+        }        
     }
 }
 
 // Notify observers that this download's status has changed.
 private void stateChanged() {
+    clearChanged();
     setChanged();
-    notifyObservers();
+    notifyObservers(STATUSES[status]);
 }
 }

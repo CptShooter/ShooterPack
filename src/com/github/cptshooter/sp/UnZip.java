@@ -8,6 +8,13 @@ import java.util.zip.*;
 public class UnZip {
 
   private static final int  BUFFER_SIZE = 4096;
+  private String destination;
+  private String fileInput;
+  
+  public UnZip(String fI, String dest){
+      destination = dest;
+      fileInput = fI;
+  }
 
   private static void extractFile(ZipInputStream in, File outdir, String name) throws IOException
   {
@@ -28,17 +35,17 @@ public class UnZip {
 
   private static String dirpart(String name)
   {
-    int s = name.lastIndexOf( File.separatorChar );
+    int s = name.lastIndexOf( "/" );
     return s == -1 ? null : name.substring( 0, s );
   }
 
   /***
    * Extract zipfile to outdir with complete directory structure
-   * @param zipfile Input .zip file
-   * @param outdir Output directory
    */
-  public void extract(File zipfile, File outdir)
+  public boolean extract()
   {
+    File zipfile    = new File(fileInput);
+    File outdir     = new File(destination);
     try
     {
       ZipInputStream zin = new ZipInputStream(new FileInputStream(zipfile));
@@ -69,6 +76,9 @@ public class UnZip {
     catch (IOException ex)
     {
       Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+      return false;
+    }finally {
+        return true;
     }
   }
 }

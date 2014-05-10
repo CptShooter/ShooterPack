@@ -116,6 +116,9 @@ public class NewJFrame extends javax.swing.JFrame {
         jProgressBar.setVisible(true);
         try {
             final Download download = new Download(new URL("http://cptshooter.esy.es/tapety.zip"));
+            //final DownloadObserver downloadObserver = new DownloadObserver();
+            //download.addObserver(downloadObserver);
+            download.start();
             final AtomicBoolean running = new AtomicBoolean(false);
             running.set(!running.get());
             if (running.get()) {
@@ -124,16 +127,15 @@ public class NewJFrame extends javax.swing.JFrame {
                     public void run() {
                         //download file in a thread
                         while (running.get()) {
-                            if(download.getStatus()!=0){
-                                jProgressBar.setValue(download.getProgress());
-                                jProgressBar.setBorder(BorderFactory.createTitledBorder(download.getStatusS()));
-                                setTextLog(download.getStatusS() + " at: " + download.getProgress() + "%");
-                                break;
-                            }
+                            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200)); 
                             jProgressBar.setValue(download.getProgress());
-                            jProgressBar.setBorder(BorderFactory.createTitledBorder(download.getStatusS()));
-                            setTextLog(download.getStatusS() + " at: " + download.getProgress() + "%");
-                            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));                            
+                            jProgressBar.setBorder(BorderFactory.createTitledBorder(download.getStatusS()));                            
+                            if(download.getStatus()==5){
+                                setTextLog(download.getStatusS());
+                                break;
+                            }else{
+                                setTextLog(download.getStatusS() + " at: " + download.getProgress() + "%");
+                            }                          
                         }
                     }
                 }.start();
