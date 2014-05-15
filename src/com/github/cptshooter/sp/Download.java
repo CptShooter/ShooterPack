@@ -177,7 +177,7 @@ public void run() {
         }       
 
     } catch (Exception ex) {
-        Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         error();
     } finally {
         // Close file.
@@ -186,7 +186,7 @@ public void run() {
                 file.close();
                 openzip();
             } catch (IOException ex) {
-                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -195,7 +195,7 @@ public void run() {
             try {
                 stream.close();
             } catch (Exception ex) {
-                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         }        
     }

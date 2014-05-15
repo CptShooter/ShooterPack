@@ -18,12 +18,16 @@ import javax.swing.BorderFactory;
  *
  * @author cptshooter
  */
-public class NewJFrame extends javax.swing.JFrame {
+public class Main extends javax.swing.JFrame {
 
+    Authentication authentication;
 
-    public NewJFrame() {        
+    public Main() {        
         initComponents();
         jProgressBar.setVisible(false);
+        logoutButton.setVisible(false);
+        playButton.setVisible(false);
+        statusLabel.setVisible(false);        
     }
 
     /**
@@ -44,6 +48,9 @@ public class NewJFrame extends javax.swing.JFrame {
         titleText = new javax.swing.JLabel();
         loginText = new javax.swing.JLabel();
         passText = new javax.swing.JLabel();
+        logoutButton = new javax.swing.JButton();
+        playButton = new javax.swing.JButton();
+        statusLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextLog = new javax.swing.JTextPane();
@@ -53,24 +60,43 @@ public class NewJFrame extends javax.swing.JFrame {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jPanel1.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 720, 30));
         jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 50, 340, -1));
-        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 80, 338, -1));
+        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 80, 340, -1));
 
-        loginButton.setText("Zaloguj");
+        loginButton.setText("Login");
         loginButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 110, -1, -1));
+        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 110, -1, -1));
 
         titleText.setText("Shooter Launcher");
         jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
 
         loginText.setText("Login");
-        jPanel1.add(loginText, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, -1, -1));
+        jPanel1.add(loginText, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 50, -1, -1));
 
-        passText.setText("Hasło");
-        jPanel1.add(passText, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 80, -1, -1));
+        passText.setText("Password");
+        jPanel1.add(passText, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, -1, -1));
+
+        logoutButton.setText("Logout");
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, -1, -1));
+
+        playButton.setText("Play");
+        playButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 110, -1, -1));
+
+        statusLabel.setText("Status");
+        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, -1, -1));
 
         jTabbedPane1.addTab("Main", jPanel1);
 
@@ -110,12 +136,64 @@ public class NewJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
+        login();
+        //getPack();
+    }//GEN-LAST:event_loginButtonActionPerformed
+
+    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
+        logout();
+    }//GEN-LAST:event_logoutButtonActionPerformed
+
+    private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_playButtonActionPerformed
+
+    public void login(){
+       String login = loginField.getText();
+       char[] password = passField.getPassword();
+       authentication = new Authentication(login, password);
+       if(authentication.connect()){
+           loginText.setVisible(false);
+           passText.setVisible(false);
+           loginField.setVisible(false);
+           passField.setVisible(false);
+           loginButton.setVisible(false);
+           playButton.setVisible(true);
+           logoutButton.setVisible(true);
+           statusLabel.setText("Login success!");
+           statusLabel.setVisible(true);
+           setTextLog("Login success!");  
+       }else{
+           if(authentication.getError()==1){
+                statusLabel.setText(authentication.getErrorMessage());
+                statusLabel.setVisible(true);
+                setTextLog(authentication.getErrorMessage());  
+           }
+       }
+    }
+    
+    public void logout(){
+        //authentication.disconnect();
+        loginText.setVisible(true);
+        passText.setVisible(true);
+        loginField.setVisible(true);
+        passField.setVisible(true);
+        loginButton.setVisible(true);
+        playButton.setVisible(false);
+        logoutButton.setVisible(false);
+        statusLabel.setText("Logout success!");
+        statusLabel.setVisible(true);
+        setTextLog("Logout success!");  
+    }
+    
+    public void getPack(){
+        String packUrl = "http://cptshooter.esy.es/tapety.zip";
         jProgressBar.setMinimum(0);
         jProgressBar.setMaximum(100);
         jProgressBar.setStringPainted(true);
         jProgressBar.setVisible(true);
         try {
-            final Download download = new Download(new URL("http://cptshooter.esy.es/tapety.zip"));
+            final Download download = new Download(new URL(packUrl));
             //final DownloadObserver downloadObserver = new DownloadObserver();
             //download.addObserver(downloadObserver);
             download.start();
@@ -131,25 +209,23 @@ public class NewJFrame extends javax.swing.JFrame {
                             jProgressBar.setValue(download.getProgress());
                             jProgressBar.setBorder(BorderFactory.createTitledBorder(download.getStatusS()));                            
                             if(download.getStatus()==5){
-                                setTextLog(download.getStatusS());
-                                break;
+                                setTextLog(download.getStatusS());                                
                             }else{
                                 setTextLog(download.getStatusS() + " at: " + download.getProgress() + "%");
                             }                          
                         }
                     }
                 }.start();
-            }
-                
+            }            
         } catch (MalformedURLException ex) {
-            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_loginButtonActionPerformed
-
+    }
+    
     public void setTextLog(String log){
         Calendar cal = Calendar.getInstance();
     	cal.getTime();
@@ -175,7 +251,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -184,7 +260,7 @@ public class NewJFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new NewJFrame().setVisible(true);
+                new Main().setVisible(true);
             }
         });
     }
@@ -198,8 +274,11 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;
     private javax.swing.JLabel loginText;
+    private javax.swing.JButton logoutButton;
     private javax.swing.JPasswordField passField;
     private javax.swing.JLabel passText;
+    private javax.swing.JButton playButton;
+    private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel titleText;
     // End of variables declaration//GEN-END:variables
 }

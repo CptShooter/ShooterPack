@@ -75,7 +75,7 @@ public class UnZip {
     } 
     catch (IOException ex)
     {
-      Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
       return false;
     }finally {
         return true;
