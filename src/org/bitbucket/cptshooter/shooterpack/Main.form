@@ -95,7 +95,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Shooter Launcher"/>
+                <Property name="text" type="java.lang.String" value="ShooterPack"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -208,7 +208,7 @@
             <Component class="javax.swing.JLabel" name="background">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/github/cptshooter/sp/minecraft.jpg"/>
+                  <Image iconType="3" name="/org/bitbucket/cptshooter/shooterpack/minecraft.jpg"/>
                 </Property>
               </Properties>
               <Constraints>

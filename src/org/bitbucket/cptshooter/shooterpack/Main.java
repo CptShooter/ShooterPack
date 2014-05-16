@@ -1,4 +1,4 @@
-package com.github.cptshooter.sp;
+package org.bitbucket.cptshooter.shooterpack;
 
 
 import java.io.FileNotFoundException;
@@ -16,7 +16,7 @@ import javax.swing.BorderFactory;
 
 /**
  *
- * @author cptshooter
+ * @author CptShooter
  */
 public class Main extends javax.swing.JFrame {
 
@@ -75,7 +75,7 @@ public class Main extends javax.swing.JFrame {
 
         titleText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         titleText.setForeground(new java.awt.Color(255, 255, 255));
-        titleText.setText("Shooter Launcher");
+        titleText.setText("ShooterPack");
         jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
         loginText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -118,7 +118,7 @@ public class Main extends javax.swing.JFrame {
         uncrafted.setText("Uncrafted.pl");
         jPanel1.add(uncrafted, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 10, -1, -1));
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/cptshooter/sp/minecraft.jpg"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/minecraft.jpg"))); // NOI18N
         jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
 
         jTabbedPane1.addTab("Main", jPanel1);
@@ -168,7 +168,8 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        // TODO add your handling code here:
+        Minecraft minecraft = new Minecraft(authentication.getUser());
+        minecraft.run();
     }//GEN-LAST:event_playButtonActionPerformed
 
     public void login(){
@@ -217,8 +218,6 @@ public class Main extends javax.swing.JFrame {
         jProgressBar.setVisible(true);
         try {
             final Download download = new Download(new URL(packUrl));
-            //final DownloadObserver downloadObserver = new DownloadObserver();
-            //download.addObserver(downloadObserver);
             download.start();
             final AtomicBoolean running = new AtomicBoolean(false);
             running.set(!running.get());

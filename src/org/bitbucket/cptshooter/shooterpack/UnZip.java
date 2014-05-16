@@ -1,10 +1,14 @@
-package com.github.cptshooter.sp;
+package org.bitbucket.cptshooter.shooterpack;
 
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.*;
 
+/**
+ *
+ * @author CptShooter
+ */
 public class UnZip {
 
   private static final int  BUFFER_SIZE = 4096;
