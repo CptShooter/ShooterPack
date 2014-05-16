@@ -51,6 +51,8 @@ public class Main extends javax.swing.JFrame {
         logoutButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
         statusLabel = new javax.swing.JLabel();
+        uncrafted = new javax.swing.JLabel();
+        background = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextLog = new javax.swing.JTextPane();
@@ -58,45 +60,66 @@ public class Main extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel1.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 720, 30));
-        jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 50, 340, -1));
-        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 80, 340, -1));
+        jPanel1.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 750, 30));
+        jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 90, 340, -1));
+        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 340, -1));
 
         loginButton.setText("Login");
+        loginButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         loginButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 110, -1, -1));
+        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 150, -1, -1));
 
+        titleText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        titleText.setForeground(new java.awt.Color(255, 255, 255));
         titleText.setText("Shooter Launcher");
-        jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
+        jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
+        loginText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        loginText.setForeground(new java.awt.Color(255, 255, 255));
         loginText.setText("Login");
-        jPanel1.add(loginText, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 50, -1, -1));
+        jPanel1.add(loginText, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, -1, -1));
 
+        passText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        passText.setForeground(new java.awt.Color(255, 255, 255));
         passText.setText("Password");
-        jPanel1.add(passText, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, -1, -1));
+        jPanel1.add(passText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, -1, -1));
 
         logoutButton.setText("Logout");
+        logoutButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         logoutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logoutButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, -1, -1));
+        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, -1, -1));
 
         playButton.setText("Play");
+        playButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         playButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 110, -1, -1));
+        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 150, -1, -1));
 
+        statusLabel.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        statusLabel.setForeground(new java.awt.Color(51, 51, 51));
         statusLabel.setText("Status");
-        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, -1, -1));
+        statusLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        statusLabel.setOpaque(true);
+        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 340, -1));
+
+        uncrafted.setFont(new java.awt.Font("Times New Roman", 1, 48)); // NOI18N
+        uncrafted.setForeground(new java.awt.Color(255, 255, 255));
+        uncrafted.setText("Uncrafted.pl");
+        jPanel1.add(uncrafted, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 10, -1, -1));
+
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/github/cptshooter/sp/minecraft.jpg"))); // NOI18N
+        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
 
         jTabbedPane1.addTab("Main", jPanel1);
 
@@ -108,14 +131,14 @@ public class Main extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -125,11 +148,11 @@ public class Main extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -265,6 +288,7 @@ public class Main extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel background;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JProgressBar jProgressBar;
@@ -280,5 +304,6 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton playButton;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel titleText;
+    private javax.swing.JLabel uncrafted;
     // End of variables declaration//GEN-END:variables
 }
