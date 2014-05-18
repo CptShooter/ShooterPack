@@ -1,8 +1,7 @@
 ShooterPack
 ==========
 
-Minecraft Launcher dla Uncrafted.pl
-Minecraft version 1.5.2
+Minecraft (1.5.2) Launcher dla Uncrafted.pl
 
 
 Mods
@@ -13,6 +12,14 @@ Mods
 
 Changelog:
 ----------
+
+**0.5** - *alpha release*
+
+* Po³¹czenie wszsystkich modu³ów
+* Przystosowanie layoutu
+* Postêp wypakowywania
+* Sprawdzanie czy jest nowy plik do poprania (suma kontrolna)
+* Linki do stron (buttony)
 
 **0.4**
 

@@ -69,7 +69,7 @@ public class Authentication {
             payload.put("password", pw);
             
             ////TEST/////
-            System.out.println(payload); //show JSON
+            //System.out.println(payload); //show JSON
             
             //http Connect
             String result = httpConnect(endpoint, payload.toString());
@@ -77,7 +77,7 @@ public class Authentication {
             JSONObject JSONres = new JSONObject(result);
 
             ////TEST/////
-            System.out.println( JSONres );  //show JSON output
+            //System.out.println( JSONres );  //show JSON output
             
             if(getError()==0){
                 ACCESS_TOKEN = JSONres.getString("accessToken");
@@ -90,7 +90,7 @@ public class Authentication {
             }
             
         } catch(Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -114,7 +114,7 @@ public class Authentication {
             System.out.println( "Disconnect" );
             System.out.println( result );
         } catch(Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex); 
+            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex); 
         }
     }
     
@@ -157,7 +157,7 @@ public class Authentication {
             return response.toString();
 
         } catch (Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         } finally {
             if(connection != null) {

@@ -71,4 +71,14 @@
     nbproject/build-impl.xml file. 
 
     -->
+	<target name="-post-jar">
+		<jar jarfile="dist/ShooterPack_v0.5_alpha.jar">
+			<zipfileset src="${dist.jar}" excludes="META-INF/*" />
+			<zipfileset src="lib/AbsoluteLayout.jar" excludes="META-INF/*" />
+			<zipfileset src="lib/org.json.jar" excludes="META-INF/*" />
+			<manifest>
+				<attribute name="Main-Class" value="org.bitbucket.cptshooter.shooterpack.Main"/>
+			</manifest>
+		</jar>
+	</target>
 </project>

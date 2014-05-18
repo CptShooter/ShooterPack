@@ -1,18 +1,15 @@
 package org.bitbucket.cptshooter.shooterpack;
 
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.BorderFactory;
+import java.awt.Toolkit;
+import java.io.File;
 
 /**
  *
@@ -21,13 +18,25 @@ import javax.swing.BorderFactory;
 public class Main extends javax.swing.JFrame {
 
     Authentication authentication;
+    WebLink weblink = new WebLink();
+    String packServer = "https://dl.dropboxusercontent.com/s/";
+    Download download = new Download(packServer);
+    UnZip zip;
+    
+    boolean unzipFlag = false;
 
     public Main() {        
         initComponents();
-        jProgressBar.setVisible(false);
+        dProgressBar.setVisible(false);
+        zProgressBar.setVisible(false);
         logoutButton.setVisible(false);
         playButton.setVisible(false);
-        statusLabel.setVisible(false);        
+        statusLabel.setVisible(false);
+        welcomeLabel.setVisible(false);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int locationX = (dim.width-this.getSize().width)/2;
+        int locationY = (dim.height-this.getSize().height)/2;
+        this.setLocation(locationX, locationY);        
     }
 
     /**
@@ -41,88 +50,169 @@ public class Main extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        jProgressBar = new javax.swing.JProgressBar();
+        dProgressBar = new javax.swing.JProgressBar();
+        zProgressBar = new javax.swing.JProgressBar();
+        welcomeLabel = new javax.swing.JLabel();
         loginField = new javax.swing.JTextField();
         passField = new javax.swing.JPasswordField();
-        loginButton = new javax.swing.JButton();
         titleText = new javax.swing.JLabel();
-        loginText = new javax.swing.JLabel();
-        passText = new javax.swing.JLabel();
+        loginButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
+        wwwButton = new javax.swing.JButton();
+        forumButton = new javax.swing.JButton();
+        tsButton = new javax.swing.JButton();
         statusLabel = new javax.swing.JLabel();
-        uncrafted = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextLog = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ShooterPack for UnCrafted.pl");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/ico.png")));
+        setResizable(false);
+
+        jTabbedPane1.setFocusable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel1.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 750, 30));
-        jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 90, 340, -1));
-        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 340, -1));
 
+        dProgressBar.setFocusable(false);
+        dProgressBar.setOpaque(true);
+        dProgressBar.setStringPainted(true);
+        jPanel1.add(dProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 145, 370, 20));
+
+        zProgressBar.setFocusable(false);
+        zProgressBar.setOpaque(true);
+        zProgressBar.setStringPainted(true);
+        jPanel1.add(zProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 145, 370, 20));
+
+        welcomeLabel.setFont(new java.awt.Font("Minecraftia", 1, 10)); // NOI18N
+        welcomeLabel.setForeground(new java.awt.Color(255, 255, 255));
+        welcomeLabel.setText("Status");
+        jPanel1.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 270, 20));
+
+        loginField.setBackground(new Color(0,0,0,0));
+        loginField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
+        loginField.setForeground(new java.awt.Color(255, 255, 255));
+        loginField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        loginField.setText("Login");
+        loginField.setBorder(null);
+        loginField.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loginFieldMouseClicked(evt);
+            }
+        });
+        jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 270, 20));
+
+        passField.setBackground(new Color(0,0,0,0));
+        passField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
+        passField.setForeground(new java.awt.Color(255, 255, 255));
+        passField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        passField.setText("password");
+        passField.setBorder(null);
+        passField.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                passFieldMouseClicked(evt);
+            }
+        });
+        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 270, 20));
+
+        titleText.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
+        titleText.setForeground(new java.awt.Color(255, 255, 255));
+        titleText.setText("ShooterPack v0.4");
+        jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 10, -1, -1));
+
+        loginButton.setBackground(new Color(0,0,0,0));
+        loginButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
+        loginButton.setForeground(new java.awt.Color(255, 255, 255));
         loginButton.setText("Login");
         loginButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        loginButton.setFocusable(false);
+        loginButton.setOpaque(false);
         loginButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 150, -1, -1));
+        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 80, 50));
 
-        titleText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        titleText.setForeground(new java.awt.Color(255, 255, 255));
-        titleText.setText("ShooterPack");
-        jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
-
-        loginText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        loginText.setForeground(new java.awt.Color(255, 255, 255));
-        loginText.setText("Login");
-        jPanel1.add(loginText, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, -1, -1));
-
-        passText.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        passText.setForeground(new java.awt.Color(255, 255, 255));
-        passText.setText("Password");
-        jPanel1.add(passText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, -1, -1));
-
+        logoutButton.setBackground(new Color(0,0,0,0));
+        logoutButton.setFont(new java.awt.Font("Minecraftia", 0, 10)); // NOI18N
+        logoutButton.setForeground(new java.awt.Color(255, 255, 255));
         logoutButton.setText("Logout");
         logoutButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        logoutButton.setFocusable(false);
         logoutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logoutButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, -1, -1));
+        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 230, 80, 20));
 
+        playButton.setBackground(new Color(0,0,0,0));
+        playButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
+        playButton.setForeground(new java.awt.Color(255, 255, 255));
         playButton.setText("Play");
         playButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        playButton.setFocusable(false);
         playButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 150, -1, -1));
+        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 80, 50));
 
-        statusLabel.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
-        statusLabel.setForeground(new java.awt.Color(51, 51, 51));
+        wwwButton.setBackground(new Color(0,0,0,0));
+        wwwButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
+        wwwButton.setForeground(new java.awt.Color(255, 255, 255));
+        wwwButton.setText("WWW");
+        wwwButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        wwwButton.setFocusable(false);
+        wwwButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wwwButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 38, 150, -1));
+
+        forumButton.setBackground(new Color(0,0,0,0));
+        forumButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
+        forumButton.setForeground(new java.awt.Color(255, 255, 255));
+        forumButton.setText("FORUM");
+        forumButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        forumButton.setFocusable(false);
+        forumButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                forumButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 67, 150, -1));
+
+        tsButton.setBackground(new Color(0,0,0,0));
+        tsButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
+        tsButton.setForeground(new java.awt.Color(255, 255, 255));
+        tsButton.setText("TeamSpeak3");
+        tsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        tsButton.setFocusable(false);
+        tsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tsButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(tsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 95, 150, -1));
+
+        statusLabel.setFont(new java.awt.Font("Minecraftia", 3, 10)); // NOI18N
+        statusLabel.setForeground(new java.awt.Color(255, 255, 255));
         statusLabel.setText("Status");
-        statusLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        statusLabel.setOpaque(true);
-        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 340, -1));
+        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 350, 20));
 
-        uncrafted.setFont(new java.awt.Font("Times New Roman", 1, 48)); // NOI18N
-        uncrafted.setForeground(new java.awt.Color(255, 255, 255));
-        uncrafted.setText("Uncrafted.pl");
-        jPanel1.add(uncrafted, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 10, -1, -1));
-
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/minecraft.jpg"))); // NOI18N
-        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/minecraft.jpg"))); // NOI18N
+        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 720, 260));
 
         jTabbedPane1.addTab("Main", jPanel1);
 
+        jTextLog.setText("ShooterPack LOG:");
         jScrollPane1.setViewportView(jTextLog);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -131,14 +221,14 @@ public class Main extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -158,11 +248,6 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        login();
-        //getPack();
-    }//GEN-LAST:event_loginButtonActionPerformed
-
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         logout();
     }//GEN-LAST:event_logoutButtonActionPerformed
@@ -172,79 +257,161 @@ public class Main extends javax.swing.JFrame {
         minecraft.run();
     }//GEN-LAST:event_playButtonActionPerformed
 
-    public void login(){
+    private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
+        if(login()){
+            getPack();
+        }
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/minecraft2.jpg")));        
+    }//GEN-LAST:event_loginButtonActionPerformed
+
+    private void loginFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginFieldMouseClicked
+        if(loginField.getText().equals("Login")){
+            loginField.setText("");
+        }
+    }//GEN-LAST:event_loginFieldMouseClicked
+
+    private void passFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_passFieldMouseClicked
+        if(passField.getPassword().length>0){
+            passField.setText("");
+        }
+    }//GEN-LAST:event_passFieldMouseClicked
+
+    private void wwwButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wwwButtonActionPerformed
+        weblink.openWebpage("http://www.uncrafted.pl/");
+    }//GEN-LAST:event_wwwButtonActionPerformed
+
+    private void forumButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forumButtonActionPerformed
+        weblink.openWebpage("http://forum.minecraft.pl/forum/103-uncrafted-uncraftedpl/");
+    }//GEN-LAST:event_forumButtonActionPerformed
+
+    private void tsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tsButtonActionPerformed
+        weblink.openWebpage("http://tsminecraft.pl/");
+    }//GEN-LAST:event_tsButtonActionPerformed
+
+    private boolean login(){
        String login = loginField.getText();
        char[] password = passField.getPassword();
        authentication = new Authentication(login, password);
        if(authentication.connect()){
-           loginText.setVisible(false);
-           passText.setVisible(false);
            loginField.setVisible(false);
            passField.setVisible(false);
-           loginButton.setVisible(false);
-           playButton.setVisible(true);
+           loginButton.setVisible(false);           
            logoutButton.setVisible(true);
            statusLabel.setText("Login success!");
            statusLabel.setVisible(true);
+           welcomeLabel.setText("Welcome "+login+"!");
+           welcomeLabel.setVisible(true);
            setTextLog("Login success!");  
+           return true;
        }else{
            if(authentication.getError()==1){
                 statusLabel.setText(authentication.getErrorMessage());
                 statusLabel.setVisible(true);
-                setTextLog(authentication.getErrorMessage());  
+                setTextLog(authentication.getErrorMessage());    
            }
+           return false;
        }
     }
     
-    public void logout(){
+    private void logout(){
         //authentication.disconnect();
-        loginText.setVisible(true);
-        passText.setVisible(true);
         loginField.setVisible(true);
         passField.setVisible(true);
         loginButton.setVisible(true);
         playButton.setVisible(false);
         logoutButton.setVisible(false);
+        welcomeLabel.setVisible(false);
         statusLabel.setText("Logout success!");
         statusLabel.setVisible(true);
         setTextLog("Logout success!");  
     }
-    
-    public void getPack(){
-        String packUrl = "http://cptshooter.esy.es/tapety.zip";
-        jProgressBar.setMinimum(0);
-        jProgressBar.setMaximum(100);
-        jProgressBar.setStringPainted(true);
-        jProgressBar.setVisible(true);
-        try {
-            final Download download = new Download(new URL(packUrl));
-            download.start();
-            final AtomicBoolean running = new AtomicBoolean(false);
-            running.set(!running.get());
-            if (running.get()) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        //download file in a thread
-                        while (running.get()) {
-                            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200)); 
-                            jProgressBar.setValue(download.getProgress());
-                            jProgressBar.setBorder(BorderFactory.createTitledBorder(download.getStatusS()));                            
-                            if(download.getStatus()==5){
-                                setTextLog(download.getStatusS());                                
-                            }else{
-                                setTextLog(download.getStatusS() + " at: " + download.getProgress() + "%");
-                            }                          
+            
+    private void getPack(){
+        download.begin();
+        final AtomicBoolean running = new AtomicBoolean(false);
+        running.set(!running.get());
+        if (running.get()) {
+            //Thread for Downloading
+            new Thread() {
+                @Override
+                public void run() {
+                    while (running.get()) {
+                        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200)); 
+                        statusLabel.setText(download.getStatusS());                        
+                        if(download.getStatus()==0){
+                            dProgressBar.setValue(download.getProgress());
+                            dProgressBar.setVisible(true);                            
+                        }else if(download.getStatus()==2){
+                            dProgressBar.setVisible(false);
+                        }else if(download.getStatus()==6){
+                            dProgressBar.setVisible(false);
+                            playButton.setVisible(true);
+                            break;
+                        }                         
+                    }
+                }
+            }.start();
+            
+            //Thread for Unzipping
+            new Thread() {
+                @Override
+                public void run() {
+                    while (running.get()) {                       
+                        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200)); 
+                        statusLabel.setText(download.getStatusS());
+                        if(download.getStatus()==2){
+                            zProgressBar.setVisible(true);
+                            if(unzipFlag==false){
+                                openZip();
+                            }                            
+                        }else if(download.getStatus()==5){
+                            zProgressBar.setVisible(true);
+                            zProgressBar.setValue(zip.getProgress());
+                        }else if(download.getStatus()==6){
+                            zProgressBar.setVisible(false);
+                            playButton.setVisible(true);
+                            break;                         
                         }
                     }
-                }.start();
-            }            
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }.start();
+            
+            //Thread for log window (write every 10s)
+            new Thread() {
+                @Override
+                public void run() {
+                    while (running.get()) {
+                        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(10000));
+                        statusLabel.setText(download.getStatusS());
+                        if(download.getStatus()==0){
+                            setTextLog(download.getStatusS() + " at: " + download.getProgress() + "%");
+                        }else if(download.getStatus()==5){
+                            setTextLog(download.getStatusS() + " at: " + zip.getProgress() + "%");
+                        }else{
+                            setTextLog(download.getStatusS());  
+                            if(download.getStatus()==6){
+                                break;
+                            }
+                        }
+
+                    }
+                }
+            }.start();
+        }
+    }
+    
+    private void openZip(){
+        if (download.getStatus() == 2) {
+            unzipFlag = true;
+            download.unzipping();
+            String fileInput = "ShooterPack.zip";
+            File fileZip = new File(fileInput);
+            zip = new UnZip(fileInput, download.getDestination(), download.getSize());
+            if(zip.extract()){
+                download.ready();
+                download.saveCheckSum();
+                fileZip.delete();
+            }        
         }
     }
     
@@ -288,21 +455,23 @@ public class Main extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
+    private javax.swing.JProgressBar dProgressBar;
+    private javax.swing.JButton forumButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JProgressBar jProgressBar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextPane jTextLog;
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;
-    private javax.swing.JLabel loginText;
     private javax.swing.JButton logoutButton;
     private javax.swing.JPasswordField passField;
-    private javax.swing.JLabel passText;
     private javax.swing.JButton playButton;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel titleText;
-    private javax.swing.JLabel uncrafted;
+    private javax.swing.JButton tsButton;
+    private javax.swing.JLabel welcomeLabel;
+    private javax.swing.JButton wwwButton;
+    private javax.swing.JProgressBar zProgressBar;
     // End of variables declaration//GEN-END:variables
 }

@@ -2,6 +2,8 @@ package org.bitbucket.cptshooter.shooterpack;
 
 import java.io.*;
 import java.net.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,11 +15,11 @@ import java.util.logging.Logger;
 class Download extends Observable implements Runnable {
 
     // Max size of download buffer.
-    private static final int MAX_BUFFER_SIZE = 4096;
+    private static final int MAX_BUFFER_SIZE = (int)Math.pow(2,11);
 
     // These are the status names.
     public static final String STATUSES[] = {"Downloading",
-    "Paused", "Complete", "Cancelled", "Error", "Unziped"};
+    "Paused", "Complete", "Cancelled", "Error", "Unzipping", "Ready", "Checking for update"};
 
     // These are the status codes.
     public static final int DOWNLOADING = 0;
@@ -25,17 +27,29 @@ class Download extends Observable implements Runnable {
     public static final int COMPLETE = 2;
     public static final int CANCELLED = 3;
     public static final int ERROR = 4;
-    public static final int UNZIPED =5;
+    public static final int UNZIPPING = 5;
+    public static final int READY = 6;
+    public static final int CHECKING = 7;
 
+    private String server; //download server
     private URL url; // download URL
     private int size; // size of download in bytes
     private int downloaded; // number of bytes downloaded
     private int status; // current status of download
     private String destination; //destination of file
-
+    
+    //Checksum
+    MessageDigest md;
+    
     // Constructor for Download.
-    public Download(URL url) throws FileNotFoundException, IOException {
-        this.url = url;
+    public Download(String server){
+        this.server = server;
+        try {
+            url = new URL(server+"5x4ug2dyvwg4j3q/ShooterPack.zip");
+            md = MessageDigest.getInstance("SHA1");
+        } catch (MalformedURLException | NoSuchAlgorithmException ex) {
+            Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+        }
         size = -1;
         downloaded = 0;
         status = DOWNLOADING;
@@ -57,10 +71,17 @@ class Download extends Observable implements Runnable {
     public int getSize() {
         return size;
     }
+    
+    // Get this download's destination.
+    public String getDestination(){
+        return destination;
+    }
 
     // Get this download's progress.
     public int getProgress() {
-        return ((int) downloaded / size) * 100;
+        double progress = ((double)downloaded / (double)size) * 100.00;
+        return (int) progress;
+        
     }
 
     // Get this download's status.
@@ -93,13 +114,37 @@ class Download extends Observable implements Runnable {
     }
 
     // Mark this download as having an error.
-    private void error() {
+    public void error() {
         status = ERROR;
         stateChanged();
     }
+    
+    //Mark this download as unzipping.
+    public void unzipping() {
+        status = UNZIPPING;
+        stateChanged();
+    }
+    
+    //Mark this download as ready to play.
+    public void ready() {
+        status = READY;
+        stateChanged();
+    }
+        
+    public void begin(){
+        String clientSide = loadCheckSum();
+        String serverSide = getCheckSum();
+        if(clientSide==null){
+            start();
+        }else if(serverSide.equals(clientSide)){
+            ready();
+        }else{
+            start();
+        }
+    }
 
     // Start or resume downloading.
-    public void start() {
+    private void start() {
         Thread thread = new Thread(this);
         thread.start();
     }
@@ -108,6 +153,55 @@ class Download extends Observable implements Runnable {
     private String getFileName(URL url) {
         String fileName = url.getFile();
         return fileName.substring(fileName.lastIndexOf('/') + 1);
+    }
+    
+    private String loadCheckSum(){
+        File file = new File(destination+"\\checksum");
+        if(file.isFile()){
+            String sCurrentLine;
+            try (BufferedReader br = new BufferedReader(new FileReader(destination+"\\checksum")))
+            {
+                sCurrentLine = br.readLine();
+                return sCurrentLine;
+            } catch (IOException ex) {
+                Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        }else{
+            return null;
+        }
+    }
+    
+    public void saveCheckSum(){
+        String checksum = checkSumToString();
+        File file = new File(destination+"\\checksum");
+        try (FileOutputStream fop = new FileOutputStream(file)) {
+            if (!file.exists()) {
+                    file.createNewFile();
+            }
+            byte[] contentInBytes = checksum.getBytes();
+
+            fop.write(contentInBytes);
+            fop.flush();
+            fop.close();
+	} catch (IOException ex) {
+            Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+	}
+    }
+    
+    private String checkSumToString(){
+        byte[] mdbytes = md.digest();
+        //convert the byte to hex format
+        StringBuilder sb = new StringBuilder("");
+        for (int i = 0; i < mdbytes.length; i++) {
+            sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();       
+    }
+    
+    private String getCheckSum(){
+        JsonReader jr = new JsonReader();
+        return jr.readJsonFromUrl(server+"3vo4jfn7j5jmtd2/checksum.json");
     }
 
     // Download file.
@@ -149,7 +243,7 @@ class Download extends Observable implements Runnable {
             // Open file and seek to the end of it.
             file = new RandomAccessFile(getFileName(url), "rw");
             file.seek(downloaded);
-
+           
             stream = connection.getInputStream();
             while (status == DOWNLOADING) {
         /* Size buffer according to how much of the
@@ -168,6 +262,8 @@ class Download extends Observable implements Runnable {
 
                 // Write buffer to file.
                 file.write(buffer, 0, read);
+                // Update SHA-1
+                md.update(buffer, 0, read);
                 downloaded += read;
                 stateChanged();
             }
@@ -187,9 +283,8 @@ class Download extends Observable implements Runnable {
             if (file != null) {
                 try {
                     file.close();
-                    openzip();
                 } catch (IOException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -198,29 +293,17 @@ class Download extends Observable implements Runnable {
                 try {
                     stream.close();
                 } catch (Exception ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }        
         }
     }
 
-    public void openzip(){
-        if (status == COMPLETE) {
-            String fileInput = "D:/Shooter/Bukkit/ShooterPack/tapety.zip";
-            File fileZip = new File(fileInput);
-            UnZip zip = new UnZip(fileInput, destination);
-            if(zip.extract()){
-                status = UNZIPED;
-                stateChanged();  
-                fileZip.delete();
-            }        
-        }
-    }
+
 
     // Notify observers that this download's status has changed.
     private void stateChanged() {
         clearChanged();
         setChanged();
-        notifyObservers(STATUSES[status]);
-    }
+    }  
 }
