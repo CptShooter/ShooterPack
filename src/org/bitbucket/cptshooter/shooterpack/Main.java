@@ -17,6 +17,8 @@ import java.io.File;
  */
 public class Main extends javax.swing.JFrame {
 
+    public static final String VERSION = "0.5";
+    
     Authentication authentication;
     WebLink weblink = new WebLink();
     String packServer = "https://dl.dropboxusercontent.com/s/";
@@ -27,6 +29,7 @@ public class Main extends javax.swing.JFrame {
 
     public Main() {        
         initComponents();
+        titleText.setText("ShooterPack v"+VERSION);
         dProgressBar.setVisible(false);
         zProgressBar.setVisible(false);
         logoutButton.setVisible(false);
