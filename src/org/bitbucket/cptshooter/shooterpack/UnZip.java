@@ -15,7 +15,7 @@ public class UnZip {
     private String destination;
     private String fileInput;
     private int size;
-    private static int unzipped;
+    private int unzipped;
   
     public UnZip(String fI, String dest, int s){
         destination = dest;
@@ -29,7 +29,7 @@ public class UnZip {
         return (int) progress;
     }
 
-    private static void extractFile(ZipInputStream in, File outdir, String name) throws IOException
+    private void extractFile(ZipInputStream in, File outdir, String name) throws IOException
     {
         byte[] buffer = new byte[BUFFER_SIZE];
             try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(outdir,name)))) {

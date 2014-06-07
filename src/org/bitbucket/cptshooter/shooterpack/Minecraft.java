@@ -56,7 +56,7 @@ public class Minecraft {
         String[] cmd = createCMD();
         //TEST
         for(int i=0;i<cmd.length;i++){
-            //System.out.println(cmd[i]);
+            System.out.println(cmd[i]);
         }
         
         Process p;
@@ -80,7 +80,7 @@ public class Minecraft {
     
     public String[] createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.5.2/1.5.2.json
-        String[] cmd = new String[11];
+        String[] cmd = new String[12];
         cmd[0] = PATH_TO_JAVA;
         cmd[1] = JAVA_OPT;
         cmd[2] = JAVA_PARAMETERS;
@@ -94,8 +94,9 @@ public class Minecraft {
         cmd[6] = MINECRAFT_MAIN_CLASS;
         cmd[7] = USER;
         cmd[8] = ACCESS_TOKEN;
-        cmd[9] = "--gameDir "+GAME_DIRECTORY;
-        cmd[10] = "--assetsDir "+ASSETS_DIRECTORY;
+        cmd[9] = " --version "+MC_VERSION;
+        cmd[10] = " --gameDir "+GAME_DIRECTORY;
+        cmd[11] = " --assetsDir "+ASSETS_DIRECTORY;
         return cmd;        
     }
 }
