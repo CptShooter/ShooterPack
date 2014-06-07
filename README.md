@@ -13,18 +13,24 @@ Mods
 Changelog:
 ----------
 
+**0.6**
+
+* Uruchomienie z starymi plikami Minecraft 1.5.2
+* Zmienna lokalna APPDATA - naprawa bÅ‚Ä™du gameDir
+* Uruchomienie z forgem
+
 **0.5** - *alpha release*
 
-* Po³¹czenie wszsystkich modu³ów
+* PoÅ‚Ä…czenie wszsystkich moduÅ‚Ã³w
 * Przystosowanie layoutu
-* Postêp wypakowywania
+* PostÄ™p wypakowywania
 * Sprawdzanie czy jest nowy plik do poprania (suma kontrolna)
 * Linki do stron (buttony)
 
 **0.4**
 
 * Utworzenie lini polecenia do uruchomienia minecrafta
-* Uruchomienie Minecrafta (bez modów)
+* Uruchomienie Minecrafta (bez modÃ³w)
 
 **0.3**
 
@@ -32,10 +38,10 @@ Changelog:
 
 **0.2**
 
-* Logowanie do serwera mojang w celu autentykacji u¿ytownika
+* Logowanie do serwera mojang w celu autentykacji uÅ¼ytownika
 
 **0.1**
 
-* Pobieranie pliku zip (paczka modów wraz z minecraftem)
+* Pobieranie pliku zip (paczka modÃ³w wraz z minecraftem)
 * Wypakowywaie pliku zip do katalogu %appdata%/.ShooterPack
-* Wstêpny projekt okna aplikacji
+* WstÄ™pny projekt okna aplikacji
