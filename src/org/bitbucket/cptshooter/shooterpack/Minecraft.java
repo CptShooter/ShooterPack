@@ -1,8 +1,9 @@
 package org.bitbucket.cptshooter.shooterpack;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.lang.ProcessBuilder.Redirect;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,15 +13,24 @@ import java.util.logging.Logger;
  */
 public class Minecraft {
     
+    private static final String MAIN_DIRECTORY = "\\.ShooterPack";
+    
     //server data
     private static final String SERVER_IP = "144.76.196.9";
     private static final String SERVER_PORT = "25574";
     
-    //run parameters
+    //APPDATA
     private static final String APPDATA = System.getenv("APPDATA");
+    
+    //java
     private static final String PATH_TO_JAVA = System.getProperty("java.home")+"\\bin\\java";
     private static final String JAVA_OPT = "-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
     private static final String JAVA_PARAMETERS = "-Xmx1G";
+    
+    private static final String MC_VERSION = "1.5.2";
+    
+    //minecraft 1.5.2 new files
+    /*
     private static final String PATH_TO_NATIVES = APPDATA+"\\.ShooterPack\\versions\\1.5.2\\1.5.2-natives\\";
     private static final String[] PATH_TO_LIBRARY = {
         APPDATA+"\\.ShooterPack\\libraries\\net\\minecraft\\launchwrapper\\1.5\\launchwrapper-1.5.jar",
@@ -38,7 +48,18 @@ public class Minecraft {
     private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.launchwrapper.Launch";
     private static final String GAME_DIRECTORY = APPDATA+"\\.ShooterPack\\";
     private static final String ASSETS_DIRECTORY = APPDATA+"\\.ShooterPack\\assets\\";
-    private static final String MC_VERSION = "1.5.2";
+    */
+    
+    //minecraft 1.5.2 old files
+    private static final String PATH_TO_NATIVES = APPDATA+MAIN_DIRECTORY+"\\.minecraft\\bin\\natives\\";
+    private static final String[] PATH_TO_LIBRARY = {
+        APPDATA+MAIN_DIRECTORY+"\\.minecraft\\bin\\jinput.jar",
+        APPDATA+MAIN_DIRECTORY+"\\.minecraft\\bin\\lwjgl.jar",
+        APPDATA+MAIN_DIRECTORY+"\\.minecraft\\bin\\lwjgl_util.jar",
+        APPDATA+MAIN_DIRECTORY+"\\.minecraft\\bin\\minecraft.jar"
+    };
+    private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.Minecraft";
+    private static final String GAME_DIRECTORY = APPDATA+MAIN_DIRECTORY+"\\";
     
     //user
     private String USER;
@@ -51,7 +72,7 @@ public class Minecraft {
         USER_ID = user[1];
         ACCESS_TOKEN = user[2];
     }
-    
+        
     public void run(){
         String[] cmd = createCMD();
         //TEST
@@ -59,28 +80,28 @@ public class Minecraft {
             System.out.println(cmd[i]);
         }
         
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        Map<String, String> env = pb.environment();
+        env.put("APPDATA", GAME_DIRECTORY);
+        pb.directory(new File(GAME_DIRECTORY));
+        File log = new File(GAME_DIRECTORY+"log");
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(Redirect.appendTo(log));
         Process p;
         try {
-            p = Runtime.getRuntime().exec(cmd);
-            p.waitFor();
-            
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            StringBuilder builder = new StringBuilder();
-            String line = null;
-            while ( (line = br.readLine()) != null) {
-               builder.append(line);
-               builder.append(System.getProperty("line.separator"));
-            }
-            String result = builder.toString();
-            System.out.println( "\n"+result ); //Error output TEST
-        } catch (IOException | InterruptedException ex) {
+            p = pb.start();
+            env.remove("APPDATA");
+            assert pb.redirectInput() == Redirect.PIPE;
+            assert pb.redirectOutput().file() == log;
+            assert p.getInputStream().read() == -1;
+        } catch (IOException ex) {
             Logger.getLogger(Minecraft.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public String[] createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.5.2/1.5.2.json
-        String[] cmd = new String[12];
+        String[] cmd = new String[11];
         cmd[0] = PATH_TO_JAVA;
         cmd[1] = JAVA_OPT;
         cmd[2] = JAVA_PARAMETERS;
@@ -95,8 +116,7 @@ public class Minecraft {
         cmd[7] = USER;
         cmd[8] = ACCESS_TOKEN;
         cmd[9] = " --version "+MC_VERSION;
-        cmd[10] = " --gameDir "+GAME_DIRECTORY;
-        cmd[11] = " --assetsDir "+ASSETS_DIRECTORY;
+        cmd[10] = " --gameDir \""+GAME_DIRECTORY+"\\.minecraft\"";
         return cmd;        
     }
 }
