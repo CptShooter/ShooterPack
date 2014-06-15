@@ -13,6 +13,11 @@ Mods
 Changelog:
 ----------
 
+**0.7**
+
+* Linki do plików na osobym (stałym) pliku JSON
+* Dodanie zakładki: Autors
+
 **0.6**
 
 * Uruchomienie z starymi plikami Minecraft 1.5.2

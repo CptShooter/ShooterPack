@@ -32,6 +32,8 @@ class Download extends Observable implements Runnable {
     public static final int CHECKING = 7;
 
     private String server; //download server
+    private String packLink; //link to pack
+    private String checksumLink; //link to checksum
     private URL url; // download URL
     private int size; // size of download in bytes
     private int downloaded; // number of bytes downloaded
@@ -42,10 +44,12 @@ class Download extends Observable implements Runnable {
     MessageDigest md;
     
     // Constructor for Download.
-    public Download(String server){
-        this.server = server;
+    public Download(String[] links){
+        this.server         = links[0];
+        this.packLink       = links[1];
+        this.checksumLink   = links[2];
         try {
-            url = new URL(server+"5x4ug2dyvwg4j3q/ShooterPack.zip");
+            url = new URL(server+packLink);
             md = MessageDigest.getInstance("SHA1");
         } catch (MalformedURLException | NoSuchAlgorithmException ex) {
             Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
@@ -136,7 +140,7 @@ class Download extends Observable implements Runnable {
         String serverSide = getCheckSum();
         if(clientSide==null){
             start();
-        }else if(serverSide.equals(clientSide)){
+        }else if(serverSide.equalsIgnoreCase(clientSide)){
             ready();
         }else{
             start();
@@ -161,7 +165,7 @@ class Download extends Observable implements Runnable {
             String sCurrentLine;
             try (BufferedReader br = new BufferedReader(new FileReader(destination+"\\checksum")))
             {
-                sCurrentLine = br.readLine();
+                sCurrentLine = br.readLine();                
                 return sCurrentLine;
             } catch (IOException ex) {
                 Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
@@ -201,7 +205,7 @@ class Download extends Observable implements Runnable {
     
     private String getCheckSum(){
         JsonReader jr = new JsonReader();
-        return jr.readJsonFromUrl(server+"3vo4jfn7j5jmtd2/checksum.json");
+        return jr.readChecksumJsonFromUrl(server+checksumLink);
     }
 
     // Download file.

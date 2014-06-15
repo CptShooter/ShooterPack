@@ -117,6 +117,7 @@ public class Minecraft {
         cmd[8] = ACCESS_TOKEN;
         cmd[9] = " --version "+MC_VERSION;
         cmd[10] = " --gameDir \""+GAME_DIRECTORY+"\\.minecraft\"";
+        //cmd[11] = SERVER_IP+":"+SERVER_PORT;
         return cmd;        
     }
 }

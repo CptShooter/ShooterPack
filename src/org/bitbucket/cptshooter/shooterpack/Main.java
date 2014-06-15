@@ -17,18 +17,18 @@ import java.io.File;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "0.6";
+    public static final String VERSION = "0.7";
     
     Authentication authentication;
-    WebLink weblink = new WebLink();
-    String packServer = "https://dl.dropboxusercontent.com/s/";
-    Download download = new Download(packServer);
+    WebLink weblink;    
+    Download download;
     UnZip zip;
     
     boolean unzipFlag = false;
 
     public Main() {        
         initComponents();
+        //Layout
         titleText.setText("ShooterPack v"+VERSION);
         dProgressBar.setVisible(false);
         zProgressBar.setVisible(false);
@@ -39,7 +39,18 @@ public class Main extends javax.swing.JFrame {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int locationX = (dim.width-this.getSize().width)/2;
         int locationY = (dim.height-this.getSize().height)/2;
-        this.setLocation(locationX, locationY);        
+        this.setLocation(locationX, locationY); 
+        setTextAutors();
+        
+        //init
+        String links[] = getLinks();
+        weblink = new WebLink();        
+        download = new Download(links);        
+    }
+    
+    private String[] getLinks(){
+        JsonReader jr = new JsonReader();
+        return jr.readLinkJsonFromUrl("http://cptshooter.esy.es/link.json");
     }
 
     /**
@@ -70,6 +81,9 @@ public class Main extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextLog = new javax.swing.JTextPane();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextAutors = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ShooterPack for UnCrafted.pl");
@@ -236,6 +250,28 @@ public class Main extends javax.swing.JFrame {
         );
 
         jTabbedPane1.addTab("Log", jPanel2);
+
+        jTextAutors.setText("Autors:");
+        jScrollPane2.setViewportView(jTextAutors);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Autors", jPanel3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -426,6 +462,17 @@ public class Main extends javax.swing.JFrame {
         jTextLog.setText(text + "\n" + sdf.format(cal.getTime()) + " | " + log);
     }
     
+    public final void setTextAutors(){
+        String text = jTextAutors.getText()
+                + "\n Shooter -> Launcher"
+                + "\n ClassAxion -> ModsPack"
+                + "\n Povered -> Graphics"
+                + "\n"
+                + "\n Copyright 2014 by Uncrafted Team"
+                + "\n All rights reserved";
+        jTextAutors.setText(text);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -462,8 +509,11 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton forumButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextPane jTextAutors;
     private javax.swing.JTextPane jTextLog;
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;

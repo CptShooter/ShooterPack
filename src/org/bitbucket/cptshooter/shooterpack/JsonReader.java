@@ -36,7 +36,7 @@ public class JsonReader {
         return sb.toString();
     }
 
-    public String readJsonFromUrl(String url){
+    public String readChecksumJsonFromUrl(String url){
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
@@ -44,7 +44,23 @@ public class JsonReader {
             return json.getString("SHA-1");
         } catch (IOException | JSONException ex) {
             Logger.getLogger(JsonReader.class.getName()).log(Level.SEVERE, null, ex);
-            return "0";
+            return null;
+        }
+    }
+    
+    public String[] readLinkJsonFromUrl(String url){
+        try (InputStream is = new URL(url).openStream()) {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            JSONObject json = new JSONObject(jsonText);
+            String[] links = new String[3];
+            links[0] = json.getString("serwer");
+            links[1] = json.getString("pack");
+            links[2] = json.getString("checksum");
+            return links;
+        } catch (IOException | JSONException ex) {
+            Logger.getLogger(JsonReader.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
     }
 }
