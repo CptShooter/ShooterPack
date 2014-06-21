@@ -17,12 +17,13 @@ import java.io.File;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "0.7";
+    public static final String VERSION = "0.8";
     
     Authentication authentication;
     WebLink weblink;    
     Download download;
     UnZip zip;
+    Options options;
     
     boolean unzipFlag = false;
 
@@ -36,16 +37,34 @@ public class Main extends javax.swing.JFrame {
         playButton.setVisible(false);
         statusLabel.setVisible(false);
         welcomeLabel.setVisible(false);
+        jTextLog.setEditable(false);
+        jTextAutors.setEditable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int locationX = (dim.width-this.getSize().width)/2;
         int locationY = (dim.height-this.getSize().height)/2;
         this.setLocation(locationX, locationY); 
         setTextAutors();
-        
+                
         //init
         String links[] = getLinks();
         weblink = new WebLink();        
-        download = new Download(links);        
+        download = new Download(links);  
+        options = new Options();
+        
+        //options
+        if(options.checkOptions()){
+            options.loadOptions();
+        }else{
+            options.setDefaultOptions();
+            options.buildOptions();
+            options.saveOptions();
+        }
+        minComboBox.setSelectedIndex(options.getNumberMin());
+        maxComboBox.setSelectedIndex(options.getNumberMax());
+        optionsSaveButton.setVisible(false);
+        int min = minComboBox.getSelectedIndex();
+        String minS = minComboBox.getSelectedItem().toString();
+        //System.out.println(minS);
     }
     
     private String[] getLinks(){
@@ -82,6 +101,16 @@ public class Main extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextLog = new javax.swing.JTextPane();
         jPanel3 = new javax.swing.JPanel();
+        optionsSaveButton = new javax.swing.JButton();
+        maLabel = new javax.swing.JLabel();
+        minLabel = new javax.swing.JLabel();
+        minComboBox = new javax.swing.JComboBox();
+        maxLabel = new javax.swing.JLabel();
+        maxComboBox = new javax.swing.JComboBox();
+        maxMbLabel = new javax.swing.JLabel();
+        minMbLabel = new javax.swing.JLabel();
+        setDefaultButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAutors = new javax.swing.JTextPane();
 
@@ -91,13 +120,15 @@ public class Main extends javax.swing.JFrame {
         setResizable(false);
 
         jTabbedPane1.setFocusable(false);
+        jTabbedPane1.setMinimumSize(new java.awt.Dimension(720, 280));
+        jTabbedPane1.setPreferredSize(new java.awt.Dimension(720, 300));
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         dProgressBar.setFocusable(false);
         dProgressBar.setOpaque(true);
         dProgressBar.setStringPainted(true);
-        jPanel1.add(dProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 145, 370, 20));
+        jPanel1.add(dProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 150, 370, 20));
 
         zProgressBar.setFocusable(false);
         zProgressBar.setOpaque(true);
@@ -107,7 +138,7 @@ public class Main extends javax.swing.JFrame {
         welcomeLabel.setFont(new java.awt.Font("Minecraftia", 1, 10)); // NOI18N
         welcomeLabel.setForeground(new java.awt.Color(255, 255, 255));
         welcomeLabel.setText("Status");
-        jPanel1.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 270, 20));
+        jPanel1.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 205, 270, 20));
 
         loginField.setBackground(new Color(0,0,0,0));
         loginField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
@@ -120,7 +151,7 @@ public class Main extends javax.swing.JFrame {
                 loginFieldMouseClicked(evt);
             }
         });
-        jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 270, 20));
+        jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 205, 270, 20));
 
         passField.setBackground(new Color(0,0,0,0));
         passField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
@@ -133,12 +164,12 @@ public class Main extends javax.swing.JFrame {
                 passFieldMouseClicked(evt);
             }
         });
-        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 270, 20));
+        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 235, 270, 20));
 
         titleText.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
         titleText.setForeground(new java.awt.Color(255, 255, 255));
         titleText.setText("ShooterPack v0.4");
-        jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 10, -1, -1));
+        jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 15, -1, -1));
 
         loginButton.setBackground(new Color(0,0,0,0));
         loginButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
@@ -152,7 +183,7 @@ public class Main extends javax.swing.JFrame {
                 loginButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 80, 50));
+        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 205, 80, 50));
 
         logoutButton.setBackground(new Color(0,0,0,0));
         logoutButton.setFont(new java.awt.Font("Minecraftia", 0, 10)); // NOI18N
@@ -165,7 +196,7 @@ public class Main extends javax.swing.JFrame {
                 logoutButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 230, 80, 20));
+        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 235, 80, 20));
 
         playButton.setBackground(new Color(0,0,0,0));
         playButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
@@ -178,7 +209,7 @@ public class Main extends javax.swing.JFrame {
                 playButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 80, 50));
+        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 205, 80, 50));
 
         wwwButton.setBackground(new Color(0,0,0,0));
         wwwButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
@@ -191,7 +222,7 @@ public class Main extends javax.swing.JFrame {
                 wwwButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 38, 150, -1));
+        jPanel1.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 43, 150, -1));
 
         forumButton.setBackground(new Color(0,0,0,0));
         forumButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
@@ -204,7 +235,7 @@ public class Main extends javax.swing.JFrame {
                 forumButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 67, 150, -1));
+        jPanel1.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 72, 150, -1));
 
         tsButton.setBackground(new Color(0,0,0,0));
         tsButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
@@ -217,19 +248,20 @@ public class Main extends javax.swing.JFrame {
                 tsButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(tsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 95, 150, -1));
+        jPanel1.add(tsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 100, 150, -1));
 
         statusLabel.setFont(new java.awt.Font("Minecraftia", 3, 10)); // NOI18N
         statusLabel.setForeground(new java.awt.Color(255, 255, 255));
         statusLabel.setText("Status");
-        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 350, 20));
+        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 175, 350, 20));
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/minecraft.jpg"))); // NOI18N
-        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 720, 260));
+        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
 
         jTabbedPane1.addTab("Main", jPanel1);
 
         jTextLog.setText("ShooterPack LOG:");
+        jTextLog.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(jTextLog);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -238,46 +270,98 @@ public class Main extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab("Log", jPanel2);
 
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        optionsSaveButton.setText("Save");
+        optionsSaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionsSaveButtonActionPerformed(evt);
+            }
+        });
+        jPanel3.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 220, -1, -1));
+
+        maLabel.setText("Memory Allocation");
+        jPanel3.add(maLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 18, -1, -1));
+
+        minLabel.setText("Min");
+        jPanel3.add(minLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 53, -1, -1));
+
+        minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096" }));
+        minComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minComboBoxActionPerformed(evt);
+            }
+        });
+        jPanel3.add(minComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(74, 50, 140, -1));
+
+        maxLabel.setText("Max");
+        jPanel3.add(maxLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 85, -1, -1));
+
+        maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096" }));
+        maxComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxComboBoxActionPerformed(evt);
+            }
+        });
+        jPanel3.add(maxComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(74, 82, 140, -1));
+
+        maxMbLabel.setText("MB");
+        jPanel3.add(maxMbLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 85, -1, -1));
+
+        minMbLabel.setText("MB");
+        jPanel3.add(minMbLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 53, -1, -1));
+
+        setDefaultButton.setText("Set Default");
+        setDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setDefaultButtonActionPerformed(evt);
+            }
+        });
+        jPanel3.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 220, -1, -1));
+
+        jTabbedPane1.addTab("Options", jPanel3);
+
         jTextAutors.setText("Autors:");
+        jTextAutors.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane2.setViewportView(jTextAutors);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Autors", jPanel3);
+        jTabbedPane1.addTab("Autors", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,7 +377,9 @@ public class Main extends javax.swing.JFrame {
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
         Minecraft minecraft = new Minecraft(authentication.getUser());
+        minecraft.setOptions(options);
         minecraft.run();
+        //System.exit(0);
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
@@ -326,6 +412,37 @@ public class Main extends javax.swing.JFrame {
     private void tsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tsButtonActionPerformed
         weblink.openWebpage("http://tsminecraft.pl/");
     }//GEN-LAST:event_tsButtonActionPerformed
+
+    private void minComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minComboBoxActionPerformed
+        optionsSaveButton.setVisible(true);
+    }//GEN-LAST:event_minComboBoxActionPerformed
+
+    private void maxComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxComboBoxActionPerformed
+        optionsSaveButton.setVisible(true);
+    }//GEN-LAST:event_maxComboBoxActionPerformed
+
+    private void optionsSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsSaveButtonActionPerformed
+        String min = minComboBox.getSelectedItem().toString();
+        String max = maxComboBox.getSelectedItem().toString();
+        int imin = Integer.parseInt(min);
+        int imax = Integer.parseInt(max);
+        if(imin>imax){
+            min = max;
+        }
+        options.setMin(min);
+        options.setMax(max);
+        options.buildOptions();
+        options.saveOptions();
+        minComboBox.setSelectedIndex(options.getNumberMin());
+        maxComboBox.setSelectedIndex(options.getNumberMax());
+        optionsSaveButton.setVisible(false);
+    }//GEN-LAST:event_optionsSaveButtonActionPerformed
+
+    private void setDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setDefaultButtonActionPerformed
+        options.setDefaultOptions();
+        minComboBox.setSelectedIndex(options.getNumberMin());
+        maxComboBox.setSelectedIndex(options.getNumberMax());
+    }//GEN-LAST:event_setDefaultButtonActionPerformed
 
     private boolean login(){
        String login = loginField.getText();
@@ -454,6 +571,32 @@ public class Main extends javax.swing.JFrame {
         }
     }
     
+//    public void clearFolder(){
+//        String dataFolder = System.getenv("APPDATA");
+//        String destination = dataFolder+"\\.ShooterPack";
+//        
+//        File folder = new File(destination);
+//        if(folder.exists()){
+//            for (File file: folder.listFiles()) {
+//                switch(file){
+//                    case: 
+//                }
+//                if(file.compareTo(minecraftF)==0) 
+//                if(file.compareTo(minecraftF)==0)
+//                if(file.compareTo(minecraftF)==0)
+//                        file.delete();
+//            }
+//        }
+//    }
+//    
+//    public int compareFiles(File file){
+//        String dataFolder = System.getenv("APPDATA");
+//        String destination = dataFolder+"\\.ShooterPack";
+//        File minecraftF = new File(destination+"\\.minecraft");
+//        File optionsF = new File(destination+"\\options.json");
+//        File checksumF = new File(destination+"\\checksum");
+//    }
+    
     public void setTextLog(String log){
         Calendar cal = Calendar.getInstance();
     	cal.getTime();
@@ -510,6 +653,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -518,8 +662,17 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;
     private javax.swing.JButton logoutButton;
+    private javax.swing.JLabel maLabel;
+    private javax.swing.JComboBox maxComboBox;
+    private javax.swing.JLabel maxLabel;
+    private javax.swing.JLabel maxMbLabel;
+    private javax.swing.JComboBox minComboBox;
+    private javax.swing.JLabel minLabel;
+    private javax.swing.JLabel minMbLabel;
+    private javax.swing.JButton optionsSaveButton;
     private javax.swing.JPasswordField passField;
     private javax.swing.JButton playButton;
+    private javax.swing.JButton setDefaultButton;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel titleText;
     private javax.swing.JButton tsButton;

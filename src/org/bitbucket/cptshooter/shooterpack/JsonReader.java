@@ -5,6 +5,8 @@
 package org.bitbucket.cptshooter.shooterpack;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,6 +62,15 @@ public class JsonReader {
             return links;
         } catch (IOException | JSONException ex) {
             Logger.getLogger(JsonReader.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public String readJsonFromFile(File file){
+        try (BufferedReader br = new BufferedReader(new FileReader(file))){
+            return readAll(br);
+        } catch (IOException ex) {
+            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
