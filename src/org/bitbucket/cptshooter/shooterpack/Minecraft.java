@@ -35,16 +35,17 @@ public class Minecraft {
     private static final String JAVA_OPT = "-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
     private String[] JAVA_PARAMETERS = new String[2];
     
-    //private static final String MC_VERSION = "1.6.4";
-    private static final String MC_VERSION = "1.5.2";
+    private static final String MC_VERSION = "1.6.4";
+    //private static final String MC_VERSION = "1.5.2";
     
     //minecraft 1.6.4 new files
-    /*
+    
     private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.main.Main";
     private static final String GAME_DIRECTORY = PACK_DIRECTORY+".minecraft";
     private static final String ASSETS_DIRECTORY = GAME_DIRECTORY+"\\assets";
     
-    private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4-natives";
+    //private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4-natives";
+    private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"\\versions\\1.6.4\\natives";
     private static final String[] PATH_TO_LIBRARY = {
         //Forge
         //GAME_DIRECTORY+"\\libraries\\net\\minecraftforge\\minecraftforge\\9.11.1.965\\minecraftforge-9.11.1.965.jar",
@@ -65,15 +66,18 @@ public class Minecraft {
         GAME_DIRECTORY+"\\libraries\\net\\java\\jinput\\jinput\\2.0.5\\jinput-2.0.5.jar",
         GAME_DIRECTORY+"\\libraries\\net\\java\\jutils\\jutils\\1.0.0\\jutils-1.0.0.jar",
         GAME_DIRECTORY+"\\libraries\\com\\google\\code\\gson\\gson\\2.2.2\\gson-2.2.2.jar",
-        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl\\2.9.0\\lwjgl-2.9.0.jar",
-        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl_util\\2.9.0\\lwjgl_util-2.9.0.jar",
-        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl-platform\\2.9.0\\lwjgl-platform-2.9.0-natives-windows.jar", //only for windows
+        //GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl\\2.9.0\\lwjgl-2.9.0.jar",
+        //GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl_util\\2.9.0\\lwjgl_util-2.9.0.jar",
+        //GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl-platform\\2.9.0\\lwjgl-platform-2.9.0-natives-windows.jar", //only for windows
+        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl\\2.9.1-nightly-20131120\\lwjgl-2.9.1-nightly-20131120.jar",
+        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl_util\\2.9.1-nightly-20131120\\lwjgl_util-2.9.1-nightly-20131120.jar",
+        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl-platform\\2.9.1-nightly-20131120\\lwjgl-platform-2.9.1-nightly-20131120-natives-windows.jar", //only for windows
         GAME_DIRECTORY+"\\libraries\\net\\java\\jinput\\jinput-platform\\2.0.5\\jinput-platform-2.0.5-natives-windows.jar", //only for windows
         GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4.jar",
     };
-    */
-    //minecraft 1.5.2 old files
     
+    //minecraft 1.5.2 old files
+    /*
     private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.Minecraft";
     private static final String GAME_DIRECTORY = PACK_DIRECTORY+".minecraft\\";
 
@@ -84,7 +88,7 @@ public class Minecraft {
         GAME_DIRECTORY+"bin\\lwjgl_util.jar",
         GAME_DIRECTORY+"bin\\minecraft.jar"
     };
-    
+    */
     
     //user
     private String USER;
@@ -122,7 +126,13 @@ public class Minecraft {
     	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.YYYY-HH.mm.ss");
         String lfn = "log-"+sdf.format(cal.getTime())+".txt";
         
-        File log = new File(PACK_DIRECTORY+"\\logs\\"+lfn);
+        //File log = new File(PACK_DIRECTORY+"\\logs\\"+lfn);
+        File log = new File(PACK_DIRECTORY+"\\log.txt");
+        try {
+			log.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         pb.redirectErrorStream(true);
         pb.redirectOutput(Redirect.appendTo(log));
         Process p;
@@ -182,9 +192,9 @@ public class Minecraft {
             cmd[5]+=";";
         }
         cmd[6] = MINECRAFT_MAIN_CLASS;
-        cmd[7] = USER;
-        cmd[8] = ACCESS_TOKEN;
-        cmd[9] = " --version "+MC_VERSION;
+        cmd[7] = " --username "+USER;
+        cmd[8] = " --accessToken "+ACCESS_TOKEN;
+        cmd[9] = " --version="+MC_VERSION;
         cmd[10] = " --gameDir \""+GAME_DIRECTORY+"\"";
         //cmd[11] = SERVER_IP+":"+SERVER_PORT;
         return cmd;        
