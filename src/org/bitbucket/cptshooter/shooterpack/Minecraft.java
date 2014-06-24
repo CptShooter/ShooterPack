@@ -40,18 +40,24 @@ public class Minecraft {
     
     //minecraft 1.6.4 new files
     
-    private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.main.Main";
+    //private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.main.Main";
+    private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.launchwrapper.Launch";
     private static final String GAME_DIRECTORY = PACK_DIRECTORY+".minecraft";
     private static final String ASSETS_DIRECTORY = GAME_DIRECTORY+"\\assets";
     
-    //private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4-natives";
-    private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"\\versions\\1.6.4\\natives";
+    private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4-natives";
     private static final String[] PATH_TO_LIBRARY = {
-        //Forge
-        //GAME_DIRECTORY+"\\libraries\\net\\minecraftforge\\minecraftforge\\9.11.1.965\\minecraftforge-9.11.1.965.jar",
-        //GAME_DIRECTORY+"\\libraries\\org\\scala-lang\\scala-library\\2.10.2\\scala-library-2.10.2.jar",
-        //GAME_DIRECTORY+"\\libraries\\org\\scala-lang\\scala-compiler\\2.10.2\\scala-compiler-2.10.2.jar",
         //Minecraft
+        GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4.jar",
+        //Launchwrapper
+        GAME_DIRECTORY+"\\libraries\\net\\minecraft\\launchwrapper\\1.8\\launchwrapper-1.8.jar",
+        GAME_DIRECTORY+"\\libraries\\org\\ow2\\asm\\asm-all\\4.1\\asm-all-4.1.jar",
+        GAME_DIRECTORY+"\\libraries\\lzma\\lzma\\0.0.1\\lzma-0.0.1.jar",
+        //Forge libs
+        GAME_DIRECTORY+"\\libraries\\net\\minecraftforge\\minecraftforge\\9.11.1.965\\minecraftforge-9.11.1.965.jar",
+        GAME_DIRECTORY+"\\libraries\\org\\scala-lang\\scala-library\\2.10.2\\scala-library-2.10.2.jar",
+        GAME_DIRECTORY+"\\libraries\\org\\scala-lang\\scala-compiler\\2.10.2\\scala-compiler-2.10.2.jar",
+        //Minecraft libs     
         GAME_DIRECTORY+"\\libraries\\net\\sf\\jopt-simple\\jopt-simple\\4.5\\jopt-simple-4.5.jar",
         GAME_DIRECTORY+"\\libraries\\com\\paulscode\\codecjorbis\\20101023\\codecjorbis-20101023.jar",
         GAME_DIRECTORY+"\\libraries\\com\\paulscode\\codecwav\\20101023\\codecwav-20101023.jar",
@@ -66,14 +72,10 @@ public class Minecraft {
         GAME_DIRECTORY+"\\libraries\\net\\java\\jinput\\jinput\\2.0.5\\jinput-2.0.5.jar",
         GAME_DIRECTORY+"\\libraries\\net\\java\\jutils\\jutils\\1.0.0\\jutils-1.0.0.jar",
         GAME_DIRECTORY+"\\libraries\\com\\google\\code\\gson\\gson\\2.2.2\\gson-2.2.2.jar",
-        //GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl\\2.9.0\\lwjgl-2.9.0.jar",
-        //GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl_util\\2.9.0\\lwjgl_util-2.9.0.jar",
-        //GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl-platform\\2.9.0\\lwjgl-platform-2.9.0-natives-windows.jar", //only for windows
-        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl\\2.9.1-nightly-20131120\\lwjgl-2.9.1-nightly-20131120.jar",
-        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl_util\\2.9.1-nightly-20131120\\lwjgl_util-2.9.1-nightly-20131120.jar",
-        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl-platform\\2.9.1-nightly-20131120\\lwjgl-platform-2.9.1-nightly-20131120-natives-windows.jar", //only for windows
+        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl\\2.9.1\\lwjgl-2.9.1.jar",
+        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl_util\\2.9.1\\lwjgl_util-2.9.1.jar",
+        GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl-platform\\2.9.1\\lwjgl-platform-2.9.1-natives-windows.jar", //only for windows
         GAME_DIRECTORY+"\\libraries\\net\\java\\jinput\\jinput-platform\\2.0.5\\jinput-platform-2.0.5-natives-windows.jar", //only for windows
-        GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4.jar",
     };
     
     //minecraft 1.5.2 old files
@@ -116,9 +118,9 @@ public class Minecraft {
         }
         
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        Map<String, String> env = pb.environment();
-        env.clear();
-        env.put("APPDATA", PACK_DIRECTORY);
+        //Map<String, String> env = pb.environment();
+        //env.clear();
+        //env.put("APPDATA", PACK_DIRECTORY); //no need in 1.6.4
         pb.directory(new File(PACK_DIRECTORY));
         
         Calendar cal = Calendar.getInstance();
@@ -126,19 +128,22 @@ public class Minecraft {
     	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.YYYY-HH.mm.ss");
         String lfn = "log-"+sdf.format(cal.getTime())+".txt";
         
-        //File log = new File(PACK_DIRECTORY+"\\logs\\"+lfn);
-        File log = new File(PACK_DIRECTORY+"\\log.txt");
+        File logFolder = new File(PACK_DIRECTORY+"\\logs");
+        if(!logFolder.exists()){
+            logFolder.mkdir();
+        }
+        File log = new File(PACK_DIRECTORY+"\\logs\\"+lfn);
         try {
-			log.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            log.createNewFile();
+	} catch (IOException ex) {
+            Logger.getLogger(Minecraft.class.getName()).log(Level.SEVERE, null, ex);
+	}
         pb.redirectErrorStream(true);
         pb.redirectOutput(Redirect.appendTo(log));
         Process p;
         try {
             p = pb.start();
-            env.remove("APPDATA");
+            //env.remove("APPDATA");
             assert pb.redirectInput() == Redirect.PIPE;
             assert pb.redirectOutput().file() == log;
             assert p.getInputStream().read() == -1;
@@ -148,10 +153,10 @@ public class Minecraft {
     }
        
     //cmd for Minecraft 1.6.4
-    /*
+    
     public String[] createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/1.6.4.json
-        String[] cmd = new String[12];
+        String[] cmd = new String[13];
         cmd[0] = PATH_TO_JAVA;
         //cmd[1] = JAVA_OPT;
         cmd[1] = JAVA_PARAMETERS[0];
@@ -169,14 +174,14 @@ public class Minecraft {
         cmd[9] = "--version="+MC_VERSION;
         cmd[10] = "--gameDir="+GAME_DIRECTORY;
         cmd[11] = "--assetsDir="+ASSETS_DIRECTORY;
-//        cmd[12] = "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker";
+        cmd[12] = "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker";
 //        cmd[13] = "--server="+SERVER_IP;
 //        cmd[14] = "--port="+SERVER_PORT;
         return cmd;        
     }
-    */
-    //cmd for Minecraft 1.5.2
     
+    //cmd for Minecraft 1.5.2
+    /*
     public String[] createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.5.2/1.5.2.json
         String[] cmd = new String[11];
@@ -192,13 +197,13 @@ public class Minecraft {
             cmd[5]+=";";
         }
         cmd[6] = MINECRAFT_MAIN_CLASS;
-        cmd[7] = " --username "+USER;
-        cmd[8] = " --accessToken "+ACCESS_TOKEN;
-        cmd[9] = " --version="+MC_VERSION;
+        cmd[7] = USER;
+        cmd[8] = ACCESS_TOKEN;
+        cmd[9] = MC_VERSION;
         cmd[10] = " --gameDir \""+GAME_DIRECTORY+"\"";
         //cmd[11] = SERVER_IP+":"+SERVER_PORT;
         return cmd;        
     }
-    
+    */
 }
 
