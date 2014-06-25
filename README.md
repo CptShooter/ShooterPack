@@ -1,7 +1,7 @@
 ShooterPack
 ==========
 
-Minecraft (1.5.2) Launcher dla Uncrafted.pl
+Minecraft (1.6.4) Launcher dla Uncrafted.pl
 
 
 Mods
