@@ -17,7 +17,7 @@ import java.io.File;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "0.9";
+    public static final String VERSION = "1.0";
     
     Authentication authentication;
     Options options; 
@@ -29,6 +29,8 @@ public class Main extends javax.swing.JFrame {
     String[] links;
     
     boolean unzipFlag = false;
+    
+    private static final int BIT = Integer.parseInt( System.getProperty("sun.arch.data.model") );
 
     public Main() {        
         initComponents();
@@ -57,9 +59,21 @@ public class Main extends javax.swing.JFrame {
         options = new Options();
         user = new User();
         
+        //32 or 64
+        setTextLog("JVM : "+BIT+"bit");
+        if(BIT==32){
+            setTextLog("You have 32bit java! For better performance install 64bit - go https://www.java.com/pl/download/manual.jsp");
+        }
+        setComboBox();              
+        
         //options
         if(options.checkOptions()){
             options.loadOptions();
+            if(options.getOptBit()!=BIT){
+                options.setDefaultOptions();
+                options.buildOptions();
+                options.saveOptions();
+            }
         }else{
             options.setDefaultOptions();
             options.buildOptions();
@@ -97,6 +111,17 @@ public class Main extends javax.swing.JFrame {
     private String[] getLinks(){
         JsonReader jr = new JsonReader();
         return jr.readLinkJsonFromUrl("http://cptshooter.esy.es/link.json");
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void setComboBox(){
+        if(BIT==32){
+            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024"}));
+            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024"}));
+        }else{
+            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096"}));
+            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096"}));
+        }  
     }
 
     /**
@@ -143,7 +168,7 @@ public class Main extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ShooterPack for UnCrafted.pl");
-        setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/ico.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/icon_64x64.png")));
         setResizable(false);
 
         jTabbedPane1.setFocusable(false);
@@ -326,7 +351,6 @@ public class Main extends javax.swing.JFrame {
         minLabel.setText("Min");
         jPanel3.add(minLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 53, -1, -1));
 
-        minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096" }));
         minComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 minComboBoxActionPerformed(evt);
@@ -337,7 +361,6 @@ public class Main extends javax.swing.JFrame {
         maxLabel.setText("Max");
         jPanel3.add(maxLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 85, -1, -1));
 
-        maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096" }));
         maxComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 maxComboBoxActionPerformed(evt);

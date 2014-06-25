@@ -20,6 +20,9 @@ public class Options {
     
     JSONObject options;
     
+    private static final int BIT = Integer.parseInt( System.getProperty("sun.arch.data.model") );
+    private int optBit;
+    
     /**
      * Constructor
      * Setting up options file destination
@@ -58,6 +61,7 @@ public class Options {
             JSONObject maJson = options.getJSONObject("memory-allocation");
             MIN = maJson.getString("min");
             MAX = maJson.getString("max");
+            optBit = options.getInt("JRE-bit");
         }catch(JSONException ex){
             Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
         }        
@@ -92,6 +96,7 @@ public class Options {
             memoryAllocation.put("min", MIN);
             memoryAllocation.put("max", MAX);
             options.put("memory-allocation", memoryAllocation);
+            options.put("JRE-bit", BIT);
             
             ////TEST/////
             //System.out.println(options); //show JSON
@@ -101,25 +106,39 @@ public class Options {
     }
     
     /**
-     * Setting options to default
+     * Setting options to default for 64 bit
      */
     public void setDefaultOptions(){
-        MIN = "1024";
-        MAX = "2048";
+        if(BIT==32){
+            MIN = "1024";
+            MAX = "1024";
+        }else{
+            MIN = "1024";
+            MAX = "2048";
+        }        
     }
-    
+        
     /**
      * Getting position of chosen String in Main ComboBox
      * @param mb
      * @return Int - position in ComboBox
      */
     public int getNumber(String mb){
-        switch(mb){
-            case "512"  : return 0;
-            case "1024" : return 1;
-            case "2048" : return 2;
-            case "4096" : return 3;
-            default     : return 0;
+        if(BIT==32){
+            switch(mb){
+                case "512"  : return 0;
+                case "768"  : return 1;
+                case "1024" : return 2;
+                default     : return 0;
+            }
+        }else{
+            switch(mb){
+                case "512"  : return 0;
+                case "1024" : return 1;
+                case "2048" : return 2;
+                case "4096" : return 3;
+                default     : return 0;
+            }
         }
     }
     
@@ -149,5 +168,9 @@ public class Options {
     
     public JSONObject getOptions(){
         return options;
+    }
+    
+    public int getOptBit(){
+        return optBit;
     }
 }

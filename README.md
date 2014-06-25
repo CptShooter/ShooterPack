@@ -13,6 +13,11 @@ Mods
 Changelog:
 ----------
 
+**1.0**
+
+* Wykrywanie czy użytkownik ma 32bit czy 64bit javę
+* Opcje w zależności od 32/64 bit
+
 **0.9**
 
 * Zapamiętanie użytkownika
