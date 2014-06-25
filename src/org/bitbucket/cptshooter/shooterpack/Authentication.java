@@ -22,9 +22,7 @@ public class Authentication {
     private char[] password;
         
     //Player parameters
-    private String ACCESS_TOKEN;
-    private String CLIENT_TOKEN;
-    private String USER_ID;
+    User user;
     
     //Error status
     private int ERROR = 0;
@@ -33,6 +31,12 @@ public class Authentication {
     public Authentication(String log, char[] pass){
         login = log;
         password = pass;
+        user = new User();
+        user.setUserName(log);
+    }
+    
+    public Authentication(User user){
+        this.user = user;
     }
     
     public void setError(int e){
@@ -47,11 +51,15 @@ public class Authentication {
         return ERROR_MESSAGE;
     }
     
-    public String[] getUser(){
-        String[] user = {login,USER_ID,ACCESS_TOKEN};
+    public User getLoggedUser(){
         return user;
     }
-            
+    
+    /**
+     * Connect to Mojang server using USERNAME and PASSWORD
+     * Output UserID, AccessToken, ClientToken
+     * @return true if success
+     */
     public boolean connect(){
         String endpoint = "/authenticate";
         JSONObject payload = new JSONObject();
@@ -74,15 +82,22 @@ public class Authentication {
             //http Connect
             String result = httpConnect(endpoint, payload.toString());
         
-            JSONObject JSONres = new JSONObject(result);
+            JSONObject JSONres;
+            if(result!=null){
+                JSONres = new JSONObject(result);
+            }else{
+                JSONres = new JSONObject();
+                JSONres.put("result", new Integer(1));
+            }
 
             ////TEST/////
             //System.out.println( JSONres );  //show JSON output
             
             if(getError()==0){
-                ACCESS_TOKEN = JSONres.getString("accessToken");
-                CLIENT_TOKEN = JSONres.getString("clientToken");
-                USER_ID = JSONres.getJSONObject("selectedProfile").getString("id");
+                user.setAccessToken( JSONres.getString("accessToken") );
+                user.setClientToken( JSONres.getString("clientToken") );
+                user.setUserID(JSONres.getJSONObject("selectedProfile").getString("id"));
+                user.rememberMe();
                 return true;
             }else{
                 ERROR_MESSAGE = JSONres.getString("errorMessage");
@@ -95,7 +110,98 @@ public class Authentication {
         }
     }
     
-    public void disconnect(){
+    /**
+     * Checking saved accessToken
+     * @return true if accessToken is valid
+     */
+    public boolean validate(){
+        String endpoint = "/validate";
+        JSONObject payload = new JSONObject();
+        try{
+            //JSON
+            payload.put("accessToken", user.getAccessToken());
+            
+            ////TEST/////
+            //System.out.println(payload); //show JSON
+            
+            //http Connect
+            String result = httpConnect(endpoint, payload.toString());
+        
+            JSONObject JSONres;
+            if(result!=null){
+                JSONres = new JSONObject(result);
+            }else{
+                JSONres = new JSONObject();
+                JSONres.put("result", new Integer(1));
+            }
+
+            ////TEST/////
+            //System.out.println( JSONres );  //show JSON output
+            
+            if(getError()==0){
+                return true;
+            }else{
+                ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }
+            
+        } catch(Exception ex) {
+            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    /**
+     * Refreshes a valid accessToken - not implemented yet by Mojang
+     * @return true if success
+     */
+    public boolean refresh(){
+        String endpoint = "/refresh";
+        JSONObject payload = new JSONObject();
+        try{
+            //JSON
+            JSONObject selectedProfile = new JSONObject();
+            selectedProfile.put("id", user.getUserID());
+            selectedProfile.put("name",user.getUserName());
+            payload.put("selectedProfile", selectedProfile);
+            payload.put("accessToken", user.getAccessToken());
+            payload.put("clientToken", user.getClientToken());
+            
+            ////TEST/////
+            //System.out.println(payload); //show JSON
+            
+            //http Connect
+            String result = httpConnect(endpoint, payload.toString());
+            
+            JSONObject JSONres;
+            if(result!=null){
+                JSONres = new JSONObject(result);
+            }else{
+                JSONres = new JSONObject();
+                JSONres.put("result", new Integer(1));
+            }
+
+            ////TEST/////
+            //System.out.println( JSONres );  //show JSON output
+            
+            if(getError()==0){
+                return true;
+            }else{
+                ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }
+            
+        } catch(Exception ex) {
+            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    /**
+     * Invalidates accessTokens using an account's username and password. 
+     * @return true if success
+     */
+    public boolean disconnect(){
         String endpoint = "/signout";
         JSONObject payload = new JSONObject();
         try{
@@ -106,18 +212,83 @@ public class Authentication {
                 pw+=password[i];
             }
             payload.put("password", pw);
-            System.out.println(payload); //show JSON
+            
+            ////TEST/////
+            //System.out.println(payload); //show JSON
             
             //http Connect
             String result = httpConnect(endpoint, payload.toString());
         
-            System.out.println( "Disconnect" );
-            System.out.println( result );
+            JSONObject JSONres;
+            if(result!=null){
+                JSONres = new JSONObject(result);
+            }else{
+                JSONres = new JSONObject();
+                JSONres.put("result", new Integer(1));
+            }
+
+            ////TEST/////
+            //System.out.println( JSONres );  //show JSON output
+            
+            if(getError()==0){
+                return true;
+            }else{
+                ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }
         } catch(Exception ex) {
             Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex); 
+            return false;
         }
     }
     
+    /**
+     * Invalidates accessTokens using a client/access token pair. 
+     * @return true if success
+     */
+    public boolean invalidate(){
+        String endpoint = "/invalidate";
+        JSONObject payload = new JSONObject();
+        try{
+            //JSON            
+            payload.put("accessToken", user.getAccessToken());
+            payload.put("clientToken", user.getClientToken());
+            
+            ////TEST/////
+            //System.out.println(payload); //show JSON
+            
+            //http Connect
+            String result = httpConnect(endpoint, payload.toString());
+        
+            JSONObject JSONres;
+            if(result!=null){
+                JSONres = new JSONObject(result);
+            }else{
+                JSONres = new JSONObject();
+                JSONres.put("result", new Integer(1));
+            }
+
+            ////TEST/////
+            //System.out.println( JSONres );  //show JSON output
+            
+            if(getError()==0){
+                return true;
+            }else{
+                ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }
+        } catch(Exception ex) {
+            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex); 
+            return false;
+        }
+    }
+    
+    /**
+     * Connecting to http
+     * @param endpoint - url endpoing ( \refresh )
+     * @param payload - JSON content
+     * @return String responseStream - connection output
+     */
     public String httpConnect(String endpoint, String payload){
         
         URL url;
@@ -139,22 +310,33 @@ public class Authentication {
             requestStream.write(contentBytes, 0, contentBytes.length);
             requestStream.close();
             
-            String response;
             BufferedReader responseStream;
             if (((HttpURLConnection) connection).getResponseCode() == 200) {
-                responseStream = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-            } else {
+               responseStream = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+          
+            } else if(((HttpURLConnection) connection).getResponseCode() == 204){
+                responseStream = null;
+            } else{                
                 responseStream = new BufferedReader(new InputStreamReader(((HttpURLConnection) connection).getErrorStream(), "UTF-8"));
             }
-
-            response = responseStream.readLine();
-            responseStream.close();
-
-            if (((HttpURLConnection) connection).getResponseCode() != 200) {
-                setError(1);
+            
+            if ( ((HttpURLConnection) connection).getResponseCode() != 200 ) {
+                if ( ((HttpURLConnection) connection).getResponseCode() != 204 ) {
+                    setError(1);
+                }
             }
             
-            return response.toString();
+            if(responseStream!=null){
+                StringBuilder sb = new StringBuilder();
+                String response;
+                while ((response = responseStream.readLine()) != null) {
+                    sb.append(response);
+                }
+                responseStream.close();
+                return sb.toString();
+            }else{
+                return null;
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);

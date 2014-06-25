@@ -17,26 +17,23 @@ import java.io.File;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "0.8";
+    public static final String VERSION = "0.9";
     
     Authentication authentication;
-    WebLink weblink;    
+    Options options; 
     Download download;
-    UnZip zip;
-    Options options;
+    UnZip zip; 
+    User user;
+    WebLink weblink;
+    
+    String[] links;
     
     boolean unzipFlag = false;
 
     public Main() {        
         initComponents();
-        //Layout
+        //Layout init
         titleText.setText("ShooterPack v"+VERSION);
-        dProgressBar.setVisible(false);
-        zProgressBar.setVisible(false);
-        logoutButton.setVisible(false);
-        playButton.setVisible(false);
-        statusLabel.setVisible(false);
-        welcomeLabel.setVisible(false);
         jTextLog.setEditable(false);
         jTextAutors.setEditable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -44,12 +41,21 @@ public class Main extends javax.swing.JFrame {
         int locationY = (dim.height-this.getSize().height)/2;
         this.setLocation(locationX, locationY); 
         setTextAutors();
+        
+        //visibility init
+        dProgressBar.setVisible(false);
+        zProgressBar.setVisible(false);
+        logoutButton.setVisible(false);
+        playButton.setVisible(false);
+        statusLabel.setVisible(false);
+        welcomeLabel.setVisible(false);
                 
         //init
-        String links[] = getLinks();
+        links = getLinks();
         weblink = new WebLink();        
         download = new Download(links);  
         options = new Options();
+        user = new User();
         
         //options
         if(options.checkOptions()){
@@ -62,9 +68,30 @@ public class Main extends javax.swing.JFrame {
         minComboBox.setSelectedIndex(options.getNumberMin());
         maxComboBox.setSelectedIndex(options.getNumberMax());
         optionsSaveButton.setVisible(false);
-        int min = minComboBox.getSelectedIndex();
-        String minS = minComboBox.getSelectedItem().toString();
-        //System.out.println(minS);
+        
+        //user
+        if(user.checkUser()){
+            user.loadUser();
+            authentication = new Authentication(user);
+            changeBackground();
+            if( authentication.validate()) {
+                loginField.setVisible(false);
+                passField.setVisible(false);
+                loginButton.setVisible(false);           
+                logoutButton.setVisible(true);
+                statusLabel.setText("Login success!");
+                statusLabel.setVisible(true);
+                welcomeLabel.setText("Welcome "+user.getUserName()+"!");
+                welcomeLabel.setVisible(true);
+                getPack();
+            }else{
+                loginField.setText(user.getUserName());
+                passField.setText("");
+                statusLabel.setText(authentication.getErrorMessage() + " - You need to Login");
+                statusLabel.setVisible(true);
+                setTextLog(authentication.getErrorMessage());  
+            }
+        }
     }
     
     private String[] getLinks(){
@@ -376,17 +403,17 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        Minecraft minecraft = new Minecraft(authentication.getUser());
+        Minecraft minecraft = new Minecraft(user.getAuthForMC());
         minecraft.setOptions(options);
         minecraft.run();
-        //System.exit(0);
+        System.exit(0);
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         if(login()){
             getPack();
         }
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/minecraft2.jpg")));        
+        changeBackground();     
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void loginFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginFieldMouseClicked
@@ -444,6 +471,10 @@ public class Main extends javax.swing.JFrame {
         maxComboBox.setSelectedIndex(options.getNumberMax());
     }//GEN-LAST:event_setDefaultButtonActionPerformed
 
+    private void changeBackground(){
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/minecraft2.jpg"))); 
+    }
+    
     private boolean login(){
        String login = loginField.getText();
        char[] password = passField.getPassword();
@@ -470,16 +501,17 @@ public class Main extends javax.swing.JFrame {
     }
     
     private void logout(){
-        //authentication.disconnect();
-        loginField.setVisible(true);
-        passField.setVisible(true);
-        loginButton.setVisible(true);
-        playButton.setVisible(false);
-        logoutButton.setVisible(false);
-        welcomeLabel.setVisible(false);
-        statusLabel.setText("Logout success!");
-        statusLabel.setVisible(true);
-        setTextLog("Logout success!");  
+        if(authentication.invalidate()){
+            loginField.setVisible(true);
+            passField.setVisible(true);
+            loginButton.setVisible(true);
+            playButton.setVisible(false);
+            logoutButton.setVisible(false);
+            welcomeLabel.setVisible(false);
+            statusLabel.setText("Logout success!");
+            statusLabel.setVisible(true);
+            setTextLog("Logout success!");
+        }          
     }
             
     private void getPack(){
@@ -559,8 +591,8 @@ public class Main extends javax.swing.JFrame {
     private void openZip(){
         if (download.getStatus() == 2) {
             unzipFlag = true;
-            download.unzipping();
-            String fileInput = "ShooterPack.zip";
+            download.unzipping();            
+            String fileInput = links[1].substring(16); //substring only if link contains dropbox attach
             File fileZip = new File(fileInput);
             zip = new UnZip(fileInput, download.getDestination(), download.getSize());
             if(zip.extract()){
@@ -570,34 +602,8 @@ public class Main extends javax.swing.JFrame {
             }        
         }
     }
-    
-//    public void clearFolder(){
-//        String dataFolder = System.getenv("APPDATA");
-//        String destination = dataFolder+"\\.ShooterPack";
-//        
-//        File folder = new File(destination);
-//        if(folder.exists()){
-//            for (File file: folder.listFiles()) {
-//                switch(file){
-//                    case: 
-//                }
-//                if(file.compareTo(minecraftF)==0) 
-//                if(file.compareTo(minecraftF)==0)
-//                if(file.compareTo(minecraftF)==0)
-//                        file.delete();
-//            }
-//        }
-//    }
-//    
-//    public int compareFiles(File file){
-//        String dataFolder = System.getenv("APPDATA");
-//        String destination = dataFolder+"\\.ShooterPack";
-//        File minecraftF = new File(destination+"\\.minecraft");
-//        File optionsF = new File(destination+"\\options.json");
-//        File checksumF = new File(destination+"\\checksum");
-//    }
-    
-    public void setTextLog(String log){
+        
+    public final void setTextLog(String log){
         Calendar cal = Calendar.getInstance();
     	cal.getTime();
     	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");

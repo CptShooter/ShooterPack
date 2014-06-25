@@ -13,6 +13,15 @@ Mods
 Changelog:
 ----------
 
+**0.9**
+
+* Zapamiętanie użytkownika
+
+**0.8**
+
+* Opcje - alokacja pamięci do gry
+* Paczka Minecraft 1.6.4 + forge
+
 **0.7**
 
 * Linki do plików na osobym (stałym) pliku JSON

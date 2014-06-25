@@ -20,6 +20,10 @@ public class Options {
     
     JSONObject options;
     
+    /**
+     * Constructor
+     * Setting up options file destination
+     */
     public Options(){
         String dataFolder = System.getenv("APPDATA");
         destination = dataFolder+"\\.ShooterPack";
@@ -30,6 +34,9 @@ public class Options {
         }
     }
     
+    /**
+     * @return true if options file exists
+     */
     public boolean checkOptions(){
         File file = new File(destination+"\\options.JSON");
         if(file.exists()){
@@ -39,6 +46,9 @@ public class Options {
         }
     }
     
+    /**
+     * Loading options from file
+     */
     public void loadOptions(){
         File file = new File(destination+"\\options.JSON");
         try{
@@ -53,6 +63,9 @@ public class Options {
         }        
     }
     
+    /**
+     * Saving options to file
+     */
     public void saveOptions(){
         File file = new File(destination+"\\options.json");
         try (FileOutputStream fop = new FileOutputStream(file)) {
@@ -69,6 +82,9 @@ public class Options {
 	}
     }
     
+    /**
+     * Building options JSON
+     */
     public void buildOptions(){
         try{
             options = new JSONObject();
@@ -78,17 +94,25 @@ public class Options {
             options.put("memory-allocation", memoryAllocation);
             
             ////TEST/////
-            System.out.println(options); //show JSON
+            //System.out.println(options); //show JSON
         } catch(Exception ex) {
             Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    /**
+     * Setting options to default
+     */
     public void setDefaultOptions(){
         MIN = "1024";
         MAX = "2048";
     }
     
+    /**
+     * Getting position of chosen String in Main ComboBox
+     * @param mb
+     * @return Int - position in ComboBox
+     */
     public int getNumber(String mb){
         switch(mb){
             case "512"  : return 0;

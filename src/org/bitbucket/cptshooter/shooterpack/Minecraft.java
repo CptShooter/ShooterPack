@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -94,13 +93,11 @@ public class Minecraft {
     
     //user
     private String USER;
-    private String USER_ID;
     private String ACCESS_TOKEN;    
         
     public Minecraft(String[] user){
         USER = user[0];
-        USER_ID = user[1];
-        ACCESS_TOKEN = user[2];
+        ACCESS_TOKEN = user[1];
     }
     
     public void setOptions(Options options){
@@ -113,9 +110,9 @@ public class Minecraft {
     public void run(){
         String[] cmd = createCMD();
         //TEST
-        for(int i=0;i<cmd.length;i++){
-            System.out.println(cmd[i]);
-        }
+//        for(int i=0;i<cmd.length;i++){
+//            System.out.println(cmd[i]);
+//        }
         
         ProcessBuilder pb = new ProcessBuilder(cmd);
         //Map<String, String> env = pb.environment();

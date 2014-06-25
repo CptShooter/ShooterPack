@@ -72,7 +72,7 @@
 
     -->
 	<target name="-post-jar">
-		<jar jarfile="dist/ShooterPack_v0.8.jar">
+		<jar jarfile="dist/ShooterPack_v0.9.jar">
 			<zipfileset src="${dist.jar}" excludes="META-INF/*" />
 			<zipfileset src="lib/AbsoluteLayout.jar" excludes="META-INF/*" />
 			<zipfileset src="lib/org.json.jar" excludes="META-INF/*" />
