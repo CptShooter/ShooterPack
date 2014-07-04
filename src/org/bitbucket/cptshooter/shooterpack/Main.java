@@ -135,7 +135,7 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        jPanelMain = new javax.swing.JPanel();
         dProgressBar = new javax.swing.JProgressBar();
         zProgressBar = new javax.swing.JProgressBar();
         welcomeLabel = new javax.swing.JLabel();
@@ -150,17 +150,17 @@ public class Main extends javax.swing.JFrame {
         tsButton = new javax.swing.JButton();
         statusLabel = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextLog = new javax.swing.JTextPane();
-        backgroundLog = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
+        jPanelOpt = new javax.swing.JPanel();
         optionsSaveButton = new javax.swing.JButton();
         minComboBox = new javax.swing.JComboBox();
         maxComboBox = new javax.swing.JComboBox();
         setDefaultButton = new javax.swing.JButton();
         backgroundOpt = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
+        jPanelLog = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextLog = new javax.swing.JTextPane();
+        backgroundLog = new javax.swing.JLabel();
+        jPanelAut = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAutors = new javax.swing.JTextPane();
         backgroundAutors = new javax.swing.JLabel();
@@ -170,25 +170,27 @@ public class Main extends javax.swing.JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/icon_64x64.png")));
         setResizable(false);
 
+        jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTabbedPane1.setFocusable(false);
         jTabbedPane1.setMinimumSize(new java.awt.Dimension(720, 280));
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(720, 300));
 
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanelMain.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanelMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         dProgressBar.setFocusable(false);
         dProgressBar.setOpaque(true);
         dProgressBar.setStringPainted(true);
-        jPanel1.add(dProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 148, 250, 20));
+        jPanelMain.add(dProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 148, 250, 20));
 
         zProgressBar.setFocusable(false);
         zProgressBar.setOpaque(true);
         zProgressBar.setStringPainted(true);
-        jPanel1.add(zProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 148, 250, 20));
+        jPanelMain.add(zProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 148, 250, 20));
 
         welcomeLabel.setFont(new java.awt.Font("Minecraftia", 1, 10)); // NOI18N
         welcomeLabel.setText("Status");
-        jPanel1.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 202, 220, 20));
+        jPanelMain.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 202, 220, 20));
 
         loginField.setBackground(new Color(0,0,0,0));
         loginField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
@@ -200,7 +202,7 @@ public class Main extends javax.swing.JFrame {
                 loginFieldMouseClicked(evt);
             }
         });
-        jPanel1.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 202, 220, 20));
+        jPanelMain.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 202, 220, 20));
 
         passField.setBackground(new Color(0,0,0,0));
         passField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
@@ -212,17 +214,18 @@ public class Main extends javax.swing.JFrame {
                 passFieldMouseClicked(evt);
             }
         });
-        jPanel1.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 232, 220, 20));
+        jPanelMain.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 232, 220, 20));
 
-        titleText.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
+        titleText.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         titleText.setForeground(new java.awt.Color(255, 255, 255));
-        titleText.setText("Uncrafted Launcher");
+        titleText.setText("Uncrafted Pack");
         titleText.setToolTipText("");
-        jPanel1.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 20, 130, -1));
+        jPanelMain.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(532, 15, 150, -1));
 
         loginButton.setBackground(new Color(0,0,0,0));
         loginButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
         loginButton.setText("Login");
+        loginButton.setAlignmentY(0.0F);
         loginButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         loginButton.setFocusable(false);
         loginButton.setOpaque(false);
@@ -231,7 +234,7 @@ public class Main extends javax.swing.JFrame {
                 loginButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 200, 70, 50));
+        jPanelMain.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 200, 70, 50));
 
         logoutButton.setBackground(new Color(0,0,0,0));
         logoutButton.setFont(new java.awt.Font("Minecraftia", 0, 10)); // NOI18N
@@ -243,7 +246,7 @@ public class Main extends javax.swing.JFrame {
                 logoutButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 230, 80, 20));
+        jPanelMain.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 230, 80, 20));
 
         playButton.setBackground(new Color(0,0,0,0));
         playButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
@@ -255,10 +258,10 @@ public class Main extends javax.swing.JFrame {
                 playButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(255, 200, 60, 50));
+        jPanelMain.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(255, 200, 60, 50));
 
         wwwButton.setBackground(new Color(0,0,0,0));
-        wwwButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
+        wwwButton.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         wwwButton.setText("WWW");
         wwwButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         wwwButton.setFocusable(false);
@@ -267,10 +270,10 @@ public class Main extends javax.swing.JFrame {
                 wwwButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 70, 150, -1));
+        jPanelMain.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 67, 150, -1));
 
         forumButton.setBackground(new Color(0,0,0,0));
-        forumButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
+        forumButton.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         forumButton.setText("FORUM");
         forumButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         forumButton.setFocusable(false);
@@ -279,10 +282,10 @@ public class Main extends javax.swing.JFrame {
                 forumButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 100, 150, -1));
+        jPanelMain.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 96, 150, -1));
 
-        tsButton.setBackground(new Color(0,0,0,0));
-        tsButton.setFont(new java.awt.Font("Minecraftia", 0, 11)); // NOI18N
+        tsButton.setBackground(new Color(245,245,245,0));
+        tsButton.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         tsButton.setText("TeamSpeak3");
         tsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         tsButton.setFocusable(false);
@@ -291,16 +294,57 @@ public class Main extends javax.swing.JFrame {
                 tsButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(tsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 130, 150, -1));
+        jPanelMain.add(tsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 125, 150, -1));
 
         statusLabel.setFont(new java.awt.Font("Minecraftia", 3, 10)); // NOI18N
         statusLabel.setText("Status");
-        jPanel1.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 172, 230, 20));
+        jPanelMain.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 172, 230, 20));
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/main1.jpg"))); // NOI18N
-        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
+        jPanelMain.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
 
-        jTabbedPane1.addTab("Main", jPanel1);
+        jTabbedPane1.addTab("Main", null, jPanelMain, "");
+
+        jPanelOpt.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        optionsSaveButton.setText("Save");
+        optionsSaveButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        optionsSaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionsSaveButtonActionPerformed(evt);
+            }
+        });
+        jPanelOpt.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, -1, -1));
+
+        minComboBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        minComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minComboBoxActionPerformed(evt);
+            }
+        });
+        jPanelOpt.add(minComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 60, 110, -1));
+
+        maxComboBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        maxComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxComboBoxActionPerformed(evt);
+            }
+        });
+        jPanelOpt.add(maxComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 96, 110, -1));
+
+        setDefaultButton.setText("Set Default");
+        setDefaultButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        setDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setDefaultButtonActionPerformed(evt);
+            }
+        });
+        jPanelOpt.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, -1, -1));
+
+        backgroundOpt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
+        jPanelOpt.add(backgroundOpt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
+
+        jTabbedPane1.addTab("Options", jPanelOpt);
 
         jTextLog.setText("ShooterLauncher LOG:");
         jTextLog.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -308,71 +352,34 @@ public class Main extends javax.swing.JFrame {
 
         backgroundLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelLogLayout = new javax.swing.GroupLayout(jPanelLog);
+        jPanelLog.setLayout(jPanelLogLayout);
+        jPanelLogLayout.setHorizontalGroup(
+            jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelLogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelLogLayout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
                     .addComponent(backgroundLog)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jPanelLogLayout.setVerticalGroup(
+            jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelLogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelLogLayout.createSequentialGroup()
                     .addGap(0, 1, Short.MAX_VALUE)
                     .addComponent(backgroundLog)
                     .addGap(0, 1, Short.MAX_VALUE)))
         );
 
-        jTabbedPane1.addTab("Log", jPanel2);
-
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        optionsSaveButton.setText("Save");
-        optionsSaveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                optionsSaveButtonActionPerformed(evt);
-            }
-        });
-        jPanel3.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, -1, -1));
-
-        minComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                minComboBoxActionPerformed(evt);
-            }
-        });
-        jPanel3.add(minComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 60, 110, -1));
-
-        maxComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxComboBoxActionPerformed(evt);
-            }
-        });
-        jPanel3.add(maxComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 96, 110, -1));
-
-        setDefaultButton.setText("Set Default");
-        setDefaultButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setDefaultButtonActionPerformed(evt);
-            }
-        });
-        jPanel3.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, -1, -1));
-
-        backgroundOpt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
-        jPanel3.add(backgroundOpt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
-
-        jTabbedPane1.addTab("Options", jPanel3);
+        jTabbedPane1.addTab("Log", jPanelLog);
 
         jTextAutors.setText("Autors:");
         jTextAutors.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
@@ -380,34 +387,34 @@ public class Main extends javax.swing.JFrame {
 
         backgroundAutors.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelAutLayout = new javax.swing.GroupLayout(jPanelAut);
+        jPanelAut.setLayout(jPanelAutLayout);
+        jPanelAutLayout.setHorizontalGroup(
+            jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelAutLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel4Layout.createSequentialGroup()
+            .addGroup(jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelAutLayout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
                     .addComponent(backgroundAutors)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        jPanelAutLayout.setVerticalGroup(
+            jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelAutLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel4Layout.createSequentialGroup()
+            .addGroup(jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelAutLayout.createSequentialGroup()
                     .addGap(0, 1, Short.MAX_VALUE)
                     .addComponent(backgroundAutors)
                     .addGap(0, 1, Short.MAX_VALUE)))
         );
 
-        jTabbedPane1.addTab("Autors", jPanel4);
+        jTabbedPane1.addTab("Autors", jPanelAut);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -417,7 +424,7 @@ public class Main extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -684,10 +691,10 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel backgroundOpt;
     private javax.swing.JProgressBar dProgressBar;
     private javax.swing.JButton forumButton;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanelAut;
+    private javax.swing.JPanel jPanelLog;
+    private javax.swing.JPanel jPanelMain;
+    private javax.swing.JPanel jPanelOpt;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
