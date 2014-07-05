@@ -153,26 +153,27 @@ public class Minecraft {
     
     public String[] createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/1.6.4.json
-        String[] cmd = new String[14];
+        String[] cmd = new String[15];
         cmd[0] = PATH_TO_JAVA;
         cmd[1] = JAVA_OPT;
         cmd[2] = JAVA_PARAMETERS[0];
         cmd[3] = JAVA_PARAMETERS[1];
         cmd[4] = "-Djava.library.path="+PATH_TO_NATIVES;
-        cmd[5] = "-cp";
-        cmd[6] = "";
+        cmd[5] = "-XX:MaxPermSize=256m";
+        cmd[6] = "-cp";
+        cmd[7] = "";
         for(int i=0;i<PATH_TO_LIBRARY.length;i++){
-            cmd[6]+=PATH_TO_LIBRARY[i];
-            cmd[6]+=";";
+            cmd[7]+=PATH_TO_LIBRARY[i];
+            cmd[7]+=";";
         }
-        cmd[7] = MINECRAFT_MAIN_CLASS;
-        cmd[8] = "--username="+USER;
-        cmd[9] = "--session="+ACCESS_TOKEN;
-        cmd[10] = "--version="+MC_VERSION;
-        cmd[11] = "--gameDir="+GAME_DIRECTORY;
-        cmd[12] = "--assetsDir="+ASSETS_DIRECTORY;
-        cmd[13] = "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker";
-//        cmd[13] = "--server="+SERVER_IP;
+        cmd[8] = MINECRAFT_MAIN_CLASS;
+        cmd[9] = "--username="+USER;
+        cmd[10] = "--session="+ACCESS_TOKEN;
+        cmd[11] = "--version="+MC_VERSION;
+        cmd[12] = "--gameDir="+GAME_DIRECTORY;
+        cmd[13] = "--assetsDir="+ASSETS_DIRECTORY;
+        cmd[14] = "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker";
+//        cmdd13] = "--server="+SERVER_IP;
 //        cmd[14] = "--port="+SERVER_PORT;
         return cmd;        
     }
