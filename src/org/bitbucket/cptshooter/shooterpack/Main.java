@@ -19,6 +19,8 @@ public class Main extends javax.swing.JFrame {
 
     public static final String VERSION = "1.0";
     
+    public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
+    
     Authentication authentication;
     Options options; 
     Download download;
@@ -646,12 +648,24 @@ public class Main extends javax.swing.JFrame {
     public final void setTextAutors(){
         String text = jTextAutors.getText()
                 + "\n Shooter -> Launcher"
-                + "\n ClassAxion -> ModsPack"
+                + "\n ClassAxion -> ModPack"
                 + "\n Povered -> Graphics"
                 + "\n"
                 + "\n Copyright 2014 by Uncrafted Team"
                 + "\n All rights reserved";
         jTextAutors.setText(text);
+    }
+        
+    /**
+     * Checking destination folder
+     * @param dest 
+     */
+    public static void checkDest(String dest){
+        File folder = new File(dest);
+        if(!folder.exists()){
+            folder.mkdir();
+            folder.setWritable(true);
+        }
     }
     
     /**

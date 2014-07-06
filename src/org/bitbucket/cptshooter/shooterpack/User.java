@@ -18,7 +18,7 @@ public class User {
     private String ACCESS_TOKEN;
     private String CLIENT_TOKEN;
     
-    private String destination; //destination of file
+    private String destination = Main.packDestination;
     
     JSONObject user;
     
@@ -27,13 +27,7 @@ public class User {
      * Setting up user file destination
      */
     public User(){
-        String dataFolder = System.getenv("APPDATA");
-        destination = dataFolder+"\\.ShooterPack";
-        File folder = new File(destination);
-        if(!folder.exists()){
-            folder.mkdir();
-            folder.setWritable(true);
-        }
+        Main.checkDest(destination);
     }
     
     /**

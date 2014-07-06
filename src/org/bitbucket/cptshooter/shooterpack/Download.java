@@ -38,7 +38,7 @@ class Download extends Observable implements Runnable {
     private int size; // size of download in bytes
     private int downloaded; // number of bytes downloaded
     private int status; // current status of download
-    private String destination; //destination of file
+    private String destination = Main.packDestination;
     
     //Checksum
     MessageDigest md;
@@ -57,13 +57,8 @@ class Download extends Observable implements Runnable {
         size = -1;
         downloaded = 0;
         status = DOWNLOADING;
-        String dataFolder = System.getenv("APPDATA");
-        destination = dataFolder+"\\.ShooterPack";
-        File folder = new File(destination);
-        if(!folder.exists()){
-            folder.mkdir();
-            folder.setWritable(true);
-        }
+
+        Main.checkDest(destination);
     }
 
     // Get this download's URL.

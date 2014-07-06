@@ -12,11 +12,11 @@ import org.json.JSONObject;
  *
  * @author CptShooter
  */
-public class Options {
+public class Options{
     
     private String MIN;
     private String MAX;
-    private String destination; //destination of file
+    private String destination = Main.packDestination;
     
     JSONObject options;
     
@@ -28,13 +28,7 @@ public class Options {
      * Setting up options file destination
      */
     public Options(){
-        String dataFolder = System.getenv("APPDATA");
-        destination = dataFolder+"\\.ShooterPack";
-        File folder = new File(destination);
-        if(!folder.exists()){
-            folder.mkdir();
-            folder.setWritable(true);
-        }
+        Main.checkDest(destination);
     }
     
     /**

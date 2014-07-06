@@ -12,13 +12,9 @@ import java.util.logging.Logger;
  *
  * @author CptShooter
  */
-public class Minecraft {
+public class Minecraft{
      
-    //APPDATA
-    private static final String APPDATA = System.getenv("APPDATA");
-    
-    private static final String MAIN_DIRECTORY = "\\.ShooterPack\\";
-    private static final String PACK_DIRECTORY = APPDATA+MAIN_DIRECTORY;
+    private static final String PACK_DIRECTORY = Main.packDestination;
     
     //server data
     private static final String SERVER_IP = "144.76.196.9";
@@ -41,7 +37,7 @@ public class Minecraft {
     
     //private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.main.Main";
     private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.launchwrapper.Launch";
-    private static final String GAME_DIRECTORY = PACK_DIRECTORY+".minecraft";
+    private static final String GAME_DIRECTORY = PACK_DIRECTORY;/* +".minecraft"; */
     private static final String ASSETS_DIRECTORY = GAME_DIRECTORY+"\\assets";
     
     private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"\\versions\\1.6.4\\1.6.4-natives";
@@ -123,7 +119,7 @@ public class Minecraft {
         Calendar cal = Calendar.getInstance();
     	cal.getTime();
     	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.YYYY-HH.mm.ss");
-        String lfn = "log-"+sdf.format(cal.getTime())+".txt";
+        String lfn = "MinecraftLog-"+sdf.format(cal.getTime())+".txt";
         
         File logFolder = new File(PACK_DIRECTORY+"\\logs");
         if(!logFolder.exists()){
