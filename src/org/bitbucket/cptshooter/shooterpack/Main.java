@@ -10,6 +10,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.awt.Toolkit;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JDialog;
+import org.bitbucket.cptshooter.shooterpack.admin.DbConnect;
+import org.bitbucket.cptshooter.shooterpack.admin.Panel;
 
 /**
  *
@@ -17,7 +22,7 @@ import java.io.File;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.1";
     
     public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
     
@@ -33,6 +38,10 @@ public class Main extends javax.swing.JFrame {
     boolean unzipFlag = false;
     
     private static final int BIT = Integer.parseInt( System.getProperty("sun.arch.data.model") );
+    
+    private final int[] cheatCode = {85, 78, 67, 82 ,65 ,70 ,84 ,69 ,68 ,65 ,68 ,77 ,73 ,78 ,10};
+    private List<Integer> cheat = new ArrayList<>();
+    private List<Integer> typed = new ArrayList<>();
 
     public Main() {        
         initComponents();
@@ -46,6 +55,7 @@ public class Main extends javax.swing.JFrame {
         int locationY = (dim.height-this.getSize().height)/2;
         this.setLocation(locationX, locationY); 
         setTextAutors();
+        cheatInit();
         
         //visibility init
         dProgressBar.setVisible(false);
@@ -56,7 +66,7 @@ public class Main extends javax.swing.JFrame {
         welcomeLabel.setVisible(false);
                 
         //init
-        links = getLinks();
+        getLinks();
         weblink = new WebLink();        
         download = new Download(links);  
         options = new Options();
@@ -111,9 +121,14 @@ public class Main extends javax.swing.JFrame {
         }
     }
     
-    private String[] getLinks(){
-        JsonReader jr = new JsonReader();
-        return jr.readLinkJsonFromUrl("http://cptshooter.esy.es/link.json");
+    private void getLinks(){
+        DbConnect db = new DbConnect();
+        links = new String[3];
+        links[0] = db.getLinkByKey("server").getValue();
+        links[1] = db.getLinkByKey("pack").getValue();
+        links[2] = db.getLinkByKey("checksum").getValue();
+//        JsonReader jr = new JsonReader();
+//        return jr.readLinkJsonFromUrl("http://cptshooter.esy.es/link.json");
     }
     
     @SuppressWarnings("unchecked")
@@ -159,11 +174,11 @@ public class Main extends javax.swing.JFrame {
         setDefaultButton = new javax.swing.JButton();
         backgroundOpt = new javax.swing.JLabel();
         jPanelLog = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPaneLog = new javax.swing.JScrollPane();
         jTextLog = new javax.swing.JTextPane();
         backgroundLog = new javax.swing.JLabel();
         jPanelAut = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPaneAutors = new javax.swing.JScrollPane();
         jTextAutors = new javax.swing.JTextPane();
         backgroundAutors = new javax.swing.JLabel();
 
@@ -171,6 +186,11 @@ public class Main extends javax.swing.JFrame {
         setTitle("ShooterLauncher for UnCrafted.pl");
         setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/icon_64x64.png")));
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTabbedPane1.setFocusable(false);
@@ -221,7 +241,6 @@ public class Main extends javax.swing.JFrame {
         titleText.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         titleText.setForeground(new java.awt.Color(255, 255, 255));
         titleText.setText("Uncrafted Pack");
-        titleText.setToolTipText("");
         jPanelMain.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(532, 15, 150, -1));
 
         loginButton.setBackground(new Color(0,0,0,0));
@@ -305,7 +324,7 @@ public class Main extends javax.swing.JFrame {
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/main1.jpg"))); // NOI18N
         jPanelMain.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
 
-        jTabbedPane1.addTab("Main", null, jPanelMain, "");
+        jTabbedPane1.addTab("Main", jPanelMain);
 
         jPanelOpt.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -350,9 +369,9 @@ public class Main extends javax.swing.JFrame {
 
         jTextLog.setText("ShooterLauncher LOG:");
         jTextLog.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        jScrollPane1.setViewportView(jTextLog);
+        jScrollPaneLog.setViewportView(jTextLog);
 
-        backgroundLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
+        backgroundLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/clear.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanelLogLayout = new javax.swing.GroupLayout(jPanelLog);
         jPanelLog.setLayout(jPanelLogLayout);
@@ -360,7 +379,7 @@ public class Main extends javax.swing.JFrame {
             jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelLogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addComponent(jScrollPaneLog, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanelLogLayout.createSequentialGroup()
@@ -372,7 +391,7 @@ public class Main extends javax.swing.JFrame {
             jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelLogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                .addComponent(jScrollPaneLog, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanelLogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanelLogLayout.createSequentialGroup()
@@ -385,9 +404,9 @@ public class Main extends javax.swing.JFrame {
 
         jTextAutors.setText("Autors:");
         jTextAutors.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        jScrollPane2.setViewportView(jTextAutors);
+        jScrollPaneAutors.setViewportView(jTextAutors);
 
-        backgroundAutors.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
+        backgroundAutors.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/clear.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanelAutLayout = new javax.swing.GroupLayout(jPanelAut);
         jPanelAut.setLayout(jPanelAutLayout);
@@ -395,7 +414,7 @@ public class Main extends javax.swing.JFrame {
             jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelAutLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addComponent(jScrollPaneAutors, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanelAutLayout.createSequentialGroup()
@@ -407,7 +426,7 @@ public class Main extends javax.swing.JFrame {
             jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelAutLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                .addComponent(jScrollPaneAutors, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanelAutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanelAutLayout.createSequentialGroup()
@@ -505,6 +524,33 @@ public class Main extends javax.swing.JFrame {
         maxComboBox.setSelectedIndex(options.getNumberMax());
     }//GEN-LAST:event_setDefaultButtonActionPerformed
 
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        System.out.print(evt.getKeyChar());
+        if(evt.getKeyCode() == 92){
+            typed.clear();
+        }else{
+            typed.add(evt.getKeyCode());
+            if(cheat.equals(typed)){
+                openAdmin();
+            }
+        }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void cheatInit(){
+        for(int i=0; i<cheatCode.length; i++){
+            cheat.add(cheatCode[i]);
+        }
+    }
+    
+    private void openAdmin(){
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int locationX = (dim.width-this.getSize().width)/2;
+        int locationY = (dim.height-this.getSize().height)/2;
+        JDialog panel = new Panel(this,true);
+        panel.setLocation(locationX, locationY);
+        panel.setVisible(true);
+    }
+    
     private void changeBackground(){
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/main2.jpg"))); 
     }
@@ -579,13 +625,13 @@ public class Main extends javax.swing.JFrame {
                 @Override
                 public void run() {
                     while (running.get()) {                       
-                        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200)); 
+                        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(100)); 
                         statusLabel.setText(download.getStatusS());
                         if(download.getStatus()==2){
                             zProgressBar.setVisible(true);
                             if(unzipFlag==false){
                                 openZip();
-                            }                            
+                            }
                         }else if(download.getStatus()==5){
                             zProgressBar.setVisible(true);
                             zProgressBar.setValue(zip.getProgress());
@@ -625,8 +671,14 @@ public class Main extends javax.swing.JFrame {
     private void openZip(){
         if (download.getStatus() == 2) {
             unzipFlag = true;
-            download.unzipping();            
-            String fileInput = links[1].substring(16); //substring only if link contains dropbox attach
+            download.unzipping();     
+            int index = links[1].indexOf("/");
+            String fileInput;
+            if(index!=-1){
+                fileInput = links[1].substring(index+1).trim();
+            }else{
+                fileInput = links[1];
+            }
             File fileZip = new File(fileInput);
             zip = new UnZip(fileInput, download.getDestination(), download.getSize());
             if(zip.extract()){
@@ -634,6 +686,9 @@ public class Main extends javax.swing.JFrame {
                 download.saveCheckSum();
                 fileZip.delete();
             }        
+        }else if(download.getStatus()==5){
+            zProgressBar.setVisible(true);
+            zProgressBar.setValue(zip.getProgress());
         }
     }
         
@@ -709,8 +764,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelLog;
     private javax.swing.JPanel jPanelMain;
     private javax.swing.JPanel jPanelOpt;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPaneAutors;
+    private javax.swing.JScrollPane jScrollPaneLog;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextPane jTextAutors;
     private javax.swing.JTextPane jTextLog;

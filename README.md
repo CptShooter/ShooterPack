@@ -1,17 +1,16 @@
-ShooterPack
+UncraftedPack
 ==========
 
 Minecraft (1.6.4) Launcher dla Uncrafted.pl
 
 
-Mods
-----------
-
-(under construction)
-
-
 Changelog:
 ----------
+
+**1.1**
+
+* Linki w bazie danych
+* Panel administracyjny
 
 **1.0**
 
