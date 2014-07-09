@@ -22,7 +22,7 @@ import org.bitbucket.cptshooter.shooterpack.admin.Panel;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "1.1";
+    public static final String VERSION = "1.1 build 002_"+getDateTime();
     
     public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
     
@@ -566,7 +566,7 @@ public class Main extends javax.swing.JFrame {
            logoutButton.setVisible(true);
            statusLabel.setText("Login success!");
            statusLabel.setVisible(true);
-           welcomeLabel.setText("Welcome "+login+"!");
+           welcomeLabel.setText("Welcome "+authentication.getLoggedUser().getUserName()+"!");
            welcomeLabel.setVisible(true);
            setTextLog("Login success!");  
            return true;
@@ -698,6 +698,13 @@ public class Main extends javax.swing.JFrame {
     	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String text = jTextLog.getText();
         jTextLog.setText(text + "\n" + sdf.format(cal.getTime()) + " | " + log);
+    }
+    
+    private static String getDateTime(){
+        Calendar cal = Calendar.getInstance();
+    	cal.getTime();
+    	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.YYYY-HH.mm.ss");
+        return sdf.format(cal.getTime());
     }
     
     public final void setTextAutors(){

@@ -106,9 +106,9 @@ public class Minecraft{
     public void run(){
         String[] cmd = createCMD();
         //TEST
-//        for(int i=0;i<cmd.length;i++){
-//            System.out.println(cmd[i]);
-//        }
+        for(int i=0;i<cmd.length;i++){
+            System.out.println(cmd[i]);
+        }
         
         ProcessBuilder pb = new ProcessBuilder(cmd);
         //Map<String, String> env = pb.environment();
@@ -149,7 +149,7 @@ public class Minecraft{
     
     public String[] createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/1.6.4.json
-        String[] cmd = new String[15];
+        String[] cmd = new String[17];
         cmd[0] = PATH_TO_JAVA;
         cmd[1] = JAVA_OPT;
         cmd[2] = JAVA_PARAMETERS[0];
@@ -169,8 +169,8 @@ public class Minecraft{
         cmd[12] = "--gameDir="+GAME_DIRECTORY;
         cmd[13] = "--assetsDir="+ASSETS_DIRECTORY;
         cmd[14] = "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker";
-//        cmdd13] = "--server="+SERVER_IP;
-//        cmd[14] = "--port="+SERVER_PORT;
+        cmd[15] = "--server="+SERVER_IP;
+        cmd[16] = "--port="+SERVER_PORT;
         return cmd;        
     }
     
