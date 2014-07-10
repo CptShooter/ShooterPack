@@ -17,6 +17,7 @@ public class User {
     private String USER_ID;
     private String ACCESS_TOKEN;
     private String CLIENT_TOKEN;
+    private String DISPLAY_NAME;
     
     private String destination = Main.packDestination;
     
@@ -35,7 +36,7 @@ public class User {
      * @return 
      */
     public String[] getAuthForMC(){
-        String[] auth = {USER_NAME, ACCESS_TOKEN};
+        String[] auth = {DISPLAY_NAME, ACCESS_TOKEN};
         return auth;
     }
     
@@ -71,6 +72,14 @@ public class User {
         return CLIENT_TOKEN;
     }
     
+    public void setDisplayName(String dn){
+        DISPLAY_NAME = dn;
+    }
+    
+    public String getDisplayName(){
+        return DISPLAY_NAME;
+    }
+    
     /**
      * @return true if user file exists
      */
@@ -96,6 +105,7 @@ public class User {
             USER_ID = user.getString("USER_ID");
             ACCESS_TOKEN = user.getString("ACCESS_TOKEN");
             CLIENT_TOKEN = user.getString("CLIENT_TOKEN");
+            DISPLAY_NAME = user.getString("DISPLAY_NAME");
         }catch(JSONException ex){
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }        
@@ -130,6 +140,7 @@ public class User {
             user.put("USER_ID", USER_ID);
             user.put("ACCESS_TOKEN", ACCESS_TOKEN);
             user.put("CLIENT_TOKEN", CLIENT_TOKEN);
+            user.put("DISPLAY_NAME", DISPLAY_NAME);
             
             ////TEST/////
             //System.out.println(user); //show JSON

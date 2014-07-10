@@ -32,6 +32,7 @@ public class Authentication {
         login = log;
         password = pass;
         user = new User();
+        user.setUserName(login);
     }
     
     public Authentication(User user){
@@ -96,7 +97,7 @@ public class Authentication {
                 user.setAccessToken( JSONres.getString("accessToken") );
                 user.setClientToken( JSONres.getString("clientToken") );
                 user.setUserID(JSONres.getJSONObject("selectedProfile").getString("id"));
-                user.setUserName(JSONres.getJSONObject("selectedProfile").getString("name"));
+                user.setDisplayName(JSONres.getJSONObject("selectedProfile").getString("name"));
                 user.rememberMe();
                 return true;
             }else{

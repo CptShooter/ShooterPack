@@ -22,7 +22,7 @@ import org.bitbucket.cptshooter.shooterpack.admin.Panel;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "1.1 build 002_"+getDateTime();
+    public static final String VERSION = "1.1 build 003_"+getDateTime();
     
     public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
     
@@ -108,7 +108,7 @@ public class Main extends javax.swing.JFrame {
                 logoutButton.setVisible(true);
                 statusLabel.setText("Login success!");
                 statusLabel.setVisible(true);
-                welcomeLabel.setText("Welcome "+user.getUserName()+"!");
+                welcomeLabel.setText("Welcome "+user.getDisplayName()+"!");
                 welcomeLabel.setVisible(true);
                 getPack();
             }else{
@@ -566,7 +566,7 @@ public class Main extends javax.swing.JFrame {
            logoutButton.setVisible(true);
            statusLabel.setText("Login success!");
            statusLabel.setVisible(true);
-           welcomeLabel.setText("Welcome "+authentication.getLoggedUser().getUserName()+"!");
+           welcomeLabel.setText("Welcome "+authentication.getLoggedUser().getDisplayName()+"!");
            welcomeLabel.setVisible(true);
            setTextLog("Login success!");  
            return true;
