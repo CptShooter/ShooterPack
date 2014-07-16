@@ -22,16 +22,16 @@ import org.bitbucket.cptshooter.shooterpack.Main;
  */
 public class DbConnect {
     //production
-//    String database = "sql3.freemysqlhosting.net";
-//    String database_name = "sql345998";
-//    String database_user = "sql345998";
-//    String database_password = "fH3*jZ1!";
+    String database = "sql3.freemysqlhosting.net";
+    String database_name = "sql345998";
+    String database_user = "sql345998";
+    String database_password = "fH3*jZ1!";
     
     //development
-    String database = "localhost";
-    String database_name = "uncrafted";
-    String database_user = "root";
-    String database_password = "";
+//    String database = "localhost";
+//    String database_name = "uncrafted";
+//    String database_user = "root";
+//    String database_password = "";
     
     String database_main = "jdbc:mysql://"+database+"/?user="+database_user+"&password="+database_password;
     String database_uncrafted = "jdbc:mysql://"+database+"/"+database_name+"?user="+database_user+"&password="+database_password;
