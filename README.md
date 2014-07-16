@@ -7,6 +7,12 @@ Minecraft (1.6.4) Launcher dla Uncrafted.pl
 Changelog:
 ----------
 
+**1.2**
+
+* Sprawdzanie wersji
+* Logi launchera do plików
+* Wyłapywanie errorów launchera i wyświetlanie statusu błędu
+
 **1.1**
 
 * Linki w bazie danych
