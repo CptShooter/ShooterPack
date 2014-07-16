@@ -18,7 +18,7 @@ Changelog:
 * Linki w bazie danych
 * Panel administracyjny
 
-**1.0**
+**1.0** - *release*
 
 * Wykrywanie czy użytkownik ma 32bit czy 64bit javę
 * Opcje w zależności od 32/64 bit
@@ -27,7 +27,7 @@ Changelog:
 
 * Zapamiętanie użytkownika
 
-**0.8**
+**0.8** - *beta release*
 
 * Opcje - alokacja pamięci do gry
 * Paczka Minecraft 1.6.4 + forge
