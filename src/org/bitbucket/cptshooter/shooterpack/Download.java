@@ -52,7 +52,11 @@ class Download extends Observable implements Runnable {
             url = new URL(server+packLink);
             md = MessageDigest.getInstance("SHA1");
         } catch (MalformedURLException | NoSuchAlgorithmException ex) {
-            Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("Download error! - contact with admin.");            
+            Main.setDownloadFlag(false);
         }
         size = -1;
         downloaded = 0;
@@ -163,7 +167,10 @@ class Download extends Observable implements Runnable {
                 sCurrentLine = br.readLine();                
                 return sCurrentLine;
             } catch (IOException ex) {
-                Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                Main.log.sendLog(ex, this.getClass().getSimpleName());
+                Main.showStatusError();
+                Main.setTextLog("Checksum load error! - contact with admin.");  
                 return null;
             }
         }else{
@@ -184,7 +191,10 @@ class Download extends Observable implements Runnable {
             fop.flush();
             fop.close();
 	} catch (IOException ex) {
-            Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("Checksum save error! - contact with admin.");  
 	}
     }
     
@@ -275,7 +285,9 @@ class Download extends Observable implements Runnable {
             }       
 
         } catch (Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.setTextLog("Download error! - contact with admin.");  
             error();
         } finally {
             // Close file.
@@ -283,7 +295,8 @@ class Download extends Observable implements Runnable {
                 try {
                     file.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                    Main.log.sendLog(ex, this.getClass().getSimpleName());
                 }
             }
 
@@ -292,7 +305,8 @@ class Download extends Observable implements Runnable {
                 try {
                     stream.close();
                 } catch (Exception ex) {
-                    Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                    Main.log.sendLog(ex, this.getClass().getSimpleName());
                 }
             }        
         }

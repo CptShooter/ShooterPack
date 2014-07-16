@@ -33,7 +33,10 @@ public class JsonReader {
                 sb.append((char) cp);
             }
         } catch (IOException ex) {
-            Logger.getLogger(JsonReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("JSON error! - contact with admin."); 
         }
         return sb.toString();
     }
@@ -45,7 +48,10 @@ public class JsonReader {
             JSONObject json = new JSONObject(jsonText);
             return json.getString("SHA-1");
         } catch (IOException | JSONException ex) {
-            Logger.getLogger(JsonReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("rChecksumURL JSON error! - contact with admin."); 
             return null;
         }
     }
@@ -61,7 +67,10 @@ public class JsonReader {
             links[2] = json.getString("checksum");
             return links;
         } catch (IOException | JSONException ex) {
-            Logger.getLogger(JsonReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("rLinkURL JSON error! - contact with admin."); 
             return null;
         }
     }
@@ -70,7 +79,10 @@ public class JsonReader {
         try (BufferedReader br = new BufferedReader(new FileReader(file))){
             return readAll(br);
         } catch (IOException ex) {
-            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("rJSON File error! - contact with admin."); 
             return null;
         }
     }

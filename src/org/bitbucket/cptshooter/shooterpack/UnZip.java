@@ -85,7 +85,10 @@ public class UnZip {
         } 
         catch (IOException ex)
         {
-            Logger.getLogger(UnZip.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("UnZIP error! - contact with admin."); 
             return false;
         }finally {
             return true;

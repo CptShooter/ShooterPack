@@ -57,7 +57,10 @@ public class Options{
             MAX = maJson.getString("max");
             optBit = options.getInt("JRE-bit");
         }catch(JSONException ex){
-            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("Options load error! - contact with admin."); 
         }        
     }
     
@@ -76,7 +79,10 @@ public class Options{
             fop.flush();
             fop.close();
 	} catch (IOException ex) {
-            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("Options save error! - contact with admin."); 
 	}
     }
     
@@ -95,7 +101,10 @@ public class Options{
             ////TEST/////
             //System.out.println(options); //show JSON
         } catch(Exception ex) {
-            Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("Options build error! - contact with admin."); 
         }
     }
     

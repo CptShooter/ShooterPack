@@ -107,7 +107,10 @@ public class User {
             CLIENT_TOKEN = user.getString("CLIENT_TOKEN");
             DISPLAY_NAME = user.getString("DISPLAY_NAME");
         }catch(JSONException ex){
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("User load error! - contact with admin."); 
         }        
     }
         
@@ -126,7 +129,10 @@ public class User {
             fop.flush();
             fop.close();
 	} catch (IOException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("User save error! - contact with admin."); 
 	}
     }
     
@@ -145,7 +151,10 @@ public class User {
             ////TEST/////
             //System.out.println(user); //show JSON
         } catch(Exception ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("User build error! - contact with admin."); 
         }
     }
     

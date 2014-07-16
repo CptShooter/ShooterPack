@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JDialog;
 import org.bitbucket.cptshooter.shooterpack.admin.DbConnect;
 import org.bitbucket.cptshooter.shooterpack.admin.Panel;
@@ -22,7 +23,8 @@ import org.bitbucket.cptshooter.shooterpack.admin.Panel;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "1.1 build 003_"+getDateTime();
+    public static final String VERSION = "1.2";
+    public static final String BUILD = "01";
     
     public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
     
@@ -32,22 +34,25 @@ public class Main extends javax.swing.JFrame {
     UnZip zip; 
     User user;
     WebLink weblink;
+    public static Log log;
+    DbConnect db;
     
     String[] links;
     
-    boolean unzipFlag = false;
+    private static boolean downloadFlag = true;
+    private boolean unzipFlag = false;
     
     private static final int BIT = Integer.parseInt( System.getProperty("sun.arch.data.model") );
     
     private final int[] cheatCode = {85, 78, 67, 82 ,65 ,70 ,84 ,69 ,68 ,65 ,68 ,77 ,73 ,78 ,10};
     private List<Integer> cheat = new ArrayList<>();
     private List<Integer> typed = new ArrayList<>();
-
+    
     public Main() {        
         initComponents();
         //Layout init
         titleText.setText("<html><p align='center'>ShooterLauncher<br>UncraftedPack</p></html>");
-        setTextLog("Version: "+VERSION);
+        setTextLog("Version: "+VERSION+" build "+BUILD);
         jTextLog.setEditable(false);
         jTextAutors.setEditable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -66,18 +71,28 @@ public class Main extends javax.swing.JFrame {
         welcomeLabel.setVisible(false);
                 
         //init
-        getLinks();
-        weblink = new WebLink();        
-        download = new Download(links);  
+        weblink = new WebLink();
         options = new Options();
         user = new User();
+        log = new Log();
+        db = new DbConnect();
         
         //32 or 64
         setTextLog("JVM : "+BIT+"bit");
         if(BIT==32){
             setTextLog("You have 32bit java! For better performance install 64bit - go https://www.java.com/pl/download/manual.jsp");
         }
-        setComboBox();              
+        setComboBox();  
+        
+        if(db.connect()){
+            getLinks();
+            checkVersion();
+            download = new Download(links);
+        }else{
+            showStatusError();
+            setTextLog("Could not find links for download: Database connect error - contact with admin.");
+            downloadFlag = false;
+        }                    
         
         //options
         if(options.checkOptions()){
@@ -110,25 +125,47 @@ public class Main extends javax.swing.JFrame {
                 statusLabel.setVisible(true);
                 welcomeLabel.setText("Welcome "+user.getDisplayName()+"!");
                 welcomeLabel.setVisible(true);
-                getPack();
-            }else{
+                if(downloadFlag){
+                    getPack();
+                }
+            }else if(authentication.getError()==1){
                 loginField.setText(user.getUserName());
                 passField.setText("");
-                statusLabel.setText(authentication.getErrorMessage() + " - You need to Login");
+                statusLabel.setText(authentication.getErrorMessage() + " - Login");
                 statusLabel.setVisible(true);
                 setTextLog(authentication.getErrorMessage());  
+            }else{
+                loginField.setText("");
+                passField.setText("");
+                statusLabel.setVisible(true);
             }
         }
     }
     
     private void getLinks(){
-        DbConnect db = new DbConnect();
         links = new String[3];
         links[0] = db.getLinkByKey("server").getValue();
         links[1] = db.getLinkByKey("pack").getValue();
         links[2] = db.getLinkByKey("checksum").getValue();
-//        JsonReader jr = new JsonReader();
-//        return jr.readLinkJsonFromUrl("http://cptshooter.esy.es/link.json");
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void checkVersion(){
+        Map<String,String> info = db.getInfo();
+        String v = info.get("Version");
+        String b = info.get("Build");
+        if(v.equalsIgnoreCase(VERSION) && b.equalsIgnoreCase(BUILD)){
+            setTextLog("Your launcher version is up to date.");
+        }else{
+            setTextLog("Your launcher version is not up to date. New version online: "+v+" build "+b);
+            String information = "There is a new version ("+v+" build "+b+") available. Go to download section on uncrafted.pl";
+            JDialog inf = new Info(this, true, information);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            int locationX = (dim.width-this.getSize().width)/2;
+            int locationY = (dim.height-this.getSize().height)/2;
+            inf.setLocation(locationX, locationY); 
+            inf.setVisible(true); 
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -464,7 +501,9 @@ public class Main extends javax.swing.JFrame {
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         if(login()){
-            getPack();
+            if(downloadFlag){
+                getPack();
+            }
         }
         changeBackground();     
     }//GEN-LAST:event_loginButtonActionPerformed
@@ -525,7 +564,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_setDefaultButtonActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        System.out.print(evt.getKeyChar());
+        //System.out.print(evt.getKeyChar());
         if(evt.getKeyCode() == 92){
             typed.clear();
         }else{
@@ -692,7 +731,7 @@ public class Main extends javax.swing.JFrame {
         }
     }
         
-    public final void setTextLog(String log){
+    public static void setTextLog(String log){
         Calendar cal = Calendar.getInstance();
     	cal.getTime();
     	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -728,6 +767,21 @@ public class Main extends javax.swing.JFrame {
             folder.mkdir();
             folder.setWritable(true);
         }
+    }
+    
+    /**
+     * Block download if error
+     * @param flag 
+     */
+    public static void setDownloadFlag(boolean flag){
+        downloadFlag = flag;
+    }
+    
+    /**
+     * Set status label to error
+     */
+    public static void showStatusError(){
+        statusLabel.setText("Error - check LOG!");
     }
     
     /**
@@ -775,7 +829,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneLog;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextPane jTextAutors;
-    private javax.swing.JTextPane jTextLog;
+    private static javax.swing.JTextPane jTextLog;
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;
     private javax.swing.JButton logoutButton;
@@ -785,7 +839,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPasswordField passField;
     private javax.swing.JButton playButton;
     private javax.swing.JButton setDefaultButton;
-    private javax.swing.JLabel statusLabel;
+    public static javax.swing.JLabel statusLabel;
     private javax.swing.JLabel titleText;
     private javax.swing.JButton tsButton;
     private javax.swing.JLabel welcomeLabel;

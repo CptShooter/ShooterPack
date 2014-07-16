@@ -3,8 +3,6 @@ package org.bitbucket.cptshooter.shooterpack;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +29,6 @@ public class Minecraft{
     private String[] JAVA_PARAMETERS = new String[2];
     
     private static final String MC_VERSION = "1.6.4";
-    //private static final String MC_VERSION = "1.5.2";
     
     //minecraft 1.6.4 new files
     
@@ -72,25 +69,11 @@ public class Minecraft{
         GAME_DIRECTORY+"\\libraries\\org\\lwjgl\\lwjgl\\lwjgl-platform\\2.9.1\\lwjgl-platform-2.9.1-natives-windows.jar", //only for windows
         GAME_DIRECTORY+"\\libraries\\net\\java\\jinput\\jinput-platform\\2.0.5\\jinput-platform-2.0.5-natives-windows.jar", //only for windows
     };
-    
-    //minecraft 1.5.2 old files
-    /*
-    private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.Minecraft";
-    private static final String GAME_DIRECTORY = PACK_DIRECTORY+".minecraft\\";
-
-    private static final String PATH_TO_NATIVES = GAME_DIRECTORY+"bin\\natives\\";
-    private static final String[] PATH_TO_LIBRARY = {
-        GAME_DIRECTORY+"bin\\jinput.jar",
-        GAME_DIRECTORY+"bin\\lwjgl.jar",
-        GAME_DIRECTORY+"bin\\lwjgl_util.jar",
-        GAME_DIRECTORY+"bin\\minecraft.jar"
-    };
-    */
-    
+        
     //user
     private String USER;
     private String ACCESS_TOKEN;    
-        
+            
     public Minecraft(String[] user){
         USER = user[0];
         ACCESS_TOKEN = user[1];
@@ -115,23 +98,8 @@ public class Minecraft{
         //env.clear();
         //env.put("APPDATA", PACK_DIRECTORY); //no need in 1.6.4
         pb.directory(new File(PACK_DIRECTORY));
-        
-        Calendar cal = Calendar.getInstance();
-    	cal.getTime();
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.YYYY-HH.mm.ss");
-        String lfn = "MinecraftLog-"+sdf.format(cal.getTime())+".txt";
-        
-        File logFolder = new File(PACK_DIRECTORY+"\\logs");
-        if(!logFolder.exists()){
-            logFolder.mkdir();
-        }
-        File log = new File(PACK_DIRECTORY+"\\logs\\"+lfn);
-        try {
-            log.createNewFile();
-	} catch (IOException ex) {
-            Logger.getLogger(Minecraft.class.getName()).log(Level.SEVERE, null, ex);
-	}
         pb.redirectErrorStream(true);
+        File log = Main.log.getLogFile("Minecraft");
         pb.redirectOutput(Redirect.appendTo(log));
         Process p;
         try {
@@ -141,7 +109,8 @@ public class Minecraft{
             assert pb.redirectOutput().file() == log;
             assert p.getInputStream().read() == -1;
         } catch (IOException ex) {
-            Logger.getLogger(Minecraft.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
         }
     }
        
@@ -173,31 +142,4 @@ public class Minecraft{
         cmd[16] = "--port="+SERVER_PORT;
         return cmd;        
     }
-    
-    //cmd for Minecraft 1.5.2
-    /*
-    public String[] createCMD(){
-        //http://s3.amazonaws.com/Minecraft.Download/versions/1.5.2/1.5.2.json
-        String[] cmd = new String[11];
-        cmd[0] = PATH_TO_JAVA;
-        //cmd[1] = JAVA_OPT;
-        cmd[1] = JAVA_PARAMETERS[0];
-        cmd[2] = JAVA_PARAMETERS[1];
-        cmd[3] = "-Djava.library.path="+PATH_TO_NATIVES;
-        cmd[4] = "-cp";
-        cmd[5] = "";
-        for(int i=0;i<PATH_TO_LIBRARY.length;i++){
-            cmd[5]+=PATH_TO_LIBRARY[i];
-            cmd[5]+=";";
-        }
-        cmd[6] = MINECRAFT_MAIN_CLASS;
-        cmd[7] = USER;
-        cmd[8] = ACCESS_TOKEN;
-        cmd[9] = MC_VERSION;
-        cmd[10] = " --gameDir \""+GAME_DIRECTORY+"\"";
-        //cmd[11] = SERVER_IP+":"+SERVER_PORT;
-        return cmd;        
-    }
-    */
 }
-

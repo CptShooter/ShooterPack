@@ -14,13 +14,16 @@ import java.util.logging.Logger;
  */
 public class WebLink {
     
-    private static void open(URI uri) {
+    private void open(URI uri) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
         if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
                 desktop.browse(uri);
             } catch (Exception ex) {
-                Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                Main.log.sendLog(ex, this.getClass().getSimpleName());
+                Main.showStatusError();
+                Main.setTextLog("OpenWebpage error! - contact with admin."); 
             }
         }
     }
@@ -30,7 +33,10 @@ public class WebLink {
             URL url = new URL(urls);
             open(url.toURI());
         } catch (URISyntaxException | MalformedURLException ex) {
-            Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("OpenWebpage error! - contact with admin."); 
         }
     }
     

@@ -81,7 +81,7 @@ public class Authentication {
             
             //http Connect
             String result = httpConnect(endpoint, payload.toString());
-        
+                    
             JSONObject JSONres;
             if(result!=null){
                 JSONres = new JSONObject(result);
@@ -100,13 +100,18 @@ public class Authentication {
                 user.setDisplayName(JSONres.getJSONObject("selectedProfile").getString("name"));
                 user.rememberMe();
                 return true;
-            }else{
+            }else if(getError()==1){                
                 ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }else {
                 return false;
             }
             
         } catch(Exception ex) {
-            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog(endpoint+" error! - contact with admin."); 
             return false;
         }
     }
@@ -141,13 +146,18 @@ public class Authentication {
             
             if(getError()==0){
                 return true;
-            }else{
+            }if(getError()==1){                
                 ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }else {
                 return false;
             }
             
         } catch(Exception ex) {
-            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog(endpoint+" error! - contact with admin."); 
             return false;
         }
     }
@@ -187,13 +197,18 @@ public class Authentication {
             
             if(getError()==0){
                 return true;
-            }else{
+            }if(getError()==1){                
                 ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }else {
                 return false;
             }
             
         } catch(Exception ex) {
-            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog(endpoint+" error! - contact with admin."); 
             return false;
         }
     }
@@ -233,12 +248,17 @@ public class Authentication {
             
             if(getError()==0){
                 return true;
-            }else{
+            }if(getError()==1){                
                 ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }else {
                 return false;
             }
         } catch(Exception ex) {
-            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex); 
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog(endpoint+" error! - contact with admin."); 
             return false;
         }
     }
@@ -274,12 +294,17 @@ public class Authentication {
             
             if(getError()==0){
                 return true;
-            }else{
+            }if(getError()==1){                
                 ERROR_MESSAGE = JSONres.getString("errorMessage");
+                return false;
+            }else {
                 return false;
             }
         } catch(Exception ex) {
-            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex); 
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog(endpoint+" error! - contact with admin."); 
             return false;
         }
     }
@@ -340,7 +365,11 @@ public class Authentication {
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(Authentication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.setTextLog("Http connect error! - check your internet connection.");
+            Main.showStatusError();
+            setError(-1);
             return null;
         } finally {
             if(connection != null) {

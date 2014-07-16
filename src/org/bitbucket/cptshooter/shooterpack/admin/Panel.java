@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.bitbucket.cptshooter.shooterpack.admin;
 
 import java.awt.Color;
@@ -9,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import javax.swing.JDialog;
+import org.bitbucket.cptshooter.shooterpack.Main;
 
 /**
  *
@@ -36,7 +33,13 @@ public class Panel extends javax.swing.JDialog {
         //visibility
         changeVisibility(false);
         
+        String version = Main.VERSION+" build "+Main.BUILD;
+        jButtonVersion.setToolTipText(version);
+        
         db = new DbConnect();
+        if(!db.connect()){
+            jTextFieldStatus.setText("Database connect error!");
+        }
     }
 
     /**
@@ -60,6 +63,7 @@ public class Panel extends javax.swing.JDialog {
         jButtonLogin = new javax.swing.JButton();
         jTextFieldStatus = new javax.swing.JTextField();
         jButtonRefresh = new javax.swing.JButton();
+        jButtonVersion = new javax.swing.JButton();
         backgroundAdmin = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -146,8 +150,16 @@ public class Panel extends javax.swing.JDialog {
         });
         getContentPane().add(jButtonRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 230, -1, -1));
 
+        jButtonVersion.setText("Set Version to current");
+        jButtonVersion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVersionActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButtonVersion, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 20, 160, -1));
+
         backgroundAdmin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/name.jpg"))); // NOI18N
-        getContentPane().add(backgroundAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(backgroundAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -201,6 +213,11 @@ public class Panel extends javax.swing.JDialog {
         db.resetLink();
         getLink();
     }//GEN-LAST:event_jButtonResetLinkActionPerformed
+
+    private void jButtonVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVersionActionPerformed
+        db.saveInfo("Version",Main.VERSION);
+        db.saveInfo("Build", Main.BUILD);
+    }//GEN-LAST:event_jButtonVersionActionPerformed
         
     public static void setStatus(String text){
         jTextFieldStatus.setText(text);
@@ -217,6 +234,7 @@ public class Panel extends javax.swing.JDialog {
         jScrollPaneAdmin.setVisible(flag);
         jScrollPaneLink.setVisible(flag);
         jButtonRefresh.setVisible(flag);
+        jButtonVersion.setVisible(flag);
     }
     
     @SuppressWarnings("unchecked")
@@ -287,6 +305,7 @@ public class Panel extends javax.swing.JDialog {
     private javax.swing.JButton jButtonLogin;
     private javax.swing.JButton jButtonRefresh;
     private javax.swing.JButton jButtonResetLink;
+    private javax.swing.JButton jButtonVersion;
     private javax.swing.JList jListAdmin;
     private javax.swing.JList jListLink;
     private javax.swing.JPasswordField jPasswordField;
