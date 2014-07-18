@@ -387,8 +387,8 @@ public class DbConnect {
     
     private void startLink(){
         firstLink("server","https://dl.dropboxusercontent.com/s/");
-        firstLink("pack","x507ntfx7ccnjvh/ShooterPack_v1.0.zip");
-        firstLink("checksum","tjdiq6427gp6587/checksum.json");
+        firstLink("pack","7jz5s48it60jaoo/UncraftedPack_v1.2.zip");
+        firstLink("checksum","z0fxbryhy0bvn1v/checksum_v1.2.json");
     }
 
     public void resetLink(){

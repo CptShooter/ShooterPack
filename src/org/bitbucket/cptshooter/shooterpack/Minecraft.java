@@ -89,9 +89,9 @@ public class Minecraft{
     public void run(){
         String[] cmd = createCMD();
         //TEST
-        for(int i=0;i<cmd.length;i++){
-            System.out.println(cmd[i]);
-        }
+//        for(int i=0;i<cmd.length;i++){
+//            System.out.println(cmd[i]);
+//        }
         
         ProcessBuilder pb = new ProcessBuilder(cmd);
         //Map<String, String> env = pb.environment();

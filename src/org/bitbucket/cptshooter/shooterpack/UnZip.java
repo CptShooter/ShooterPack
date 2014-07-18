@@ -56,6 +56,7 @@ public class UnZip {
    * Extract zipfile to outdir with complete directory structure
    */
     public boolean extract(){
+        clearOld();
         File zipfile    = new File(fileInput);
         File outdir     = new File(destination);
         try
@@ -93,5 +94,26 @@ public class UnZip {
         }finally {
             return true;
         }
+    }
+        
+     private void clearOld(){
+        deleteFolder(new File(destination+"\\mods"));
+        deleteFolder(new File(destination+"\\modes"));
+        deleteFolder(new File(destination+"\\config"));
+        deleteFolder(new File(destination+"\\Chocolate"));
+    }
+    
+    private void deleteFolder(File folder){
+        File[] files = folder.listFiles();
+        if(files!=null) { //some JVMs return null for empty dirs
+            for(File f: files) {
+                if(f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        folder.delete();
     }
 }

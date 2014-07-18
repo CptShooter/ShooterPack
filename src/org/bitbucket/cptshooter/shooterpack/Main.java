@@ -24,7 +24,7 @@ import org.bitbucket.cptshooter.shooterpack.admin.Panel;
 public class Main extends javax.swing.JFrame {
 
     public static final String VERSION = "1.2";
-    public static final String BUILD = "03";
+    public static final String BUILD = "04";
     
     public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
     
@@ -667,12 +667,12 @@ public class Main extends javax.swing.JFrame {
                         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(100)); 
                         statusLabel.setText(download.getStatusS());
                         if(download.getStatus()==2){
-                            zProgressBar.setVisible(true);
+                            //zProgressBar.setVisible(true);
                             if(unzipFlag==false){
                                 openZip();
                             }
                         }else if(download.getStatus()==5){
-                            zProgressBar.setVisible(true);
+                            //zProgressBar.setVisible(true);
                             zProgressBar.setValue(zip.getProgress());
                         }else if(download.getStatus()==6){
                             zProgressBar.setVisible(false);
@@ -725,9 +725,6 @@ public class Main extends javax.swing.JFrame {
                 download.saveCheckSum();
                 fileZip.delete();
             }        
-        }else if(download.getStatus()==5){
-            zProgressBar.setVisible(true);
-            zProgressBar.setValue(zip.getProgress());
         }
     }
         
