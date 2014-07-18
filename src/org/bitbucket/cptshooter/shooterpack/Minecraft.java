@@ -118,7 +118,7 @@ public class Minecraft{
     
     public String[] createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/1.6.4.json
-        String[] cmd = new String[17];
+        String[] cmd = new String[15];
         cmd[0] = PATH_TO_JAVA;
         cmd[1] = JAVA_OPT;
         cmd[2] = JAVA_PARAMETERS[0];
@@ -138,8 +138,8 @@ public class Minecraft{
         cmd[12] = "--gameDir="+GAME_DIRECTORY;
         cmd[13] = "--assetsDir="+ASSETS_DIRECTORY;
         cmd[14] = "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker";
-        cmd[15] = "--server="+SERVER_IP;
-        cmd[16] = "--port="+SERVER_PORT;
+//        cmd[15] = "--server="+SERVER_IP;
+//        cmd[16] = "--port="+SERVER_PORT;
         return cmd;        
     }
 }
