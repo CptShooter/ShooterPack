@@ -132,14 +132,17 @@ public class Options{
                 case "512"  : return 0;
                 case "768"  : return 1;
                 case "1024" : return 2;
+                case "1280" : return 3;
+                case "1536" : return 4;
                 default     : return 0;
             }
         }else{
             switch(mb){
                 case "512"  : return 0;
                 case "1024" : return 1;
-                case "2048" : return 2;
-                case "4096" : return 3;
+                case "1536" : return 2;
+                case "2048" : return 3;
+                case "4096" : return 4;
                 default     : return 0;
             }
         }

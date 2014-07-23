@@ -24,7 +24,7 @@ import org.bitbucket.cptshooter.shooterpack.admin.Panel;
 public class Main extends javax.swing.JFrame {
 
     public static final String VERSION = "1.2";
-    public static final String BUILD = "04";
+    public static final String BUILD = "05";
     
     public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
     
@@ -171,11 +171,11 @@ public class Main extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     private void setComboBox(){
         if(BIT==32){
-            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024"}));
-            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024"}));
+            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024", "1280", "1536"}));
+            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024", "1280", "1536"}));
         }else{
-            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096"}));
-            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024", "2048", "4096"}));
+            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024","1536", "2048", "4096"}));
+            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024","1536", "2048", "4096"}));
         }  
     }
 
