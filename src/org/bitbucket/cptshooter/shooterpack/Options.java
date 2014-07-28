@@ -17,6 +17,10 @@ public class Options{
     private String MIN;
     private String MAX;
     private String destination = Main.packDestination;
+    private boolean launcher;
+    private boolean rememberme;
+    private boolean JVMflag;
+    private String JVMargs;
     
     JSONObject options;
     
@@ -56,11 +60,19 @@ public class Options{
             MIN = maJson.getString("min");
             MAX = maJson.getString("max");
             optBit = options.getInt("JRE-bit");
+            launcher = options.getBoolean("launcher");
+            rememberme = options.getBoolean("rememberme");
+            JSONObject jvmJson = options.getJSONObject("JVM-arguments");
+            JVMflag = jvmJson.getBoolean("JVMflag");
+            JVMargs = jvmJson.getString("JVMargs");
         }catch(JSONException ex){
+            setDefaultOptions();
+            buildOptions();
+            saveOptions();
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             Main.log.sendLog(ex, this.getClass().getSimpleName());
             Main.showStatusError();
-            Main.setTextLog("Options load error! - contact with admin."); 
+            Main.setTextLog("Options load error! - setting Default"); 
         }        
     }
     
@@ -97,7 +109,12 @@ public class Options{
             memoryAllocation.put("max", MAX);
             options.put("memory-allocation", memoryAllocation);
             options.put("JRE-bit", BIT);
-            
+            options.put("launcher", launcher);
+            options.put("rememberme", rememberme);
+            JSONObject JVMarguments = new JSONObject();
+            JVMarguments.put("JVMflag",JVMflag);
+            JVMarguments.put("JVMargs",JVMargs);
+            options.put("JVM-arguments",JVMarguments);
             ////TEST/////
             //System.out.println(options); //show JSON
         } catch(Exception ex) {
@@ -116,9 +133,13 @@ public class Options{
             MIN = "1024";
             MAX = "1024";
         }else{
-            MIN = "1024";
+            MIN = "2048";
             MAX = "2048";
-        }        
+        }
+        launcher = false;
+        rememberme = false;
+        JVMflag = false;
+        JVMargs = "";
     }
         
     /**
@@ -178,5 +199,37 @@ public class Options{
     
     public int getOptBit(){
         return optBit;
+    }
+    
+    public void setLauncher(boolean launcher){
+        this.launcher = launcher;
+    }
+    
+    public boolean getLauncher(){
+        return this.launcher;
+    }
+    
+    public void setRememberMe(boolean rememberme){
+        this.rememberme = rememberme;
+    }
+    
+    public boolean getRememberMe(){
+        return this.rememberme;
+    }
+    
+    public void setJVMflag(boolean JVMflag){
+        this.JVMflag = JVMflag;
+    }
+    
+    public boolean getJVMflag(){
+        return this.JVMflag;
+    }
+    
+    public void setJVMargs(String JVMargs){
+        this.JVMargs = JVMargs;
+    }
+    
+    public String getJVMargs(){
+        return this.JVMargs;
     }
 }

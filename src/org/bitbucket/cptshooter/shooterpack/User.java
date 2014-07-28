@@ -80,6 +80,14 @@ public class User {
         return DISPLAY_NAME;
     }
     
+    @Override
+    public String toString(){
+        return "UserName: "+USER_NAME+"\n"+
+               "AccessToken: "+ACCESS_TOKEN+"\n"+
+               "ClientToken: "+CLIENT_TOKEN+"\n"+
+               "DisplayName: "+DISPLAY_NAME+"\n";
+    }
+    
     /**
      * @return true if user file exists
      */

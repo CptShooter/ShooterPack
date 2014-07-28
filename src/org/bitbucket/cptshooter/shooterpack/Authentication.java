@@ -32,6 +32,9 @@ public class Authentication {
         login = log;
         password = pass;
         user = new User();
+        if(user.checkUser()){
+            user.loadUser();
+        }
         user.setUserName(login);
     }
     
@@ -75,6 +78,10 @@ public class Authentication {
                 pw+=password[i];
             }
             payload.put("password", pw);
+            //System.out.println("clientToken: "+user.getClientToken());
+            if(user.getClientToken()!=null){
+                payload.put("clientToken",user.getClientToken());
+            }
             
             ////TEST/////
             //System.out.println(payload); //show JSON
@@ -138,7 +145,7 @@ public class Authentication {
                 JSONres = new JSONObject(result);
             }else{
                 JSONres = new JSONObject();
-                JSONres.put("result", new Integer(1));
+                JSONres.put("errorMessage", "Validate error");
             }
 
             ////TEST/////
@@ -189,7 +196,7 @@ public class Authentication {
                 JSONres = new JSONObject(result);
             }else{
                 JSONres = new JSONObject();
-                JSONres.put("result", new Integer(1));
+                JSONres.put("errorMessage", "Refresh error");
             }
 
             ////TEST/////
@@ -240,7 +247,7 @@ public class Authentication {
                 JSONres = new JSONObject(result);
             }else{
                 JSONres = new JSONObject();
-                JSONres.put("result", new Integer(1));
+                JSONres.put("errorMessage", "Signout error");
             }
 
             ////TEST/////
@@ -286,7 +293,7 @@ public class Authentication {
                 JSONres = new JSONObject(result);
             }else{
                 JSONres = new JSONObject();
-                JSONres.put("result", new Integer(1));
+                JSONres.put("errorMessage", "Invalidate error");
             }
 
             ////TEST/////

@@ -24,7 +24,7 @@ import org.bitbucket.cptshooter.shooterpack.admin.Panel;
 public class Main extends javax.swing.JFrame {
 
     public static final String VERSION = "1.2";
-    public static final String BUILD = "05";
+    public static final String BUILD = "06";
     
     public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
     
@@ -69,7 +69,8 @@ public class Main extends javax.swing.JFrame {
         playButton.setVisible(false);
         statusLabel.setVisible(false);
         welcomeLabel.setVisible(false);
-                
+        jTextFieldJVMargs.setEnabled(false);
+        
         //init
         weblink = new WebLink();
         options = new Options();
@@ -107,8 +108,7 @@ public class Main extends javax.swing.JFrame {
             options.buildOptions();
             options.saveOptions();
         }
-        minComboBox.setSelectedIndex(options.getNumberMin());
-        maxComboBox.setSelectedIndex(options.getNumberMax());
+        refreshOptions();
         optionsSaveButton.setVisible(false);
         
         //user
@@ -117,19 +117,29 @@ public class Main extends javax.swing.JFrame {
             authentication = new Authentication(user);
             changeBackground();
             if( authentication.validate()) {
-                loginField.setVisible(false);
-                passField.setVisible(false);
-                loginButton.setVisible(false);           
-                logoutButton.setVisible(true);
-                statusLabel.setText("Login success!");
-                statusLabel.setVisible(true);
-                welcomeLabel.setText("Welcome "+user.getDisplayName()+"!");
-                welcomeLabel.setVisible(true);
-                if(downloadFlag){
-                    getPack();
+                if( user.getDisplayName()==null ){
+                    authentication.invalidate();
+                    loginField.setText("");
+                    passField.setText("");
+                    statusLabel.setText("Something went wrong - Login");
+                    statusLabel.setVisible(true);
+                    setTextLog("Display name at NULL - Login again");
+                }else{
+                    loginField.setVisible(false);
+                    passField.setVisible(false);
+                    loginButton.setVisible(false);           
+                    logoutButton.setVisible(true);
+                    statusLabel.setText("Login success!");
+                    statusLabel.setVisible(true);
+                    welcomeLabel.setText("Welcome "+user.getDisplayName()+"!");
+                    welcomeLabel.setVisible(true);
+                    jCheckBoxRememberMe.setVisible(false);
+                    if(downloadFlag){
+                        getPack();
+                    }
                 }
             }else if(authentication.getError()==1){
-                loginField.setText(user.getUserName());
+                loginField.setText("");
                 passField.setText("");
                 statusLabel.setText(authentication.getErrorMessage() + " - Login");
                 statusLabel.setVisible(true);
@@ -203,12 +213,16 @@ public class Main extends javax.swing.JFrame {
         forumButton = new javax.swing.JButton();
         tsButton = new javax.swing.JButton();
         statusLabel = new javax.swing.JLabel();
+        jCheckBoxRememberMe = new javax.swing.JCheckBox();
         background = new javax.swing.JLabel();
         jPanelOpt = new javax.swing.JPanel();
         optionsSaveButton = new javax.swing.JButton();
         minComboBox = new javax.swing.JComboBox();
         maxComboBox = new javax.swing.JComboBox();
         setDefaultButton = new javax.swing.JButton();
+        jCheckBoxLauncher = new javax.swing.JCheckBox();
+        jCheckBoxJVMargs = new javax.swing.JCheckBox();
+        jTextFieldJVMargs = new javax.swing.JTextField();
         backgroundOpt = new javax.swing.JLabel();
         jPanelLog = new javax.swing.JPanel();
         jScrollPaneLog = new javax.swing.JScrollPane();
@@ -358,6 +372,17 @@ public class Main extends javax.swing.JFrame {
         statusLabel.setText("Status");
         jPanelMain.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 172, 230, 20));
 
+        jCheckBoxRememberMe.setBackground(new Color(0,0,0,0));
+        jCheckBoxRememberMe.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jCheckBoxRememberMe.setForeground(new java.awt.Color(255, 255, 255));
+        jCheckBoxRememberMe.setText("Remember me");
+        jCheckBoxRememberMe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxRememberMeActionPerformed(evt);
+            }
+        });
+        jPanelMain.add(jCheckBoxRememberMe, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 230, 150, -1));
+
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/main1.jpg"))); // NOI18N
         jPanelMain.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
 
@@ -372,7 +397,7 @@ public class Main extends javax.swing.JFrame {
                 optionsSaveButtonActionPerformed(evt);
             }
         });
-        jPanelOpt.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, -1, -1));
+        jPanelOpt.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 220, -1, -1));
 
         minComboBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         minComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -398,6 +423,33 @@ public class Main extends javax.swing.JFrame {
             }
         });
         jPanelOpt.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, -1, -1));
+
+        jCheckBoxLauncher.setBackground(new Color(0,0,0,0));
+        jCheckBoxLauncher.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jCheckBoxLauncher.setText("Keep launcher open");
+        jCheckBoxLauncher.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxLauncherActionPerformed(evt);
+            }
+        });
+        jPanelOpt.add(jCheckBoxLauncher, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 10, 150, -1));
+
+        jCheckBoxJVMargs.setBackground(new Color(0,0,0,0));
+        jCheckBoxJVMargs.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jCheckBoxJVMargs.setText("JVM args:");
+        jCheckBoxJVMargs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxJVMargsActionPerformed(evt);
+            }
+        });
+        jPanelOpt.add(jCheckBoxJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 40, -1, -1));
+
+        jTextFieldJVMargs.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldJVMargsFocusGained(evt);
+            }
+        });
+        jPanelOpt.add(jTextFieldJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 70, 370, -1));
 
         backgroundOpt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
         jPanelOpt.add(backgroundOpt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
@@ -490,17 +542,23 @@ public class Main extends javax.swing.JFrame {
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
         logout();
+        jCheckBoxRememberMe.setVisible(true);
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
+        setTextLog("Logged as: "+authentication.getLoggedUser().getDisplayName());
         Minecraft minecraft = new Minecraft(user.getAuthForMC());
         minecraft.setOptions(options);
         minecraft.run();
-        System.exit(0);
+        if(!options.getLauncher()){
+            System.exit(0);
+        }
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         if(login()){
+            System.out.println(user.toString());
+            checkRememberme();
             if(downloadFlag){
                 getPack();
             }
@@ -550,10 +608,12 @@ public class Main extends javax.swing.JFrame {
         }
         options.setMin(min);
         options.setMax(max);
+        options.setLauncher(jCheckBoxLauncher.isSelected());
+        options.setJVMflag(jCheckBoxJVMargs.isSelected());
+        options.setJVMargs(jTextFieldJVMargs.getText());
         options.buildOptions();
         options.saveOptions();
-        minComboBox.setSelectedIndex(options.getNumberMin());
-        maxComboBox.setSelectedIndex(options.getNumberMax());
+        refreshOptions();
         optionsSaveButton.setVisible(false);
     }//GEN-LAST:event_optionsSaveButtonActionPerformed
 
@@ -561,6 +621,7 @@ public class Main extends javax.swing.JFrame {
         options.setDefaultOptions();
         minComboBox.setSelectedIndex(options.getNumberMin());
         maxComboBox.setSelectedIndex(options.getNumberMax());
+        jCheckBoxLauncher.setSelected(false);
     }//GEN-LAST:event_setDefaultButtonActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
@@ -574,6 +635,28 @@ public class Main extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_formKeyPressed
+
+    private void jCheckBoxLauncherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxLauncherActionPerformed
+        optionsSaveButton.setVisible(true);
+    }//GEN-LAST:event_jCheckBoxLauncherActionPerformed
+
+    private void jCheckBoxRememberMeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxRememberMeActionPerformed
+        boolean rememberme = jCheckBoxRememberMe.isSelected();
+        options.setRememberMe(rememberme);
+        options.buildOptions();
+        options.saveOptions();
+        refreshOptions();
+        optionsSaveButton.setVisible(false);
+    }//GEN-LAST:event_jCheckBoxRememberMeActionPerformed
+
+    private void jCheckBoxJVMargsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxJVMargsActionPerformed
+        jTextFieldJVMargs.setEnabled(jCheckBoxJVMargs.isSelected());
+        optionsSaveButton.setVisible(true);
+    }//GEN-LAST:event_jCheckBoxJVMargsActionPerformed
+
+    private void jTextFieldJVMargsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldJVMargsFocusGained
+        optionsSaveButton.setVisible(true);
+    }//GEN-LAST:event_jTextFieldJVMargsFocusGained
 
     private void cheatInit(){
         for(int i=0; i<cheatCode.length; i++){
@@ -590,6 +673,24 @@ public class Main extends javax.swing.JFrame {
         panel.setVisible(true);
     }
     
+    private void checkRememberme(){
+        jCheckBoxRememberMe.setVisible(false);
+        if(!options.getRememberMe()){
+            File file = new File(packDestination+"\\user.json");
+            file.delete();
+        }
+    }
+    
+    private void refreshOptions(){
+        minComboBox.setSelectedIndex(options.getNumberMin());
+        maxComboBox.setSelectedIndex(options.getNumberMax());
+        jCheckBoxLauncher.setSelected(options.getLauncher());
+        jCheckBoxRememberMe.setSelected(options.getRememberMe());
+        jCheckBoxJVMargs.setSelected(options.getJVMflag());
+        jTextFieldJVMargs.setEnabled(options.getJVMflag());
+        jTextFieldJVMargs.setText(options.getJVMargs());
+    }
+    
     private void changeBackground(){
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/main2.jpg"))); 
     }
@@ -599,16 +700,27 @@ public class Main extends javax.swing.JFrame {
        char[] password = passField.getPassword();
        authentication = new Authentication(login, password);
        if(authentication.connect()){
-           loginField.setVisible(false);
-           passField.setVisible(false);
-           loginButton.setVisible(false);           
-           logoutButton.setVisible(true);
-           statusLabel.setText("Login success!");
-           statusLabel.setVisible(true);
-           welcomeLabel.setText("Welcome "+authentication.getLoggedUser().getDisplayName()+"!");
-           welcomeLabel.setVisible(true);
-           setTextLog("Login success!");  
-           return true;
+           if(!authentication.validate()){
+                authentication.invalidate();
+                loginField.setText("");
+                passField.setText("");
+                statusLabel.setText("Login unsuccess - try again");
+                statusLabel.setVisible(true);
+                setTextLog("Login unsuccess - try again");
+               return false;
+           }else{
+               user = authentication.getLoggedUser();
+               loginField.setVisible(false);
+               passField.setVisible(false);
+               loginButton.setVisible(false);           
+               logoutButton.setVisible(true);
+               statusLabel.setText("Login success!");
+               statusLabel.setVisible(true);
+               welcomeLabel.setText("Welcome "+authentication.getLoggedUser().getDisplayName()+"!");
+               welcomeLabel.setVisible(true);
+               setTextLog("Login success!");  
+               return true;
+           }
        }else{
            if(authentication.getError()==1){
                 statusLabel.setText(authentication.getErrorMessage());
@@ -621,6 +733,8 @@ public class Main extends javax.swing.JFrame {
     
     private void logout(){
         if(authentication.invalidate()){
+            loginField.setText("");
+            passField.setText("");
             loginField.setVisible(true);
             passField.setVisible(true);
             loginButton.setVisible(true);
@@ -818,6 +932,9 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel backgroundOpt;
     private javax.swing.JProgressBar dProgressBar;
     private javax.swing.JButton forumButton;
+    private javax.swing.JCheckBox jCheckBoxJVMargs;
+    private javax.swing.JCheckBox jCheckBoxLauncher;
+    private javax.swing.JCheckBox jCheckBoxRememberMe;
     private javax.swing.JPanel jPanelAut;
     private javax.swing.JPanel jPanelLog;
     private javax.swing.JPanel jPanelMain;
@@ -826,6 +943,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneLog;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextPane jTextAutors;
+    private javax.swing.JTextField jTextFieldJVMargs;
     private static javax.swing.JTextPane jTextLog;
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;

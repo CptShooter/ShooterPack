@@ -7,11 +7,24 @@ Minecraft (1.6.4) Launcher dla Uncrafted.pl
 Changelog:
 ----------
 
-**1.2**
+**1.2** build 06
+
+* RememberMe checkBox
+* Keep launcher open checkBox
+* Naprawienie "Bad Login"
+* Build na JDK 1.7_65
+* Argumenty JVM
+
+**1.2** build 02-05
+
+* Naprawienie małych błędów
+
+**1.2** build 01
 
 * Sprawdzanie wersji
 * Logi launchera do plików
 * Wyłapywanie errorów launchera i wyświetlanie statusu błędu
+
 
 **1.1**
 

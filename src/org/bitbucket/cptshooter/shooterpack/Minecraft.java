@@ -3,6 +3,9 @@ package org.bitbucket.cptshooter.shooterpack;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +25,9 @@ public class Minecraft{
     //memory-allocation
     private String maMin;
     private String maMax;
+    //JVMargs
+    private boolean JVMflag;
+    private String JVMargs;
     
     //java
     private static final String PATH_TO_JAVA = System.getProperty("java.home")+"\\bin\\java";
@@ -82,15 +88,18 @@ public class Minecraft{
     public void setOptions(Options options){
         maMin = options.getMin();
         maMax = options.getMax();
+        JVMflag = options.getJVMflag();
+        JVMargs = options.getJVMargs();
         JAVA_PARAMETERS[0] = "-Xms"+maMin+"m";
         JAVA_PARAMETERS[1] = "-Xmx"+maMax+"m";
     }
-        
+    
+    @SuppressWarnings("unchecked")
     public void run(){
-        String[] cmd = createCMD();
+        List<String> cmd = createCMD();
         //TEST
-//        for(int i=0;i<cmd.length;i++){
-//            System.out.println(cmd[i]);
+//        for(int i=0;i<cmd.size();i++){
+//            System.out.println(cmd.get(i));
 //        }
         
         ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -116,30 +125,35 @@ public class Minecraft{
        
     //cmd for Minecraft 1.6.4
     
-    public String[] createCMD(){
+    public List createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/1.6.4.json
-        String[] cmd = new String[15];
-        cmd[0] = PATH_TO_JAVA;
-        cmd[1] = JAVA_OPT;
-        cmd[2] = JAVA_PARAMETERS[0];
-        cmd[3] = JAVA_PARAMETERS[1];
-        cmd[4] = "-Djava.library.path="+PATH_TO_NATIVES;
-        cmd[5] = "-XX:MaxPermSize=256m";
-        cmd[6] = "-cp";
-        cmd[7] = "";
-        for(int i=0;i<PATH_TO_LIBRARY.length;i++){
-            cmd[7]+=PATH_TO_LIBRARY[i];
-            cmd[7]+=";";
+        ArrayList<String> cmd = new ArrayList<>();
+        cmd.add( PATH_TO_JAVA );
+        cmd.add( JAVA_OPT );
+        cmd.add( JAVA_PARAMETERS[0] );
+        cmd.add( JAVA_PARAMETERS[1] );
+        cmd.add( "-Djava.library.path="+PATH_TO_NATIVES );
+        cmd.add( "-XX:MaxPermSize=256m" );
+        if(JVMflag){
+            String[] args = JVMargs.trim().split(" ");
+            cmd.addAll(Arrays.asList(args));            
         }
-        cmd[8] = MINECRAFT_MAIN_CLASS;
-        cmd[9] = "--username="+USER;
-        cmd[10] = "--session="+ACCESS_TOKEN;
-        cmd[11] = "--version="+MC_VERSION;
-        cmd[12] = "--gameDir="+GAME_DIRECTORY;
-        cmd[13] = "--assetsDir="+ASSETS_DIRECTORY;
-        cmd[14] = "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker";
-//        cmd[15] = "--server="+SERVER_IP;
-//        cmd[16] = "--port="+SERVER_PORT;
+        cmd.add( "-cp" );
+        String lib = "";
+        for(int i=0;i<PATH_TO_LIBRARY.length;i++){
+            lib+=PATH_TO_LIBRARY[i];
+            lib+=";";
+        }
+        cmd.add( lib );
+        cmd.add( MINECRAFT_MAIN_CLASS );
+        cmd.add( "--username="+USER );
+        cmd.add( "--session="+ACCESS_TOKEN );
+        cmd.add( "--version="+MC_VERSION );
+        cmd.add( "--gameDir="+GAME_DIRECTORY );
+        cmd.add( "--assetsDir="+ASSETS_DIRECTORY );
+        cmd.add( "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker" );
+//      cmd.add( "--server="+SERVER_IP );
+//      cmd.add( "--port="+SERVER_PORT );
         return cmd;        
     }
 }
