@@ -75,7 +75,6 @@
 		<jar jarfile="dist/ShooterPack_v1.2.jar">
 			<zipfileset src="${dist.jar}" excludes="META-INF/*" />
 			<zipfileset src="lib/AbsoluteLayout.jar" excludes="META-INF/*" />
-			<zipfileset src="lib/mysql-connector-java-5.1.18-bin.jar" excludes="META-INF/*" />
 			<zipfileset src="lib/org.json.jar" excludes="META-INF/*" />
 			<manifest>
 				<attribute name="Main-Class" value="org.bitbucket.cptshooter.shooterpack.Main"/>

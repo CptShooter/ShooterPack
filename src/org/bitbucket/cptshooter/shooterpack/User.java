@@ -20,6 +20,7 @@ public class User {
     private String DISPLAY_NAME;
     
     private String destination = Main.packDestination;
+    private String osS = Main.osSeparator;
     
     JSONObject user;
     
@@ -92,7 +93,7 @@ public class User {
      * @return true if user file exists
      */
     public boolean checkUser(){
-        File file = new File(destination+"\\user.JSON");
+        File file = new File(destination+osS+"user.JSON");
         if(file.exists()){
             return true;
         }else{
@@ -104,7 +105,7 @@ public class User {
      * Loading user from file
      */
     public void loadUser(){
-        File file = new File(destination+"\\user.JSON");
+        File file = new File(destination+osS+"user.JSON");
         try{
             JsonReader jr = new JsonReader();
             String userStr = jr.readJsonFromFile(file);
@@ -126,7 +127,7 @@ public class User {
      * Saving user to file
      */
     public void saveUser(){
-        File file = new File(destination+"\\user.json");
+        File file = new File(destination+osS+"user.json");
         try (FileOutputStream fop = new FileOutputStream(file)) {
             if (!file.exists()) {
                     file.createNewFile();

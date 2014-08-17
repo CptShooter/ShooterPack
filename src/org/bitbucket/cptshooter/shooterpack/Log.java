@@ -15,6 +15,7 @@ import java.util.logging.Logger;
  */
 public class Log {
      private String destination = Main.packDestination;
+     private String osS = Main.osSeparator;
      
      public Log(){
          Main.checkDest(destination);
@@ -22,7 +23,7 @@ public class Log {
      }
      
      private void setLogFolder(){     
-        File logFolder = new File(destination+"\\logs");
+        File logFolder = new File(destination+osS+"logs");
         if(!logFolder.exists()){
             logFolder.mkdir();
         }
@@ -30,7 +31,7 @@ public class Log {
      
      public File getLogFile(String name){
         String lfn = name+".Log-"+getDateTime()+".txt";
-        File log = new File(destination+"\\logs\\"+lfn);
+        File log = new File(destination+osS+"logs"+osS+lfn);
         try {
             log.createNewFile();
 	} catch (IOException ex) {

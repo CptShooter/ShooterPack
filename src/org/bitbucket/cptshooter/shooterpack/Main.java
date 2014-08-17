@@ -3,6 +3,9 @@ package org.bitbucket.cptshooter.shooterpack;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -10,12 +13,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.awt.Toolkit;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
-import org.bitbucket.cptshooter.shooterpack.admin.DbConnect;
-import org.bitbucket.cptshooter.shooterpack.admin.Panel;
 
 /**
  *
@@ -24,9 +26,10 @@ import org.bitbucket.cptshooter.shooterpack.admin.Panel;
 public class Main extends javax.swing.JFrame {
 
     public static final String VERSION = "1.2";
-    public static final String BUILD = "06";
+    public static final String BUILD = "07";
     
-    public static String packDestination = System.getenv("APPDATA")+"\\.UncraftedPack";
+    public static String packDestination;
+    public static String osSeparator;
     
     Authentication authentication;
     Options options; 
@@ -35,24 +38,27 @@ public class Main extends javax.swing.JFrame {
     User user;
     WebLink weblink;
     public static Log log;
-    DbConnect db;
+    JsonReader json;
     
-    String[] links;
+    String[] info;
     
     private static boolean downloadFlag = true;
     private boolean unzipFlag = false;
     
-    private static final int BIT = Integer.parseInt( System.getProperty("sun.arch.data.model") );
-    
-    private final int[] cheatCode = {85, 78, 67, 82 ,65 ,70 ,84 ,69 ,68 ,65 ,68 ,77 ,73 ,78 ,10};
-    private List<Integer> cheat = new ArrayList<>();
-    private List<Integer> typed = new ArrayList<>();
+    private static final String OS_name = System.getProperty("os.name");
+    private static final String OS_version = System.getProperty("os.version");
+    private static final String OS_arch = System.getProperty("os.arch");
+    private static final String Java_version = System.getProperty("java.version");
+    private static final String Java_vendor = System.getProperty("java.vendor");
+    private static final int Java_arch = Integer.parseInt( System.getProperty("sun.arch.data.model") );
+        
+    Font minecraftiaFont;
     
     public Main() {        
         initComponents();
         //Layout init
-        titleText.setText("<html><p align='center'>ShooterLauncher<br>UncraftedPack</p></html>");
-        setTextLog("Version: "+VERSION+" build "+BUILD);
+        titleText.setText("<html><p align='center'>UnCrafted Launcher<br>by CptShooter</p></html>");
+        setTextLog("Launcher version: "+VERSION+" build "+BUILD);
         jTextLog.setEditable(false);
         jTextAutors.setEditable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -60,7 +66,22 @@ public class Main extends javax.swing.JFrame {
         int locationY = (dim.height-this.getSize().height)/2;
         this.setLocation(locationX, locationY); 
         setTextAutors();
-        cheatInit();
+        //fontInit();
+         
+        //OS
+        OSValidator OSV = new OSValidator(OS_name);
+        if(OSV.check().equalsIgnoreCase("windows")){
+            osSeparator = "\\";
+            setTextLog("This is Windows - setting up directory in %appdata%"+osSeparator+".UncraftedPack");
+            packDestination = System.getenv("APPDATA")+osSeparator+".UncraftedPack";
+        }else if(OSV.check().equalsIgnoreCase("linux")){
+            osSeparator = "/";
+            setTextLog("This is Linux - setting up directory in home"+osSeparator+"user"+osSeparator+".UncraftedPack");
+            System.out.println(System.getProperty("user.home"));
+            packDestination = System.getProperty("user.home")+osSeparator+".UncraftedPack";
+        }else{
+            setTextLog("Your OS is not support!!");
+        }
         
         //visibility init
         dProgressBar.setVisible(false);
@@ -76,29 +97,29 @@ public class Main extends javax.swing.JFrame {
         options = new Options();
         user = new User();
         log = new Log();
-        db = new DbConnect();
+        json = new JsonReader();
         
-        //32 or 64
-        setTextLog("JVM : "+BIT+"bit");
-        if(BIT==32){
+        //System.getProperty
+        setTextLog("System name: "+OS_name);
+        setTextLog("System version: "+OS_version);
+        setTextLog("System arch: "+OS_arch);
+        setTextLog("Java version: "+Java_version);
+        setTextLog("Java vendor: "+Java_vendor);
+        setTextLog("Java arch: "+Java_arch);
+        if(Java_arch==32){
             setTextLog("You have 32bit java! For better performance install 64bit - go https://www.java.com/pl/download/manual.jsp");
         }
         setComboBox();  
-        
-        if(db.connect()){
-            getLinks();
-            checkVersion();
-            download = new Download(links);
-        }else{
-            showStatusError();
-            setTextLog("Could not find links for download: Database connect error - contact with admin.");
-            downloadFlag = false;
-        }                    
+
+        //download
+        getLinks();
+        checkVersion();
+        download = new Download(info);                 
         
         //options
         if(options.checkOptions()){
             options.loadOptions();
-            if(options.getOptBit()!=BIT){
+            if(options.getOptBit()!=Java_arch){
                 options.setDefaultOptions();
                 options.buildOptions();
                 options.saveOptions();
@@ -151,19 +172,57 @@ public class Main extends javax.swing.JFrame {
             }
         }
     }
+     
+    private void fontInit(){
+        boolean flag = true;
+        try {
+            //tu nie działa
+            InputStream in = getClass().getResourceAsStream("Minecraftia.ttf");
+            //File tempFile = new File(System.getProperty("java.io.tmpdir") + RandomStringUtils.randomAlphanumeric(15) + ".tmp");
+            //FileUtils.copyInputStreamToFile(in, tempFile);
+            minecraftiaFont = Font.createFont(Font.TRUETYPE_FONT, in).deriveFont(12f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, in));
+        } catch (IOException | FontFormatException ex) {
+            flag = false;
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            log.sendLog(ex, this.getClass().getSimpleName());
+            showStatusError();
+            setTextLog("Font load error!");            
+        }
+        if(flag){
+            wwwButton.setFont(minecraftiaFont);
+            forumButton.setFont(minecraftiaFont);
+            tsButton.setFont(minecraftiaFont);
+            titleText.setFont(minecraftiaFont);
+            statusLabel.setFont(minecraftiaFont.deriveFont(Font.BOLD | Font.ITALIC, 10));
+            welcomeLabel.setFont(minecraftiaFont.deriveFont(Font.BOLD | Font.ITALIC, 11));
+            loginField.setFont(minecraftiaFont.deriveFont(Font.BOLD, 11));
+            passField.setFont(minecraftiaFont.deriveFont(Font.BOLD, 11));
+            loginButton.setFont(minecraftiaFont);
+            logoutButton.setFont(minecraftiaFont.deriveFont(Font.PLAIN, 10));
+            playButton.setFont(minecraftiaFont);
+            jCheckBoxRememberMe.setFont(minecraftiaFont);
+            jTabbedPane1.setFont(minecraftiaFont);
+            optionsSaveButton.setFont(minecraftiaFont);
+            minComboBox.setFont(minecraftiaFont);
+            maxComboBox.setFont(minecraftiaFont);
+            setDefaultButton.setFont(minecraftiaFont);
+            jCheckBoxLauncher.setFont(minecraftiaFont);
+            jCheckBoxJVMargs.setFont(minecraftiaFont);
+            jTextFieldJVMargs.setFont(minecraftiaFont);
+        }                
+    }
     
     private void getLinks(){
-        links = new String[3];
-        links[0] = db.getLinkByKey("server").getValue();
-        links[1] = db.getLinkByKey("pack").getValue();
-        links[2] = db.getLinkByKey("checksum").getValue();
+        info = new String[5];
+        info = json.readInfoJsonFromUrl("http://uncrafted.cptshooter.pl/info.json");
     }
     
     @SuppressWarnings("unchecked")
     private void checkVersion(){
-        Map<String,String> info = db.getInfo();
-        String v = info.get("Version");
-        String b = info.get("Build");
+        String v = info[3];
+        String b = info[4];
         if(v.equalsIgnoreCase(VERSION) && b.equalsIgnoreCase(BUILD)){
             setTextLog("Your launcher version is up to date.");
         }else{
@@ -180,7 +239,7 @@ public class Main extends javax.swing.JFrame {
     
     @SuppressWarnings("unchecked")
     private void setComboBox(){
-        if(BIT==32){
+        if(Java_arch==32){
             minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024", "1280", "1536"}));
             maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024", "1280", "1536"}));
         }else{
@@ -234,14 +293,9 @@ public class Main extends javax.swing.JFrame {
         backgroundAutors = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("ShooterLauncher for UnCrafted.pl");
+        setTitle("Launcher for UnCrafted.pl");
         setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/icon_64x64.png")));
         setResizable(false);
-        addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                formKeyPressed(evt);
-            }
-        });
 
         jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTabbedPane1.setFocusable(false);
@@ -261,12 +315,10 @@ public class Main extends javax.swing.JFrame {
         zProgressBar.setStringPainted(true);
         jPanelMain.add(zProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 148, 250, 20));
 
-        welcomeLabel.setFont(new java.awt.Font("Minecraftia", 1, 10)); // NOI18N
         welcomeLabel.setText("Status");
         jPanelMain.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 202, 220, 20));
 
         loginField.setBackground(new Color(0,0,0,0));
-        loginField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
         loginField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         loginField.setText("Login");
         loginField.setBorder(null);
@@ -278,7 +330,6 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 202, 220, 20));
 
         passField.setBackground(new Color(0,0,0,0));
-        passField.setFont(new java.awt.Font("Minecraftia", 1, 11)); // NOI18N
         passField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         passField.setText("password");
         passField.setBorder(null);
@@ -289,13 +340,11 @@ public class Main extends javax.swing.JFrame {
         });
         jPanelMain.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 232, 220, 20));
 
-        titleText.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         titleText.setForeground(new java.awt.Color(255, 255, 255));
-        titleText.setText("Uncrafted Pack");
-        jPanelMain.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(532, 15, 150, -1));
+        titleText.setText("UnCraftedLauncher");
+        jPanelMain.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 20, 150, -1));
 
         loginButton.setBackground(new Color(0,0,0,0));
-        loginButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
         loginButton.setText("Login");
         loginButton.setAlignmentY(0.0F);
         loginButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -309,7 +358,6 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 200, 70, 50));
 
         logoutButton.setBackground(new Color(0,0,0,0));
-        logoutButton.setFont(new java.awt.Font("Minecraftia", 0, 10)); // NOI18N
         logoutButton.setText("Logout");
         logoutButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         logoutButton.setFocusable(false);
@@ -321,7 +369,6 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 230, 80, 20));
 
         playButton.setBackground(new Color(0,0,0,0));
-        playButton.setFont(new java.awt.Font("Minecraftia", 0, 12)); // NOI18N
         playButton.setText("Play");
         playButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         playButton.setFocusable(false);
@@ -333,7 +380,6 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(255, 200, 60, 50));
 
         wwwButton.setBackground(new Color(0,0,0,0));
-        wwwButton.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         wwwButton.setText("WWW");
         wwwButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         wwwButton.setFocusable(false);
@@ -345,7 +391,6 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 67, 150, -1));
 
         forumButton.setBackground(new Color(0,0,0,0));
-        forumButton.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         forumButton.setText("FORUM");
         forumButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         forumButton.setFocusable(false);
@@ -357,7 +402,6 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 96, 150, -1));
 
         tsButton.setBackground(new Color(245,245,245,0));
-        tsButton.setFont(new java.awt.Font("Minecraftia", 0, 13)); // NOI18N
         tsButton.setText("TeamSpeak3");
         tsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         tsButton.setFocusable(false);
@@ -373,7 +417,6 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 172, 230, 20));
 
         jCheckBoxRememberMe.setBackground(new Color(0,0,0,0));
-        jCheckBoxRememberMe.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jCheckBoxRememberMe.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBoxRememberMe.setText("Remember me");
         jCheckBoxRememberMe.addActionListener(new java.awt.event.ActionListener() {
@@ -432,7 +475,7 @@ public class Main extends javax.swing.JFrame {
                 jCheckBoxLauncherActionPerformed(evt);
             }
         });
-        jPanelOpt.add(jCheckBoxLauncher, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 10, 150, -1));
+        jPanelOpt.add(jCheckBoxLauncher, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 10, 210, -1));
 
         jCheckBoxJVMargs.setBackground(new Color(0,0,0,0));
         jCheckBoxJVMargs.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -456,7 +499,7 @@ public class Main extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Options", jPanelOpt);
 
-        jTextLog.setText("ShooterLauncher LOG:");
+        jTextLog.setText("Launcher LOG:");
         jTextLog.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPaneLog.setViewportView(jTextLog);
 
@@ -557,7 +600,7 @@ public class Main extends javax.swing.JFrame {
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         if(login()){
-            System.out.println(user.toString());
+            //System.out.println(user.toString());
             checkRememberme();
             if(downloadFlag){
                 getPack();
@@ -624,18 +667,6 @@ public class Main extends javax.swing.JFrame {
         jCheckBoxLauncher.setSelected(false);
     }//GEN-LAST:event_setDefaultButtonActionPerformed
 
-    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        //System.out.print(evt.getKeyChar());
-        if(evt.getKeyCode() == 92){
-            typed.clear();
-        }else{
-            typed.add(evt.getKeyCode());
-            if(cheat.equals(typed)){
-                openAdmin();
-            }
-        }
-    }//GEN-LAST:event_formKeyPressed
-
     private void jCheckBoxLauncherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxLauncherActionPerformed
         optionsSaveButton.setVisible(true);
     }//GEN-LAST:event_jCheckBoxLauncherActionPerformed
@@ -657,26 +688,11 @@ public class Main extends javax.swing.JFrame {
     private void jTextFieldJVMargsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldJVMargsFocusGained
         optionsSaveButton.setVisible(true);
     }//GEN-LAST:event_jTextFieldJVMargsFocusGained
-
-    private void cheatInit(){
-        for(int i=0; i<cheatCode.length; i++){
-            cheat.add(cheatCode[i]);
-        }
-    }
-    
-    private void openAdmin(){
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        int locationX = (dim.width-this.getSize().width)/2;
-        int locationY = (dim.height-this.getSize().height)/2;
-        JDialog panel = new Panel(this,true);
-        panel.setLocation(locationX, locationY);
-        panel.setVisible(true);
-    }
-    
+        
     private void checkRememberme(){
         jCheckBoxRememberMe.setVisible(false);
         if(!options.getRememberMe()){
-            File file = new File(packDestination+"\\user.json");
+            File file = new File(packDestination+osSeparator+"user.json");
             file.delete();
         }
     }
@@ -825,12 +841,12 @@ public class Main extends javax.swing.JFrame {
         if (download.getStatus() == 2) {
             unzipFlag = true;
             download.unzipping();     
-            int index = links[1].indexOf("/");
+            int index = info[1].indexOf("/");
             String fileInput;
             if(index!=-1){
-                fileInput = links[1].substring(index+1).trim();
+                fileInput = info[1].substring(index+1).trim();
             }else{
-                fileInput = links[1];
+                fileInput = info[1];
             }
             File fileZip = new File(fileInput);
             zip = new UnZip(fileInput, download.getDestination(), download.getSize());
@@ -843,27 +859,24 @@ public class Main extends javax.swing.JFrame {
     }
         
     public static void setTextLog(String log){
-        Calendar cal = Calendar.getInstance();
-    	cal.getTime();
-    	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String text = jTextLog.getText();
-        jTextLog.setText(text + "\n" + sdf.format(cal.getTime()) + " | " + log);
+        jTextLog.setText(text + "\n" + "[" + getDateTime() + "] " + log);
     }
     
     private static String getDateTime(){
         Calendar cal = Calendar.getInstance();
     	cal.getTime();
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.YYYY-HH.mm.ss");
+    	SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.YYYY-HH:mm:ss");
         return sdf.format(cal.getTime());
     }
     
     public final void setTextAutors(){
         String text = jTextAutors.getText()
-                + "\n Shooter -> Launcher"
+                + "\n CptShooter -> Launcher"
                 + "\n ClassAxion -> ModPack"
                 + "\n Povered -> Graphics"
                 + "\n"
-                + "\n Copyright 2014 by Uncrafted Team"
+                + "\n Copyright 2014 by UnCrafted Team"
                 + "\n All rights reserved";
         jTextAutors.setText(text);
     }

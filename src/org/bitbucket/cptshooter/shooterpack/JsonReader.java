@@ -56,21 +56,23 @@ public class JsonReader {
         }
     }
     
-    public String[] readLinkJsonFromUrl(String url){
+    public String[] readInfoJsonFromUrl(String url){
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
-            String[] links = new String[3];
-            links[0] = json.getString("serwer");
-            links[1] = json.getString("pack");
-            links[2] = json.getString("checksum");
-            return links;
+            String[] info = new String[5];
+            info[0] = json.getString("server");
+            info[1] = json.getString("pack");
+            info[2] = json.getString("checksum");
+            info[3] = json.getString("version");
+            info[4] = json.getString("build");
+            return info;
         } catch (IOException | JSONException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             Main.log.sendLog(ex, this.getClass().getSimpleName());
             Main.showStatusError();
-            Main.setTextLog("rLinkURL JSON error! - contact with admin."); 
+            Main.setTextLog("rInfoURL JSON error! - contact with admin."); 
             return null;
         }
     }

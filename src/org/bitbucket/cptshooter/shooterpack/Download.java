@@ -43,6 +43,9 @@ class Download extends Observable implements Runnable {
     //Checksum
     MessageDigest md;
     
+    //separator
+    private String osS = Main.osSeparator;
+    
     // Constructor for Download.
     public Download(String[] links){
         this.server         = links[0];
@@ -159,10 +162,10 @@ class Download extends Observable implements Runnable {
     }
     
     private String loadCheckSum(){
-        File file = new File(destination+"\\checksum");
+        File file = new File(destination+osS+"checksum");
         if(file.isFile()){
             String sCurrentLine;
-            try (BufferedReader br = new BufferedReader(new FileReader(destination+"\\checksum")))
+            try (BufferedReader br = new BufferedReader(new FileReader(destination+osS+"checksum")))
             {
                 sCurrentLine = br.readLine();                
                 return sCurrentLine;
@@ -180,7 +183,7 @@ class Download extends Observable implements Runnable {
     
     public void saveCheckSum(){
         String checksum = checkSumToString();
-        File file = new File(destination+"\\checksum");
+        File file = new File(destination+osS+"checksum");
         try (FileOutputStream fop = new FileOutputStream(file)) {
             if (!file.exists()) {
                     file.createNewFile();

@@ -11,6 +11,8 @@ import java.util.zip.*;
  */
 public class UnZip {
 
+    private String osS = Main.osSeparator;
+    
     private static final int  BUFFER_SIZE = (int)Math.pow(2,11);
     private String destination;
     private String fileInput;
@@ -97,10 +99,10 @@ public class UnZip {
     }
         
      private void clearOld(){
-        deleteFolder(new File(destination+"\\mods"));
-        deleteFolder(new File(destination+"\\modes"));
-        deleteFolder(new File(destination+"\\config"));
-        deleteFolder(new File(destination+"\\Chocolate"));
+        deleteFolder(new File(destination+osS+"mods"));
+        deleteFolder(new File(destination+osS+"modes"));
+        deleteFolder(new File(destination+osS+"config"));
+        deleteFolder(new File(destination+osS+"Chocolate"));
     }
     
     private void deleteFolder(File folder){

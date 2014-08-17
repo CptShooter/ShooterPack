@@ -17,6 +17,7 @@ public class Options{
     private String MIN;
     private String MAX;
     private String destination = Main.packDestination;
+    private String osS = Main.osSeparator;
     private boolean launcher;
     private boolean rememberme;
     private boolean JVMflag;
@@ -24,7 +25,7 @@ public class Options{
     
     JSONObject options;
     
-    private static final int BIT = Integer.parseInt( System.getProperty("sun.arch.data.model") );
+    private static final int Java_arch = Integer.parseInt( System.getProperty("sun.arch.data.model") );
     private int optBit;
     
     /**
@@ -39,7 +40,7 @@ public class Options{
      * @return true if options file exists
      */
     public boolean checkOptions(){
-        File file = new File(destination+"\\options.JSON");
+        File file = new File(destination+osS+"options.JSON");
         if(file.exists()){
             return true;
         }else{
@@ -51,7 +52,7 @@ public class Options{
      * Loading options from file
      */
     public void loadOptions(){
-        File file = new File(destination+"\\options.JSON");
+        File file = new File(destination+osS+"options.JSON");
         try{
             JsonReader jr = new JsonReader();
             String optStr = jr.readJsonFromFile(file);
@@ -80,7 +81,7 @@ public class Options{
      * Saving options to file
      */
     public void saveOptions(){
-        File file = new File(destination+"\\options.json");
+        File file = new File(destination+osS+"options.json");
         try (FileOutputStream fop = new FileOutputStream(file)) {
             if (!file.exists()) {
                     file.createNewFile();
@@ -108,7 +109,7 @@ public class Options{
             memoryAllocation.put("min", MIN);
             memoryAllocation.put("max", MAX);
             options.put("memory-allocation", memoryAllocation);
-            options.put("JRE-bit", BIT);
+            options.put("JRE-bit", Java_arch);
             options.put("launcher", launcher);
             options.put("rememberme", rememberme);
             JSONObject JVMarguments = new JSONObject();
@@ -129,7 +130,7 @@ public class Options{
      * Setting options to default for 64 bit
      */
     public void setDefaultOptions(){
-        if(BIT==32){
+        if(Java_arch==32){
             MIN = "1024";
             MAX = "1024";
         }else{
@@ -148,7 +149,7 @@ public class Options{
      * @return Int - position in ComboBox
      */
     public int getNumber(String mb){
-        if(BIT==32){
+        if(Java_arch==32){
             switch(mb){
                 case "512"  : return 0;
                 case "768"  : return 1;

@@ -7,6 +7,15 @@ Minecraft (1.6.4) Launcher dla Uncrafted.pl
 Changelog:
 ----------
 
+**1.2** build 07
+
+* Zmiana spash arta
+* Zmiana nazwy pliku
+* usuniecie panelu admina
+* rezygnacja z bazy danych
+* linki do paczki z pliku json
+* przygotowanie do multi platform
+
 **1.2** build 06
 
 * RememberMe checkBox
