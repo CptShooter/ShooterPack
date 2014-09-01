@@ -93,7 +93,7 @@ public class User {
      * @return true if user file exists
      */
     public boolean checkUser(){
-        File file = new File(destination+osS+"user.JSON");
+        File file = new File(destination+osS+"user.json");
         if(file.exists()){
             return true;
         }else{
@@ -105,7 +105,7 @@ public class User {
      * Loading user from file
      */
     public void loadUser(){
-        File file = new File(destination+osS+"user.JSON");
+        File file = new File(destination+osS+"user.json");
         try{
             JsonReader jr = new JsonReader();
             String userStr = jr.readJsonFromFile(file);

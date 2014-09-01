@@ -5,16 +5,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.awt.Toolkit;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
@@ -25,8 +29,8 @@ import javax.swing.JDialog;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "1.2";
-    public static final String BUILD = "07";
+    public static final String VERSION = "1.3";
+    public static final String BUILD = "01";
     
     public static String packDestination;
     public static String osSeparator;
@@ -57,8 +61,10 @@ public class Main extends javax.swing.JFrame {
     public Main() {        
         initComponents();
         //Layout init
-        titleText.setText("<html><p align='center'>UnCrafted Launcher<br>by CptShooter</p></html>");
+        //titleText.setText("<html><p align='center'>UnCrafted Launcher<br>by CptShooter</p></html>");
         setTextLog("Launcher version: "+VERSION+" build "+BUILD);
+        getLinks();
+        checkVersion();
         jTextLog.setEditable(false);
         jTextAutors.setEditable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -66,22 +72,28 @@ public class Main extends javax.swing.JFrame {
         int locationY = (dim.height-this.getSize().height)/2;
         this.setLocation(locationX, locationY); 
         setTextAutors();
-        //fontInit();
+        this.getRootPane().setDefaultButton(loginButton);        
          
         //OS
         OSValidator OSV = new OSValidator(OS_name);
         if(OSV.check().equalsIgnoreCase("windows")){
             osSeparator = "\\";
-            setTextLog("This is Windows - setting up directory in %appdata%"+osSeparator+".UncraftedPack");
             packDestination = System.getenv("APPDATA")+osSeparator+".UncraftedPack";
+            setTextLog("This is Windows - setting up directory in: "+packDestination);
         }else if(OSV.check().equalsIgnoreCase("linux")){
-            osSeparator = "/";
-            setTextLog("This is Linux - setting up directory in home"+osSeparator+"user"+osSeparator+".UncraftedPack");
-            System.out.println(System.getProperty("user.home"));
+            osSeparator = "/";            
             packDestination = System.getProperty("user.home")+osSeparator+".UncraftedPack";
+            setTextLog("This is Linux - setting up directory in: "+packDestination);
+        }else if(OSV.check().equalsIgnoreCase("mac")){
+            osSeparator = "/";            
+            packDestination = System.getProperty("user.home")+osSeparator+"Library"+osSeparator+"Application Support"+osSeparator+".UncraftedPack";
+            setTextLog("This is Mac - setting up directory in: "+packDestination);
         }else{
             setTextLog("Your OS is not support!!");
         }
+        
+        //font
+        fontInit();
         
         //visibility init
         dProgressBar.setVisible(false);
@@ -96,8 +108,7 @@ public class Main extends javax.swing.JFrame {
         weblink = new WebLink();
         options = new Options();
         user = new User();
-        log = new Log();
-        json = new JsonReader();
+        log = new Log();        
         
         //System.getProperty
         setTextLog("System name: "+OS_name);
@@ -109,11 +120,9 @@ public class Main extends javax.swing.JFrame {
         if(Java_arch==32){
             setTextLog("You have 32bit java! For better performance install 64bit - go https://www.java.com/pl/download/manual.jsp");
         }
-        setComboBox();  
+        setSlider();  
 
-        //download
-        getLinks();
-        checkVersion();
+        //download        
         download = new Download(info);                 
         
         //options
@@ -148,7 +157,8 @@ public class Main extends javax.swing.JFrame {
                 }else{
                     loginField.setVisible(false);
                     passField.setVisible(false);
-                    loginButton.setVisible(false);           
+                    loginButton.setVisible(false);
+                    loginButton.setEnabled(false);
                     logoutButton.setVisible(true);
                     statusLabel.setText("Login success!");
                     statusLabel.setVisible(true);
@@ -172,17 +182,17 @@ public class Main extends javax.swing.JFrame {
             }
         }
     }
-     
+         
     private void fontInit(){
-        boolean flag = true;
+        boolean flag = true;         
+        String font_path = packDestination+osSeparator+"Minecraftia.ttf";
+        if(!new File(font_path).exists()){
+            downloadFont(font_path);
+        }
         try {
-            //tu nie działa
-            InputStream in = getClass().getResourceAsStream("Minecraftia.ttf");
-            //File tempFile = new File(System.getProperty("java.io.tmpdir") + RandomStringUtils.randomAlphanumeric(15) + ".tmp");
-            //FileUtils.copyInputStreamToFile(in, tempFile);
-            minecraftiaFont = Font.createFont(Font.TRUETYPE_FONT, in).deriveFont(12f);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, in));
+                InputStream myStream = new BufferedInputStream(new FileInputStream(font_path));
+                Font ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
+                minecraftiaFont = ttfBase.deriveFont(Font.PLAIN, 12);               
         } catch (IOException | FontFormatException ex) {
             flag = false;
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
@@ -190,11 +200,13 @@ public class Main extends javax.swing.JFrame {
             showStatusError();
             setTextLog("Font load error!");            
         }
+        
         if(flag){
             wwwButton.setFont(minecraftiaFont);
             forumButton.setFont(minecraftiaFont);
             tsButton.setFont(minecraftiaFont);
-            titleText.setFont(minecraftiaFont);
+            titleText.setFont(minecraftiaFont.deriveFont(Font.PLAIN, 11));
+            autorText.setFont(minecraftiaFont.deriveFont(Font.PLAIN, 11));
             statusLabel.setFont(minecraftiaFont.deriveFont(Font.BOLD | Font.ITALIC, 10));
             welcomeLabel.setFont(minecraftiaFont.deriveFont(Font.BOLD | Font.ITALIC, 11));
             loginField.setFont(minecraftiaFont.deriveFont(Font.BOLD, 11));
@@ -205,18 +217,46 @@ public class Main extends javax.swing.JFrame {
             jCheckBoxRememberMe.setFont(minecraftiaFont);
             jTabbedPane1.setFont(minecraftiaFont);
             optionsSaveButton.setFont(minecraftiaFont);
-            minComboBox.setFont(minecraftiaFont);
-            maxComboBox.setFont(minecraftiaFont);
             setDefaultButton.setFont(minecraftiaFont);
             jCheckBoxLauncher.setFont(minecraftiaFont);
             jCheckBoxJVMargs.setFont(minecraftiaFont);
             jTextFieldJVMargs.setFont(minecraftiaFont);
+            jSliderMin.setFont(minecraftiaFont.deriveFont(Font.PLAIN, 10));
+            jSliderMax.setFont(minecraftiaFont.deriveFont(Font.PLAIN, 10));
+            jLabelMin.setFont(minecraftiaFont);
+            jLabelMax.setFont(minecraftiaFont);
+            jTextFieldMin.setFont(minecraftiaFont);
+            jTextFieldMax.setFont(minecraftiaFont);
+            jLabelMinMB.setFont(minecraftiaFont);
+            jLabelMaxMB.setFont(minecraftiaFont);
+            //jTextLog.setFont(minecraftiaFont.deriveFont(Font.PLAIN, 11));
+            jTextAutors.setFont(minecraftiaFont);
         }                
     }
     
+    private void downloadFont(String font_path){
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new URL("http://uncrafted.cptshooter.pl/Minecraftia.ttf").openStream();  
+            outputStream = new FileOutputStream(new File(font_path));
+            int read = 0;
+            byte[] bytes = new byte[1024];
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            log.sendLog(ex, this.getClass().getSimpleName());
+            showStatusError();
+            setTextLog("Font download error!");     
+        }
+    }
+    
     private void getLinks(){
+        json = new JsonReader();
         info = new String[5];
-        info = json.readInfoJsonFromUrl("http://uncrafted.cptshooter.pl/info.json");
+        info = json.readInfoJsonFromUrl("http://uncrafted.cptshooter.pl/info_dev.json");
     }
     
     @SuppressWarnings("unchecked")
@@ -238,14 +278,11 @@ public class Main extends javax.swing.JFrame {
     }
     
     @SuppressWarnings("unchecked")
-    private void setComboBox(){
+    private void setSlider(){
         if(Java_arch==32){
-            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024", "1280", "1536"}));
-            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "768", "1024", "1280", "1536"}));
-        }else{
-            minComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024","1536", "2048", "4096"}));
-            maxComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512", "1024","1536", "2048", "4096"}));
-        }  
+            jSliderMin.setMaximum(1536);
+            jSliderMax.setMaximum(1536);
+        } 
     }
 
     /**
@@ -265,6 +302,7 @@ public class Main extends javax.swing.JFrame {
         loginField = new javax.swing.JTextField();
         passField = new javax.swing.JPasswordField();
         titleText = new javax.swing.JLabel();
+        autorText = new javax.swing.JLabel();
         loginButton = new javax.swing.JButton();
         logoutButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
@@ -276,12 +314,18 @@ public class Main extends javax.swing.JFrame {
         background = new javax.swing.JLabel();
         jPanelOpt = new javax.swing.JPanel();
         optionsSaveButton = new javax.swing.JButton();
-        minComboBox = new javax.swing.JComboBox();
-        maxComboBox = new javax.swing.JComboBox();
         setDefaultButton = new javax.swing.JButton();
         jCheckBoxLauncher = new javax.swing.JCheckBox();
         jCheckBoxJVMargs = new javax.swing.JCheckBox();
         jTextFieldJVMargs = new javax.swing.JTextField();
+        jLabelMin = new javax.swing.JLabel();
+        jSliderMin = new javax.swing.JSlider();
+        jTextFieldMin = new javax.swing.JTextField();
+        jSliderMax = new javax.swing.JSlider();
+        jTextFieldMax = new javax.swing.JTextField();
+        jLabelMax = new javax.swing.JLabel();
+        jLabelMinMB = new javax.swing.JLabel();
+        jLabelMaxMB = new javax.swing.JLabel();
         backgroundOpt = new javax.swing.JLabel();
         jPanelLog = new javax.swing.JPanel();
         jScrollPaneLog = new javax.swing.JScrollPane();
@@ -341,8 +385,12 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 232, 220, 20));
 
         titleText.setForeground(new java.awt.Color(255, 255, 255));
-        titleText.setText("UnCraftedLauncher");
-        jPanelMain.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 20, 150, -1));
+        titleText.setText("UnCrafted Launcher");
+        jPanelMain.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(536, 18, 150, -1));
+
+        autorText.setForeground(new java.awt.Color(255, 255, 255));
+        autorText.setText("by CptShooter");
+        jPanelMain.add(autorText, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 40, 130, -1));
 
         loginButton.setBackground(new Color(0,0,0,0));
         loginButton.setText("Login");
@@ -417,8 +465,8 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 172, 230, 20));
 
         jCheckBoxRememberMe.setBackground(new Color(0,0,0,0));
-        jCheckBoxRememberMe.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBoxRememberMe.setText("Remember me");
+        jCheckBoxRememberMe.setFocusable(false);
         jCheckBoxRememberMe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxRememberMeActionPerformed(evt);
@@ -440,23 +488,7 @@ public class Main extends javax.swing.JFrame {
                 optionsSaveButtonActionPerformed(evt);
             }
         });
-        jPanelOpt.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 220, -1, -1));
-
-        minComboBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        minComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                minComboBoxActionPerformed(evt);
-            }
-        });
-        jPanelOpt.add(minComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 60, 110, -1));
-
-        maxComboBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        maxComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxComboBoxActionPerformed(evt);
-            }
-        });
-        jPanelOpt.add(maxComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 96, 110, -1));
+        jPanelOpt.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 235, -1, -1));
 
         setDefaultButton.setText("Set Default");
         setDefaultButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -465,34 +497,90 @@ public class Main extends javax.swing.JFrame {
                 setDefaultButtonActionPerformed(evt);
             }
         });
-        jPanelOpt.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, -1, -1));
+        jPanelOpt.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 235, -1, -1));
 
         jCheckBoxLauncher.setBackground(new Color(0,0,0,0));
-        jCheckBoxLauncher.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jCheckBoxLauncher.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBoxLauncher.setText("Keep launcher open");
         jCheckBoxLauncher.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxLauncherActionPerformed(evt);
             }
         });
-        jPanelOpt.add(jCheckBoxLauncher, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 10, 210, -1));
+        jPanelOpt.add(jCheckBoxLauncher, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 210, -1));
 
         jCheckBoxJVMargs.setBackground(new Color(0,0,0,0));
-        jCheckBoxJVMargs.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jCheckBoxJVMargs.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBoxJVMargs.setText("JVM args:");
         jCheckBoxJVMargs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBoxJVMargsActionPerformed(evt);
             }
         });
-        jPanelOpt.add(jCheckBoxJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 40, -1, -1));
+        jPanelOpt.add(jCheckBoxJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, -1, -1));
 
         jTextFieldJVMargs.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jTextFieldJVMargsFocusGained(evt);
             }
         });
-        jPanelOpt.add(jTextFieldJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 70, 370, -1));
+        jPanelOpt.add(jTextFieldJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 197, 560, -1));
+
+        jLabelMin.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelMin.setText("Memory Allocation Minimum");
+        jPanelOpt.add(jLabelMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, -1, -1));
+
+        jSliderMin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jSliderMin.setForeground(new java.awt.Color(255, 255, 255));
+        jSliderMin.setMajorTickSpacing(512);
+        jSliderMin.setMaximum(4096);
+        jSliderMin.setMinimum(512);
+        jSliderMin.setMinorTickSpacing(128);
+        jSliderMin.setPaintLabels(true);
+        jSliderMin.setPaintTicks(true);
+        jSliderMin.setSnapToTicks(true);
+        jSliderMin.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSliderMinStateChanged(evt);
+            }
+        });
+        jPanelOpt.add(jSliderMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 600, 50));
+
+        jTextFieldMin.setEditable(false);
+        jTextFieldMin.setText(new Integer(jSliderMin.getValue()).toString());
+        jPanelOpt.add(jTextFieldMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 40, 50, -1));
+
+        jSliderMax.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jSliderMax.setForeground(new java.awt.Color(255, 255, 255));
+        jSliderMax.setMajorTickSpacing(512);
+        jSliderMax.setMaximum(4096);
+        jSliderMax.setMinimum(512);
+        jSliderMax.setMinorTickSpacing(128);
+        jSliderMax.setPaintLabels(true);
+        jSliderMax.setPaintTicks(true);
+        jSliderMax.setSnapToTicks(true);
+        jSliderMax.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSliderMaxStateChanged(evt);
+            }
+        });
+        jPanelOpt.add(jSliderMax, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 600, 50));
+
+        jTextFieldMax.setEditable(false);
+        jTextFieldMax.setText(new Integer(jSliderMax.getValue()).toString());
+        jPanelOpt.add(jTextFieldMax, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 110, 50, -1));
+
+        jLabelMax.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelMax.setText("Memory Allocation Maximum");
+        jPanelOpt.add(jLabelMax, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, -1, -1));
+
+        jLabelMinMB.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelMinMB.setText("MB");
+        jPanelOpt.add(jLabelMinMB, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 44, 20, 20));
+
+        jLabelMaxMB.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelMaxMB.setText("MB");
+        jPanelOpt.add(jLabelMaxMB, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 114, 20, 20));
 
         backgroundOpt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/options.jpg"))); // NOI18N
         jPanelOpt.add(backgroundOpt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 270));
@@ -633,22 +721,11 @@ public class Main extends javax.swing.JFrame {
         weblink.openWebpage("http://tsminecraft.pl/");
     }//GEN-LAST:event_tsButtonActionPerformed
 
-    private void minComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minComboBoxActionPerformed
-        optionsSaveButton.setVisible(true);
-    }//GEN-LAST:event_minComboBoxActionPerformed
-
-    private void maxComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxComboBoxActionPerformed
-        optionsSaveButton.setVisible(true);
-    }//GEN-LAST:event_maxComboBoxActionPerformed
-
     private void optionsSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsSaveButtonActionPerformed
-        String min = minComboBox.getSelectedItem().toString();
-        String max = maxComboBox.getSelectedItem().toString();
-        int imin = Integer.parseInt(min);
-        int imax = Integer.parseInt(max);
-        if(imin>imax){
-            min = max;
-        }
+        int imin = jSliderMin.getValue();
+        int imax = jSliderMax.getValue();
+        String min = new Integer(imin).toString();
+        String max = new Integer(imax).toString();
         options.setMin(min);
         options.setMax(max);
         options.setLauncher(jCheckBoxLauncher.isSelected());
@@ -662,8 +739,8 @@ public class Main extends javax.swing.JFrame {
 
     private void setDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setDefaultButtonActionPerformed
         options.setDefaultOptions();
-        minComboBox.setSelectedIndex(options.getNumberMin());
-        maxComboBox.setSelectedIndex(options.getNumberMax());
+        jSliderMin.setValue(Integer.parseInt(options.getMin()));
+        jSliderMax.setValue(Integer.parseInt(options.getMax()));
         jCheckBoxLauncher.setSelected(false);
     }//GEN-LAST:event_setDefaultButtonActionPerformed
 
@@ -688,6 +765,28 @@ public class Main extends javax.swing.JFrame {
     private void jTextFieldJVMargsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldJVMargsFocusGained
         optionsSaveButton.setVisible(true);
     }//GEN-LAST:event_jTextFieldJVMargsFocusGained
+
+    private void jSliderMinStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSliderMinStateChanged
+        int min = jSliderMin.getValue();
+        jTextFieldMin.setText(new Integer(min).toString());
+        
+        int max = jSliderMax.getValue();
+        if(min>=max){
+           jSliderMax.setValue(jSliderMin.getValue()); 
+        }
+        optionsSaveButton.setVisible(true);
+    }//GEN-LAST:event_jSliderMinStateChanged
+
+    private void jSliderMaxStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSliderMaxStateChanged
+        int max = jSliderMax.getValue();
+        jTextFieldMax.setText(new Integer(max).toString());
+        
+        int min = jSliderMin.getValue();
+        if(max<=min){
+           jSliderMin.setValue(jSliderMax.getValue()); 
+        }
+        optionsSaveButton.setVisible(true);
+    }//GEN-LAST:event_jSliderMaxStateChanged
         
     private void checkRememberme(){
         jCheckBoxRememberMe.setVisible(false);
@@ -698,8 +797,8 @@ public class Main extends javax.swing.JFrame {
     }
     
     private void refreshOptions(){
-        minComboBox.setSelectedIndex(options.getNumberMin());
-        maxComboBox.setSelectedIndex(options.getNumberMax());
+        jSliderMin.setValue(Integer.parseInt(options.getMin()));
+        jSliderMax.setValue(Integer.parseInt(options.getMax()));
         jCheckBoxLauncher.setSelected(options.getLauncher());
         jCheckBoxRememberMe.setSelected(options.getRememberMe());
         jCheckBoxJVMargs.setSelected(options.getJVMflag());
@@ -728,7 +827,8 @@ public class Main extends javax.swing.JFrame {
                user = authentication.getLoggedUser();
                loginField.setVisible(false);
                passField.setVisible(false);
-               loginButton.setVisible(false);           
+               loginButton.setVisible(false);
+               loginButton.setEnabled(false);
                logoutButton.setVisible(true);
                statusLabel.setText("Login success!");
                statusLabel.setVisible(true);
@@ -754,6 +854,7 @@ public class Main extends javax.swing.JFrame {
             loginField.setVisible(true);
             passField.setVisible(true);
             loginButton.setVisible(true);
+            loginButton.setEnabled(true);
             playButton.setVisible(false);
             logoutButton.setVisible(false);
             welcomeLabel.setVisible(false);
@@ -875,6 +976,8 @@ public class Main extends javax.swing.JFrame {
                 + "\n CptShooter -> Launcher"
                 + "\n ClassAxion -> ModPack"
                 + "\n Povered -> Graphics"
+                + "\n TheReduxPL -> Linux Tester"
+                + "\n Intothenether -> OSX Tester"
                 + "\n"
                 + "\n Copyright 2014 by UnCrafted Team"
                 + "\n All rights reserved";
@@ -939,6 +1042,7 @@ public class Main extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel autorText;
     private javax.swing.JLabel background;
     private javax.swing.JLabel backgroundAutors;
     private javax.swing.JLabel backgroundLog;
@@ -948,21 +1052,27 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBoxJVMargs;
     private javax.swing.JCheckBox jCheckBoxLauncher;
     private javax.swing.JCheckBox jCheckBoxRememberMe;
+    private javax.swing.JLabel jLabelMax;
+    private javax.swing.JLabel jLabelMaxMB;
+    private javax.swing.JLabel jLabelMin;
+    private javax.swing.JLabel jLabelMinMB;
     private javax.swing.JPanel jPanelAut;
     private javax.swing.JPanel jPanelLog;
     private javax.swing.JPanel jPanelMain;
     private javax.swing.JPanel jPanelOpt;
     private javax.swing.JScrollPane jScrollPaneAutors;
     private javax.swing.JScrollPane jScrollPaneLog;
+    private javax.swing.JSlider jSliderMax;
+    private javax.swing.JSlider jSliderMin;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextPane jTextAutors;
     private javax.swing.JTextField jTextFieldJVMargs;
+    private javax.swing.JTextField jTextFieldMax;
+    private javax.swing.JTextField jTextFieldMin;
     private static javax.swing.JTextPane jTextLog;
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;
     private javax.swing.JButton logoutButton;
-    private javax.swing.JComboBox maxComboBox;
-    private javax.swing.JComboBox minComboBox;
     private javax.swing.JButton optionsSaveButton;
     private javax.swing.JPasswordField passField;
     private javax.swing.JButton playButton;

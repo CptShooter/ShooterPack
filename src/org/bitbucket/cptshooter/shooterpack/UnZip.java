@@ -103,6 +103,7 @@ public class UnZip {
         deleteFolder(new File(destination+osS+"modes"));
         deleteFolder(new File(destination+osS+"config"));
         deleteFolder(new File(destination+osS+"Chocolate"));
+        deleteFolder(new File(destination+osS+"libraries"));
     }
     
     private void deleteFolder(File folder){

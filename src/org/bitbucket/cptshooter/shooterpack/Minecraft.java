@@ -39,12 +39,15 @@ public class Minecraft{
     
     //minecraft 1.6.4 new files
     
-    //private static final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.main.Main";
+//    private final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.main.Main";
     private final String MINECRAFT_MAIN_CLASS = "net.minecraft.launchwrapper.Launch";
-    private final String GAME_DIRECTORY = PACK_DIRECTORY;/* +".minecraft"; */
+    private final String GAME_DIRECTORY = PACK_DIRECTORY;
     private final String ASSETS_DIRECTORY = GAME_DIRECTORY+osS+"assets";
     
-    private final String PATH_TO_NATIVES = GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4-natives";
+    private final String PATH_TO_NATIVES_WIN = GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4-natives-win";
+    private final String PATH_TO_NATIVES_LINUX = GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4-natives-linux";
+    private final String PATH_TO_NATIVES_MAC = GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4-natives-osx";
+    /*
     private final String[] PATH_TO_LIBRARY = {
         //Minecraft
         GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4.jar",
@@ -74,20 +77,55 @@ public class Minecraft{
         GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"lwjgl"+osS+"lwjgl"+osS+"lwjgl"+osS+"2.9.1"+osS+"lwjgl-2.9.1.jar",
         GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"lwjgl"+osS+"lwjgl"+osS+"lwjgl_util"+osS+"2.9.1"+osS+"lwjgl_util-2.9.1.jar",
     };
+    */
     
+    private final String[] PATH_TO_LIBRARY = {
+        //Minecraft
+        GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4.jar",
+        //Launchwrapper
+        GAME_DIRECTORY+osS+"libraries"+osS+"launchwrapper"+osS+"launchwrapper-1.8.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"launchwrapper"+osS+"asm-all-4.1.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"launchwrapper"+osS+"lzma-0.0.1.jar",
+        //Forge libs
+        GAME_DIRECTORY+osS+"libraries"+osS+"forge"+osS+"minecraftforge-9.11.1.965.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"forge"+osS+"scala-library-2.10.2.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"forge"+osS+"scala-compiler-2.10.2.jar",
+        //Minecraft libs
+        GAME_DIRECTORY+osS+"libraries"+osS+"argo-2.25_fixed.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"bcprov-jdk15on-1.47.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"codecjorbis-20101023.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"codecwav-20101023.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"commons-io-2.4.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"commons-lang3-3.1.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"gson-2.2.2.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"guava-14.0.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-2.0.5.jar",        
+        GAME_DIRECTORY+osS+"libraries"+osS+"jopt-simple-4.5.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"jutils-1.0.0.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"libraryjavasound-20101123.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"librarylwjglopenal-20100824.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"soundsystem-20120107.jar", 
+    };
+        
     private final String[] PATH_TO_LIBRARY_WIN = {
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"lwjgl"+osS+"lwjgl"+osS+"lwjgl-platform"+osS+"2.9.1"+osS+"lwjgl-platform-2.9.1-natives-windows.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"java"+osS+"jinput"+osS+"jinput-platform"+osS+"2.0.5"+osS+"jinput-platform-2.0.5-natives-windows.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.1.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.1.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.1-natives-windows.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-windows.jar",
     };
     
     private final String[] PATH_TO_LIBRARY_LINUX = {
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"lwjgl"+osS+"lwjgl"+osS+"lwjgl-platform"+osS+"2.9.1"+osS+"lwjgl-platform-2.9.1-natives-linux.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"java"+osS+"jinput"+osS+"jinput-platform"+osS+"2.0.5"+osS+"jinput-platform-2.0.5-natives-linux.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.0.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.0.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.0-natives-linux.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-linux.jar",
     };
     
     private final String[] PATH_TO_LIBRARY_MAC = {
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"lwjgl"+osS+"lwjgl"+osS+"lwjgl-platform"+osS+"2.9.1"+osS+"lwjgl-platform-2.9.1-natives-osx.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"java"+osS+"jinput"+osS+"jinput-platform"+osS+"2.0.5"+osS+"jinput-platform-2.0.5-natives-osx.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.0.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.0.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.0-natives-osx.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-osx.jar",
     };
     
     //user
@@ -112,14 +150,11 @@ public class Minecraft{
     public void run(){
         List<String> cmd = createCMD();
         //TEST
-//        for(int i=0;i<cmd.size();i++){
-//            System.out.println(cmd.get(i));
-//        }
+        for(int i=0;i<cmd.size();i++){
+            System.out.println(cmd.get(i));
+        }
         
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        //Map<String, String> env = pb.environment();
-        //env.clear();
-        //env.put("APPDATA", PACK_DIRECTORY); //no need in 1.6.4
         pb.directory(new File(PACK_DIRECTORY));
         pb.redirectErrorStream(true);
         File log = Main.log.getLogFile("Minecraft");
@@ -127,7 +162,6 @@ public class Minecraft{
         Process p;
         try {
             p = pb.start();
-            //env.remove("APPDATA");
             assert pb.redirectInput() == Redirect.PIPE;
             assert pb.redirectOutput().file() == log;
             assert p.getInputStream().read() == -1;
@@ -141,32 +175,64 @@ public class Minecraft{
     public List createCMD(){
         //http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/1.6.4.json
         ArrayList<String> cmd = new ArrayList<>();
+        OSValidator OSV = new OSValidator(System.getProperty("os.name"));
+        
         cmd.add( PATH_TO_JAVA );
-        cmd.add( JAVA_OPT );
+        //cmd.add( JAVA_OPT );
         cmd.add( JAVA_PARAMETERS[0] );
         cmd.add( JAVA_PARAMETERS[1] );
-        cmd.add( "-Djava.library.path="+PATH_TO_NATIVES );
+        
+        if(OSV.check().equalsIgnoreCase("windows")){
+            cmd.add( "-Djava.library.path="+PATH_TO_NATIVES_WIN );
+        }else if(OSV.check().equalsIgnoreCase("linux")){
+            cmd.add( "-Djava.library.path="+PATH_TO_NATIVES_LINUX );
+        }else if(OSV.check().equalsIgnoreCase("mac")){
+            cmd.add( "-Djava.library.path="+PATH_TO_NATIVES_MAC );
+        }
+
         cmd.add( "-XX:MaxPermSize=256m" );
         if(JVMflag){
             String[] args = JVMargs.trim().split(" ");
             cmd.addAll(Arrays.asList(args));            
         }
+        
+        String cpSeparator=";";
+        if(OSV.check().equalsIgnoreCase("windows")){
+            cpSeparator = ";";
+        }else if(OSV.check().equalsIgnoreCase("linux")){
+            cpSeparator = ":";
+        }else if(OSV.check().equalsIgnoreCase("mac")){
+            cpSeparator = ":";
+        }
+        
+        //cp
         cmd.add( "-cp" );
         String lib = "";
         for(int i=0;i<PATH_TO_LIBRARY.length;i++){
             lib+=PATH_TO_LIBRARY[i];
-            lib+=";";
+            lib+=cpSeparator;
         }
-        OSValidator OSV = new OSValidator(System.getProperty("os.name"));
+        
         if(OSV.check().equalsIgnoreCase("windows")){
             for(int i=0;i<PATH_TO_LIBRARY_WIN.length;i++){
                 lib+=PATH_TO_LIBRARY_WIN[i];
-                lib+=";";
+                if(i<PATH_TO_LIBRARY_WIN.length-1){
+                    lib+=cpSeparator;
+                }
             }
         }else if(OSV.check().equalsIgnoreCase("linux")){
             for(int i=0;i<PATH_TO_LIBRARY_LINUX.length;i++){
-                lib+=PATH_TO_LIBRARY_WIN[i];
-                lib+=";";
+                lib+=PATH_TO_LIBRARY_LINUX[i];
+                if(i<PATH_TO_LIBRARY_LINUX.length-1){
+                    lib+=cpSeparator;
+                }
+            }
+        }else if(OSV.check().equalsIgnoreCase("mac")){
+            for(int i=0;i<PATH_TO_LIBRARY_MAC.length;i++){
+                lib+=PATH_TO_LIBRARY_MAC[i];
+                if(i<PATH_TO_LIBRARY_MAC.length-1){
+                    lib+=cpSeparator;
+                }
             }
         }
         

@@ -7,6 +7,16 @@ Minecraft (1.6.4) Launcher dla Uncrafted.pl
 Changelog:
 ----------
 
+**1.3** build 01
+
+* Działanie na Linux
+* Działanie na MAC
+* Czcionka Minecraftia
+* slidebar w opcjach przydziału pamięci
+* splash w build.xml
+* enterowalny login
+* dostępne na Java 8
+
 **1.2** build 07
 
 * Zmiana spash arta

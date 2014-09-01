@@ -71,14 +71,17 @@
     nbproject/build-impl.xml file. 
 
     -->
+
 	<target name="-post-jar">
-		<jar jarfile="dist/ShooterPack_v1.2.jar">
+		<jar jarfile="dist/UncraftedPack_v1.3.jar">
 			<zipfileset src="${dist.jar}" excludes="META-INF/*" />
 			<zipfileset src="lib/AbsoluteLayout.jar" excludes="META-INF/*" />
 			<zipfileset src="lib/org.json.jar" excludes="META-INF/*" />
 			<manifest>
 				<attribute name="Main-Class" value="org.bitbucket.cptshooter.shooterpack.Main"/>
+				<attribute name="SplashScreen-Image" value="org/bitbucket/cptshooter/shooterpack/images/splash.png"/>
 			</manifest>
 		</jar>
 	</target>
+
 </project>
