@@ -30,7 +30,7 @@ import javax.swing.JDialog;
 public class Main extends javax.swing.JFrame {
 
     public static final String VERSION = "1.3";
-    public static final String BUILD = "01";
+    public static final String BUILD = "02";
     
     public static String packDestination;
     public static String osSeparator;
@@ -184,7 +184,8 @@ public class Main extends javax.swing.JFrame {
     }
          
     private void fontInit(){
-        boolean flag = true;         
+        boolean flag = true;
+        checkDest(packDestination);
         String font_path = packDestination+osSeparator+"Minecraftia.ttf";
         if(!new File(font_path).exists()){
             downloadFont(font_path);
