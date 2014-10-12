@@ -7,6 +7,13 @@ Minecraft (1.6.4) Launcher dla Uncrafted.pl
 Changelog:
 ----------
 
+**2.0** build 01
+
+* Pobieranie po plikach
+* non-premium
+* nowe grafiki
+* v1.7.10
+
 **1.3** build 01
 
 * Działanie na Linux

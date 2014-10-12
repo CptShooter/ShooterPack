@@ -35,83 +35,79 @@ public class Minecraft{
     private final String JAVA_OPT = "-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump";
     private String[] JAVA_PARAMETERS = new String[2];
     
-    private final String MC_VERSION = "1.6.4";
+    private final String MC_VERSION = "1.7.10";
     
-    //minecraft 1.6.4 new files
-    
-//    private final String MINECRAFT_MAIN_CLASS = "net.minecraft.client.main.Main";
+    //minecraft
     private final String MINECRAFT_MAIN_CLASS = "net.minecraft.launchwrapper.Launch";
     private final String GAME_DIRECTORY = PACK_DIRECTORY;
     private final String ASSETS_DIRECTORY = GAME_DIRECTORY+osS+"assets";
     
-    private final String PATH_TO_NATIVES_WIN = GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4-natives-win";
-    private final String PATH_TO_NATIVES_LINUX = GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4-natives-linux";
-    private final String PATH_TO_NATIVES_MAC = GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4-natives-osx";
-    /*
+    private final String PATH_TO_NATIVES_WIN = GAME_DIRECTORY+osS+"versions"+osS+MC_VERSION+osS+MC_VERSION+"-natives-windows";
+    private final String PATH_TO_NATIVES_LINUX = GAME_DIRECTORY+osS+"versions"+osS+MC_VERSION+osS+MC_VERSION+"-natives-linux";
+    private final String PATH_TO_NATIVES_MAC = GAME_DIRECTORY+osS+"versions"+osS+MC_VERSION+osS+MC_VERSION+"-natives-osx";
+      
     private final String[] PATH_TO_LIBRARY = {
         //Minecraft
-        GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4.jar",
+        GAME_DIRECTORY+osS+"versions"+osS+MC_VERSION+osS+MC_VERSION+".jar",
         //Launchwrapper
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"minecraft"+osS+"launchwrapper"+osS+"1.8"+osS+"launchwrapper-1.8.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"ow2"+osS+"asm"+osS+"asm-all"+osS+"4.1"+osS+"asm-all-4.1.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"lzma"+osS+"lzma"+osS+"0.0.1"+osS+"lzma-0.0.1.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"launchwrapper-1.11.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"asm-all-5.0.3.jar", //
+        GAME_DIRECTORY+osS+"libraries"+osS+"lzma-0.0.1.jar",//
         //Forge libs
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"minecraftforge"+osS+"minecraftforge"+osS+"9.11.1.965"+osS+"minecraftforge-9.11.1.965.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"scala-lang"+osS+"scala-library"+osS+"2.10.2"+osS+"scala-library-2.10.2.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"scala-lang"+osS+"scala-compiler"+osS+"2.10.2"+osS+"scala-compiler-2.10.2.jar",
-        //Minecraft libs     
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"sf"+osS+"jopt-simple"+osS+"jopt-simple"+osS+"4.5"+osS+"jopt-simple-4.5.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"com"+osS+"paulscode"+osS+"codecjorbis"+osS+"20101023"+osS+"codecjorbis-20101023.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"com"+osS+"paulscode"+osS+"codecwav"+osS+"20101023"+osS+"codecwav-20101023.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"com"+osS+"paulscode"+osS+"libraryjavasound"+osS+"20101123"+osS+"libraryjavasound-20101123.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"com"+osS+"paulscode"+osS+"librarylwjglopenal"+osS+"20100824"+osS+"librarylwjglopenal-20100824.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"com"+osS+"paulscode"+osS+"soundsystem"+osS+"20120107"+osS+"soundsystem-20120107.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"argo"+osS+"argo"+osS+"2.25_fixed"+osS+"argo-2.25_fixed.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"bouncycastle"+osS+"bcprov-jdk15on"+osS+"1.47"+osS+"bcprov-jdk15on-1.47.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"com"+osS+"google"+osS+"guava"+osS+"guava"+osS+"14.0"+osS+"guava-14.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"apache"+osS+"commons"+osS+"commons-lang3"+osS+"3.1"+osS+"commons-lang3-3.1.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"commons-io"+osS+"commons-io"+osS+"2.4"+osS+"commons-io-2.4.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"java"+osS+"jinput"+osS+"jinput"+osS+"2.0.5"+osS+"jinput-2.0.5.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"net"+osS+"java"+osS+"jutils"+osS+"jutils"+osS+"1.0.0"+osS+"jutils-1.0.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"com"+osS+"google"+osS+"code"+osS+"gson"+osS+"gson"+osS+"2.2.2"+osS+"gson-2.2.2.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"lwjgl"+osS+"lwjgl"+osS+"lwjgl"+osS+"2.9.1"+osS+"lwjgl-2.9.1.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"org"+osS+"lwjgl"+osS+"lwjgl"+osS+"lwjgl_util"+osS+"2.9.1"+osS+"lwjgl_util-2.9.1.jar",
-    };
-    */
-    
-    private final String[] PATH_TO_LIBRARY = {
-        //Minecraft
-        GAME_DIRECTORY+osS+"versions"+osS+"1.6.4"+osS+"1.6.4.jar",
-        //Launchwrapper
-        GAME_DIRECTORY+osS+"libraries"+osS+"launchwrapper"+osS+"launchwrapper-1.8.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"launchwrapper"+osS+"asm-all-4.1.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"launchwrapper"+osS+"lzma-0.0.1.jar",
-        //Forge libs
-        GAME_DIRECTORY+osS+"libraries"+osS+"forge"+osS+"minecraftforge-9.11.1.965.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"forge"+osS+"scala-library-2.10.2.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"forge"+osS+"scala-compiler-2.10.2.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"forge-1.7.10-10.13.0.1208.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"akka-actor_2.11-2.3.3.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"config-1.2.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-actors-migration_2.11-1.1.0.jar", //
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-compiler-2.11.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-continuations-library_2.11-1.0.2.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-continuations-plugin_2.11.1-1.0.2.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-library-2.11.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-parser-combinators_2.11-1.0.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-reflect-2.11.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-swing_2.11-1.0.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"scala-xml_2.11-1.0.2.jar",//
+        
         //Minecraft libs
-        GAME_DIRECTORY+osS+"libraries"+osS+"argo-2.25_fixed.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"bcprov-jdk15on-1.47.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"codecjorbis-20101023.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"codecwav-20101023.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"commons-io-2.4.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"commons-lang3-3.1.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"gson-2.2.2.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"guava-14.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-2.0.5.jar",        
-        GAME_DIRECTORY+osS+"libraries"+osS+"jopt-simple-4.5.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"jutils-1.0.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"libraryjavasound-20101123.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"librarylwjglopenal-20100824.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"soundsystem-20120107.jar", 
+        //GAME_DIRECTORY+osS+"libraries"+osS+"argo-2.25_fixed.jar",
+        //GAME_DIRECTORY+osS+"libraries"+osS+"bcprov-jdk15on-1.47.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"codecjorbis-20101023.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"codecwav-20101023.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"commons-io-2.4.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"commons-lang3-3.2.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"gson-2.2.4.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"guava-16.0.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-2.0.5.jar",//   
+        GAME_DIRECTORY+osS+"libraries"+osS+"jopt-simple-4.5.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"jutils-1.0.0.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"libraryjavasound-20101123.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"librarylwjglopenal-20100824.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"soundsystem-20120107.jar", //
+        
+        //Minecraft 1.7+
+        GAME_DIRECTORY+osS+"libraries"+osS+"realms-1.3.5.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"commons-compress-1.8.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"httpclient-4.3.3.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"commons-logging-1.1.3.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"httpcore-4.3.2.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"vecmath-1.3.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"trove4j-3.0.3.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"icu4j-core-mojang-51.2.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"netty-all-4.0.10.Final.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"commons-codec-1.9.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"authlib-1.5.16.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"log4j-api-2.0-beta9.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"log4j-core-2.0-beta9.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"twitch-5.16.jar",//
+        
     };
         
     private final String[] PATH_TO_LIBRARY_WIN = {
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.1.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.1.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.1-natives-windows.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-windows.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.1-natives-windows.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-windows.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"twitch-external-platform-4.5-natives-windows-64.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"twitch-platform-5.16-natives-windows-64.jar",//
     };
     
     private final String[] PATH_TO_LIBRARY_LINUX = {
@@ -130,11 +126,19 @@ public class Minecraft{
     
     //user
     private String USER;
-    private String ACCESS_TOKEN;    
+    private String ACCESS_TOKEN;   
+    private String USER_ID;
             
     public Minecraft(String[] user){
         USER = user[0];
         ACCESS_TOKEN = user[1];
+        USER_ID = user[2];
+    }
+    
+    public Minecraft(String user){
+        USER = user;
+        ACCESS_TOKEN = null;
+        USER_ID = null;
     }
     
     public void setOptions(Options options){
@@ -178,7 +182,10 @@ public class Minecraft{
         OSValidator OSV = new OSValidator(System.getProperty("os.name"));
         
         cmd.add( PATH_TO_JAVA );
-        //cmd.add( JAVA_OPT );
+        cmd.add( JAVA_OPT );
+        cmd.add("-XX:+UseConcMarkSweepGC");
+        cmd.add("-XX:+CMSIncrementalMode");
+        cmd.add("-XX:-UseAdaptiveSizePolicy");
         cmd.add( JAVA_PARAMETERS[0] );
         cmd.add( JAVA_PARAMETERS[1] );
         
@@ -239,10 +246,14 @@ public class Minecraft{
         cmd.add( lib );
         cmd.add( MINECRAFT_MAIN_CLASS );
         cmd.add( "--username="+USER );
-        cmd.add( "--session="+ACCESS_TOKEN );
         cmd.add( "--version="+MC_VERSION );
         cmd.add( "--gameDir="+GAME_DIRECTORY );
         cmd.add( "--assetsDir="+ASSETS_DIRECTORY );
+        cmd.add( "--assetIndex="+MC_VERSION );
+        cmd.add( "--uuid="+USER_ID );
+        cmd.add( "--accessToken="+ACCESS_TOKEN );
+        cmd.add( "--userProperties="+"{}" );
+        cmd.add( "--userType="+"legacy" );
         cmd.add( "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker" );
 //      cmd.add( "--server="+SERVER_IP );
 //      cmd.add( "--port="+SERVER_PORT );

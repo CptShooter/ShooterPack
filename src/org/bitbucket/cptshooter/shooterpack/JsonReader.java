@@ -40,39 +40,21 @@ public class JsonReader {
         }
         return sb.toString();
     }
-
-    public String readChecksumJsonFromUrl(String url){
-        try (InputStream is = new URL(url).openStream()) {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            String jsonText = readAll(rd);
-            JSONObject json = new JSONObject(jsonText);
-            return json.getString("SHA-1");
-        } catch (IOException | JSONException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            Main.log.sendLog(ex, this.getClass().getSimpleName());
-            Main.showStatusError();
-            Main.setTextLog("rChecksumURL JSON error! - contact with admin."); 
-            return null;
-        }
-    }
     
-    public String[] readInfoJsonFromUrl(String url){
+    public String[] readVersionJsonFromUrl(String url){
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
-            String[] info = new String[5];
-            info[0] = json.getString("server");
-            info[1] = json.getString("pack");
-            info[2] = json.getString("checksum");
-            info[3] = json.getString("version");
-            info[4] = json.getString("build");
+            String[] info = new String[2];
+            info[0] = json.getString("version");
+            info[1] = json.getString("build");
             return info;
         } catch (IOException | JSONException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             Main.log.sendLog(ex, this.getClass().getSimpleName());
             Main.showStatusError();
-            Main.setTextLog("rInfoURL JSON error! - contact with admin."); 
+            Main.setTextLog("rVersionURL JSON error! - contact with admin."); 
             return null;
         }
     }
@@ -84,7 +66,20 @@ public class JsonReader {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             Main.log.sendLog(ex, this.getClass().getSimpleName());
             Main.showStatusError();
-            Main.setTextLog("rJSON File error! - contact with admin."); 
+            Main.setTextLog("rJSONfFILE File error! - contact with admin."); 
+            return null;
+        }
+    }
+    
+    public String readJsonFromUrl(String url){
+        try (InputStream is = new URL(url).openStream()) {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            return readAll(rd);
+        } catch (IOException ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            Main.log.sendLog(ex, this.getClass().getSimpleName());
+            Main.showStatusError();
+            Main.setTextLog("rJSONfURL JSON error! - contact with admin."); 
             return null;
         }
     }

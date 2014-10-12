@@ -37,7 +37,7 @@ public class User {
      * @return 
      */
     public String[] getAuthForMC(){
-        String[] auth = {DISPLAY_NAME, ACCESS_TOKEN};
+        String[] auth = {DISPLAY_NAME, ACCESS_TOKEN, USER_ID};
         return auth;
     }
     

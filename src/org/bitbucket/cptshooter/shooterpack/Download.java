@@ -1,10 +1,13 @@
 package org.bitbucket.cptshooter.shooterpack;
 
-import java.io.*;
-import java.net.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,314 +15,109 @@ import java.util.logging.Logger;
  *
  * @author CptShooter
  */
-class Download extends Observable implements Runnable {
+class Download  extends Observable  implements Runnable {
 
     // Max size of download buffer.
     private static final int MAX_BUFFER_SIZE = (int)Math.pow(2,11);
 
-    // These are the status names.
-    public static final String STATUSES[] = {"Downloading",
-    "Paused", "Complete", "Cancelled", "Error", "Unzipping", "Ready", "Checking for update"};
-
-    // These are the status codes.
-    public static final int DOWNLOADING = 0;
-    public static final int PAUSED = 1;
-    public static final int COMPLETE = 2;
-    public static final int CANCELLED = 3;
-    public static final int ERROR = 4;
-    public static final int UNZIPPING = 5;
-    public static final int READY = 6;
-    public static final int CHECKING = 7;
-
-    private String server; //download server
-    private String packLink; //link to pack
-    private String checksumLink; //link to checksum
-    private URL url; // download URL
-    private int size; // size of download in bytes
-    private int downloaded; // number of bytes downloaded
-    private int status; // current status of download
+    private String server = "http://uncrafted.cptshooter.pl/"; //download server
     private String destination = Main.packDestination;
-    
-    //Checksum
-    MessageDigest md;
-    
-    //separator
     private String osS = Main.osSeparator;
+    private File outdir = new File(destination);
+    private int nfiles;
+    private int dfiles;
     
+    private ArrayList<ServerFileInfo> filesD;
+            
     // Constructor for Download.
-    public Download(String[] links){
-        this.server         = links[0];
-        this.packLink       = links[1];
-        this.checksumLink   = links[2];
-        try {
-            url = new URL(server+packLink);
-            md = MessageDigest.getInstance("SHA1");
-        } catch (MalformedURLException | NoSuchAlgorithmException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            Main.log.sendLog(ex, this.getClass().getSimpleName());
-            Main.showStatusError();
-            Main.setTextLog("Download error! - contact with admin.");            
-            Main.setDownloadFlag(false);
-        }
-        size = -1;
-        downloaded = 0;
-        status = DOWNLOADING;
-
+    public Download(){
         Main.checkDest(destination);
     }
-
-    // Get this download's URL.
-    public String getUrl() {
-        return url.toString();
-    }
-
-    // Get this download's size.
-    public int getSize() {
-        return size;
+    
+    public int getNFiles(){
+        return nfiles;
     }
     
-    // Get this download's destination.
-    public String getDestination(){
-        return destination;
-    }
-
-    // Get this download's progress.
-    public int getProgress() {
-        double progress = ((double)downloaded / (double)size) * 100.00;
-        return (int) progress;
-        
-    }
-
-    // Get this download's status.
-    public int getStatus() {
-        return status;
-    }
-
-    // Get this download's status string.
-    public String getStatusS(){
-        return STATUSES[status];
-    }
-
-    // Pause this download.
-    public void pause() {
-        status = PAUSED;
-        stateChanged();
-    }
-
-    // Resume this download.
-    public void resume() {
-        status = DOWNLOADING;
-        stateChanged();
-        start();
-    }
-
-    // Cancel this download.
-    public void cancel() {
-        status = CANCELLED;
-        stateChanged();
-    }
-
-    // Mark this download as having an error.
-    public void error() {
-        status = ERROR;
-        stateChanged();
+    public int getDFiles(){
+        return dfiles;
     }
     
-    //Mark this download as unzipping.
-    public void unzipping() {
-        status = UNZIPPING;
-        stateChanged();
+    public double getPercentage(){
+        return (dfiles*100)/nfiles;
     }
     
-    //Mark this download as ready to play.
-    public void ready() {
-        status = READY;
-        stateChanged();
+    public void setDownloadFiles(ArrayList<ServerFileInfo> filesD){
+        this.filesD = filesD;
+        nfiles = filesD.size();
     }
-        
-    public void begin(){
-        String clientSide = loadCheckSum();
-        String serverSide = getCheckSum();
-        if(clientSide==null){
-            start();
-        }else if(serverSide.equalsIgnoreCase(clientSide)){
-            ready();
-        }else{
-            start();
-        }
+    
+    private static void mkdirs(File outdir, String path){
+        File d = new File(outdir, path);
+        if( !d.exists() )
+            d.mkdirs();
     }
 
-    // Start or resume downloading.
-    private void start() {
+    private String linkDirpart(String name){
+        int f = name.lastIndexOf( "public_html" );
+        return name.substring( f+12 );
+    }
+    
+    private String foldersDirpart(String name){
+        int s = name.lastIndexOf( "/" );
+        int f = name.lastIndexOf( "public_html" );
+        return name.substring( f+16, s );
+    }
+    
+    private String fileDirpart(String name){
+        int f = name.lastIndexOf( "public_html" );
+        return name.substring( f+16 );
+    }
+    
+    public void start(){
         Thread thread = new Thread(this);
         thread.start();
     }
 
-    // Get file name portion of URL.
-    private String getFileName(URL url) {
-        String fileName = url.getFile();
-        return fileName.substring(fileName.lastIndexOf('/') + 1);
-    }
-    
-    private String loadCheckSum(){
-        File file = new File(destination+osS+"checksum");
-        if(file.isFile()){
-            String sCurrentLine;
-            try (BufferedReader br = new BufferedReader(new FileReader(destination+osS+"checksum")))
-            {
-                sCurrentLine = br.readLine();                
-                return sCurrentLine;
-            } catch (IOException ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                Main.log.sendLog(ex, this.getClass().getSimpleName());
-                Main.showStatusError();
-                Main.setTextLog("Checksum load error! - contact with admin.");  
-                return null;
-            }
-        }else{
-            return null;
+    @Override
+    public void run(){
+        for(int i=0; i<filesD.size(); i++){
+            String linkPart = linkDirpart(filesD.get(i).getPath());
+            String foldersPart = foldersDirpart(filesD.get(i).getPath());
+            foldersPart = foldersPart.replace("/", osS);
+            String filePart = fileDirpart(filesD.get(i).getPath());
+            filePart = filePart.replace("/", osS);
+            downloadFile(linkPart,foldersPart,filePart);
+            dfiles++;
+            stateChanged();
         }
     }
     
-    public void saveCheckSum(){
-        String checksum = checkSumToString();
-        File file = new File(destination+osS+"checksum");
-        try (FileOutputStream fop = new FileOutputStream(file)) {
-            if (!file.exists()) {
-                    file.createNewFile();
+    public void downloadFile(String linkPart, String foldersPart, String filePart){
+        if( foldersPart != null )
+            mkdirs(outdir,foldersPart);
+        
+        //System.out.println(destination+filePart);
+        
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new URL(server+linkPart).openStream();  
+            outputStream = new FileOutputStream(new File(destination+filePart));
+            int read = 0;
+            byte[] bytes = new byte[MAX_BUFFER_SIZE];
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
             }
-            byte[] contentInBytes = checksum.getBytes();
-
-            fop.write(contentInBytes);
-            fop.flush();
-            fop.close();
-	} catch (IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             Main.log.sendLog(ex, this.getClass().getSimpleName());
             Main.showStatusError();
-            Main.setTextLog("Checksum save error! - contact with admin.");  
-	}
-    }
-    
-    private String checkSumToString(){
-        byte[] mdbytes = md.digest();
-        //convert the byte to hex format
-        StringBuilder sb = new StringBuilder("");
-        for (int i = 0; i < mdbytes.length; i++) {
-            sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
-        }
-        return sb.toString();       
-    }
-    
-    private String getCheckSum(){
-        JsonReader jr = new JsonReader();
-        return jr.readChecksumJsonFromUrl(server+checksumLink);
-    }
-
-    // Download file.
-    @Override
-    public void run() {
-        RandomAccessFile file = null;
-        InputStream stream = null;
-
-        try {
-            // Open connection to URL.
-            HttpURLConnection connection =
-                    (HttpURLConnection) url.openConnection();
-
-            // Specify what portion of file to download.
-            connection.setRequestProperty("Range",
-                    "bytes=" + downloaded + "-");
-
-            // Connect to server.
-            connection.connect();
-
-            // Make sure response code is in the 200 range.
-            if (connection.getResponseCode() / 100 != 2) {
-                error();
-            }
-
-            // Check for valid content length.
-            int contentLength = connection.getContentLength();
-            if (contentLength < 1) {
-                error();
-            }
-
-      /* Set the size for this download if it
-         hasn't been already set. */
-            if (size == -1) {
-                size = contentLength;
-                stateChanged();
-            }
-
-            // Open file and seek to the end of it.
-            file = new RandomAccessFile(getFileName(url), "rw");
-            file.seek(downloaded);
-           
-            stream = connection.getInputStream();
-            while (status == DOWNLOADING) {
-        /* Size buffer according to how much of the
-           file is left to download. */
-                byte buffer[];
-                if (size - downloaded > MAX_BUFFER_SIZE) {
-                    buffer = new byte[MAX_BUFFER_SIZE];
-                } else {
-                    buffer = new byte[size - downloaded];
-                }
-
-                // Read from server into buffer.
-                int read = stream.read(buffer);
-                if (read == -1)
-                    break;
-
-                // Write buffer to file.
-                file.write(buffer, 0, read);
-                // Update SHA-1
-                md.update(buffer, 0, read);
-                downloaded += read;
-                stateChanged();
-            }
-
-      /* Change status to complete if this point was
-         reached because downloading has finished. */
-            if (status == DOWNLOADING) {
-                status = COMPLETE;
-                stateChanged();
-            }       
-
-        } catch (Exception ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            Main.log.sendLog(ex, this.getClass().getSimpleName());
-            Main.setTextLog("Download error! - contact with admin.");  
-            error();
-        } finally {
-            // Close file.
-            if (file != null) {
-                try {
-                    file.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    Main.log.sendLog(ex, this.getClass().getSimpleName());
-                }
-            }
-
-            // Close connection to server.
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (Exception ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    Main.log.sendLog(ex, this.getClass().getSimpleName());
-                }
-            }        
+            Main.setTextLog("getServerFilesInfo error! - contact with admin.");   
         }
     }
-
-
-
-    // Notify observers that this download's status has changed.
+    
     private void stateChanged() {
         clearChanged();
         setChanged();
-    }  
+    }
 }
