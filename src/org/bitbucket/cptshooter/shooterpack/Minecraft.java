@@ -6,6 +6,7 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,7 +55,7 @@ public class Minecraft{
         GAME_DIRECTORY+osS+"libraries"+osS+"asm-all-5.0.3.jar", //
         GAME_DIRECTORY+osS+"libraries"+osS+"lzma-0.0.1.jar",//
         //Forge libs
-        GAME_DIRECTORY+osS+"libraries"+osS+"forge-1.7.10-10.13.0.1208.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"forge-1.7.10-10.13.2.1231.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"akka-actor_2.11-2.3.3.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"config-1.2.1.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"scala-actors-migration_2.11-1.1.0.jar", //
@@ -182,10 +183,10 @@ public class Minecraft{
         OSValidator OSV = new OSValidator(System.getProperty("os.name"));
         
         cmd.add( PATH_TO_JAVA );
-        cmd.add( JAVA_OPT );
-        cmd.add("-XX:+UseConcMarkSweepGC");
-        cmd.add("-XX:+CMSIncrementalMode");
-        cmd.add("-XX:-UseAdaptiveSizePolicy");
+        //cmd.add( JAVA_OPT );
+        //cmd.add("-XX:+UseConcMarkSweepGC");
+        //cmd.add("-XX:+CMSIncrementalMode");
+        //cmd.add("-XX:-UseAdaptiveSizePolicy");
         cmd.add( JAVA_PARAMETERS[0] );
         cmd.add( JAVA_PARAMETERS[1] );
         
@@ -196,8 +197,8 @@ public class Minecraft{
         }else if(OSV.check().equalsIgnoreCase("mac")){
             cmd.add( "-Djava.library.path="+PATH_TO_NATIVES_MAC );
         }
-
-        cmd.add( "-XX:MaxPermSize=256m" );
+        cmd.add( "-XX:PermSize=256m" );
+        cmd.add( "-XX:MaxPermSize=512m" );
         if(JVMflag){
             String[] args = JVMargs.trim().split(" ");
             cmd.addAll(Arrays.asList(args));            
@@ -250,10 +251,19 @@ public class Minecraft{
         cmd.add( "--gameDir="+GAME_DIRECTORY );
         cmd.add( "--assetsDir="+ASSETS_DIRECTORY );
         cmd.add( "--assetIndex="+MC_VERSION );
-        cmd.add( "--uuid="+USER_ID );
-        cmd.add( "--accessToken="+ACCESS_TOKEN );
+        String uuid = UUID.nameUUIDFromBytes(USER.getBytes()).toString();
+        if(USER_ID==null){
+            cmd.add( "--uuid="+uuid );
+        }else{
+            cmd.add( "--uuid="+USER_ID );  
+        }
+        if(ACCESS_TOKEN==null){
+            cmd.add( "--accessToken="+uuid );
+        }else{
+            cmd.add( "--accessToken="+ACCESS_TOKEN );
+        }
         cmd.add( "--userProperties="+"{}" );
-        cmd.add( "--userType="+"legacy" );
+        cmd.add( "--userType="+"mojang" );
         cmd.add( "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker" );
 //      cmd.add( "--server="+SERVER_IP );
 //      cmd.add( "--port="+SERVER_PORT );

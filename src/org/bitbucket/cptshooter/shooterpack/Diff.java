@@ -40,12 +40,15 @@ public class Diff {
     }
     
     private void setCIL(){
+        ClientIgnoreList.add("Minecraftia.ttf");
         ClientIgnoreList.add("Minecrafter.ttf");
         ClientIgnoreList.add("options.json");
         ClientIgnoreList.add("user.json");
         ClientIgnoreList.add("ignorelist");
         ClientIgnoreList.add("folderignorelist");
         ClientIgnoreList.add("ignoreREADME");
+        ClientIgnoreList.add("options.txt");
+        ClientIgnoreList.add("servers.dat");
     }
     
     private void CFIshow(){
@@ -143,10 +146,29 @@ public class Diff {
         }
     }
     
+    //Downloads config files only once
+    private void addConfigToIgnoreDownload(){
+        String configFolder = "config";
+        boolean flag = false;
+        for(int i=0;i<filesC.size();i++){
+            if(filesC.get(i).getPath().contains(configFolder)){
+                flag = true;
+                break;
+            }
+        }
+        if(flag){
+            for(int i=0;i<filesS.size();i++){
+                if(filesS.get(i).getPath().contains(configFolder)){
+                    ServerIgnoreList.add(filesS.get(i).getName());
+                }
+            }
+        }
+    }
+    
     public void start(){
         //CFIshow();
         //SFIshow();
-        
+        addConfigToIgnoreDownload();
         boolean CSFmatch = false;
         for(int i=0;i<filesS.size();i++){
             String SFname = filesS.get(i).getName();
@@ -159,14 +181,10 @@ public class Diff {
                     if(CFname.equals(SFname)){
                         if(CFmd5.equalsIgnoreCase(SFmd5)){
                             CSFmatch = true;
-                            //System.out.println(SFname+"[OK]");
-                        }else{
-                            //System.out.println(SFname+"[MD5 incorrect]");
-                        }                    
+                        }                  
                     }                  
                 }
                 if(!CSFmatch){
-                    //System.out.println(SFname+"[Download]");
                     filesD.add(filesS.get(i));
                 }
             }

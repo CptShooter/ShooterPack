@@ -96,7 +96,7 @@ class Download  extends Observable  implements Runnable {
         if( foldersPart != null )
             mkdirs(outdir,foldersPart);
         
-        //System.out.println(destination+filePart);
+        Main.setTextLog(filePart);
         
         InputStream inputStream = null;
         OutputStream outputStream = null;

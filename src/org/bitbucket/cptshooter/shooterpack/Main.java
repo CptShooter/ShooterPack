@@ -33,7 +33,7 @@ import javax.swing.JDialog;
 public class Main extends javax.swing.JFrame {
 
     public static final String VERSION = "2.0";
-    public static final String BUILD = "01";
+    public static final String BUILD = "03";
     
     public static String packDestination;
     public static String osSeparator;
@@ -50,9 +50,11 @@ public class Main extends javax.swing.JFrame {
     
     String[] version;
     
+    private Thread getPackThread;
     private Thread checkThread;
     private boolean diffThread = true;
     private Thread downloadThread;
+    private boolean alreadyDownloaded = false;
     
     private static final String OS_name = System.getProperty("os.name");
     private static final String OS_version = System.getProperty("os.version");
@@ -62,7 +64,7 @@ public class Main extends javax.swing.JFrame {
     private static final int Java_arch = Integer.parseInt( System.getProperty("sun.arch.data.model") );
         
     Font launcherFont;
-    private String fontName = "Minecrafter.ttf";
+    private String fontName = "Minecraftia.ttf";
     
     public Main() {        
         initComponents();
@@ -109,6 +111,8 @@ public class Main extends javax.swing.JFrame {
         statusLabel.setVisible(false);
         welcomeLabel.setVisible(false);
         jTextFieldJVMargs.setEnabled(false);
+        titleText.setVisible(false);
+        autorText.setVisible(false);
         
         //init
         weblink = new WebLink();
@@ -166,12 +170,12 @@ public class Main extends javax.swing.JFrame {
                     loginButton.setVisible(false);
                     loginButton.setEnabled(false);
                     logoutButton.setVisible(true);
-                    jCheckBoxNonPremium.setVisible(false);
+                    jCheckNonPremium.setVisible(false);
                     statusLabel.setText("Login success!");
                     statusLabel.setVisible(true);
                     welcomeLabel.setText("Welcome "+user.getDisplayName()+"!");
                     welcomeLabel.setVisible(true);
-                    jCheckBoxRememberMe.setVisible(false);
+                    jCheckRememberMe.setVisible(false);
                     ImageIcon image = getFace(authentication.getLoggedUser().getDisplayName());
                     skinface.setIcon(image);
                     download();
@@ -219,16 +223,16 @@ public class Main extends javax.swing.JFrame {
             welcomeLabel.setFont(launcherFont);
             loginField.setFont(launcherFont);
             passField.setFont(launcherFont);
-            loginButton.setFont(launcherFont);
+            loginButton.setFont(launcherFont.deriveFont(Font.PLAIN, 32));
             logoutButton.setFont(launcherFont);
-            playButton.setFont(launcherFont);
-            jCheckBoxRememberMe.setFont(launcherFont);
-            jCheckBoxNonPremium.setFont(launcherFont);
+            playButton.setFont(launcherFont.deriveFont(Font.PLAIN, 32));
+            jCheckRememberMe.setFont(launcherFont);
+            jCheckNonPremium.setFont(launcherFont);
             jTabbedPane1.setFont(launcherFont);
             optionsSaveButton.setFont(launcherFont);
             setDefaultButton.setFont(launcherFont);
-            jCheckBoxLauncher.setFont(launcherFont);
-            jCheckBoxJVMargs.setFont(launcherFont);
+            jCheckLauncher.setFont(launcherFont);
+            jCheckJVMargs.setFont(launcherFont);
             jTextFieldJVMargs.setFont(launcherFont);
             jSliderMin.setFont(launcherFont.deriveFont(Font.PLAIN, 10));
             jSliderMax.setFont(launcherFont.deriveFont(Font.PLAIN, 10));
@@ -318,15 +322,15 @@ public class Main extends javax.swing.JFrame {
         forumButton = new javax.swing.JButton();
         tsButton = new javax.swing.JButton();
         statusLabel = new javax.swing.JLabel();
-        jCheckBoxRememberMe = new javax.swing.JCheckBox();
-        jCheckBoxNonPremium = new javax.swing.JCheckBox();
+        jCheckRememberMe = new javax.swing.JRadioButton();
+        jCheckNonPremium = new javax.swing.JRadioButton();
         skinface = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
         jPanelOpt = new javax.swing.JPanel();
         optionsSaveButton = new javax.swing.JButton();
         setDefaultButton = new javax.swing.JButton();
-        jCheckBoxLauncher = new javax.swing.JCheckBox();
-        jCheckBoxJVMargs = new javax.swing.JCheckBox();
+        jCheckLauncher = new javax.swing.JRadioButton();
+        jCheckJVMargs = new javax.swing.JRadioButton();
         jTextFieldJVMargs = new javax.swing.JTextField();
         jLabelMin = new javax.swing.JLabel();
         jSliderMin = new javax.swing.JSlider();
@@ -373,7 +377,7 @@ public class Main extends javax.swing.JFrame {
 
         welcomeLabel.setForeground(new java.awt.Color(255, 255, 255));
         welcomeLabel.setText("Status");
-        jPanelMain.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 470, 20));
+        jPanelMain.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 55, 470, 20));
 
         loginField.setBackground(new Color(0,0,0,0));
         loginField.setForeground(new java.awt.Color(255, 255, 255));
@@ -385,7 +389,7 @@ public class Main extends javax.swing.JFrame {
                 loginFieldMouseClicked(evt);
             }
         });
-        jPanelMain.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 460, 20));
+        jPanelMain.add(loginField, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 55, 460, 20));
 
         passField.setBackground(new Color(0,0,0,0));
         passField.setForeground(new java.awt.Color(255, 255, 255));
@@ -418,7 +422,7 @@ public class Main extends javax.swing.JFrame {
                 loginButtonActionPerformed(evt);
             }
         });
-        jPanelMain.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 270, 130, 50));
+        jPanelMain.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 270, 170, 50));
 
         logoutButton.setBackground(new Color(0,0,0,0));
         logoutButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -430,7 +434,7 @@ public class Main extends javax.swing.JFrame {
                 logoutButtonActionPerformed(evt);
             }
         });
-        jPanelMain.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 105, 140, 20));
+        jPanelMain.add(logoutButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 100, 140, 20));
 
         playButton.setBackground(new Color(0,0,0,0));
         playButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -442,7 +446,7 @@ public class Main extends javax.swing.JFrame {
                 playButtonActionPerformed(evt);
             }
         });
-        jPanelMain.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 270, 130, 50));
+        jPanelMain.add(playButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 270, 170, 50));
 
         wwwButton.setBackground(new Color(0,0,0,0));
         wwwButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -454,7 +458,7 @@ public class Main extends javax.swing.JFrame {
                 wwwButtonActionPerformed(evt);
             }
         });
-        jPanelMain.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 150, -1));
+        jPanelMain.add(wwwButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 295, 150, -1));
 
         forumButton.setBackground(new Color(0,0,0,0));
         forumButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -466,7 +470,7 @@ public class Main extends javax.swing.JFrame {
                 forumButtonActionPerformed(evt);
             }
         });
-        jPanelMain.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 300, 150, -1));
+        jPanelMain.add(forumButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 295, 150, -1));
 
         tsButton.setBackground(new Color(245,245,245,0));
         tsButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -478,37 +482,33 @@ public class Main extends javax.swing.JFrame {
                 tsButtonActionPerformed(evt);
             }
         });
-        jPanelMain.add(tsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 300, 160, -1));
+        jPanelMain.add(tsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 295, 160, -1));
 
         statusLabel.setForeground(new java.awt.Color(255, 255, 255));
         statusLabel.setText("Status");
-        jPanelMain.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 470, 20));
+        jPanelMain.add(statusLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 145, 470, 20));
 
-        jCheckBoxRememberMe.setBackground(new Color(0,0,0,0));
-        jCheckBoxRememberMe.setForeground(new java.awt.Color(255, 255, 255));
-        jCheckBoxRememberMe.setText("Remember me");
-        jCheckBoxRememberMe.setAlignmentY(0.0F);
-        jCheckBoxRememberMe.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jCheckBoxRememberMe.setFocusable(false);
-        jCheckBoxRememberMe.addActionListener(new java.awt.event.ActionListener() {
+        jCheckRememberMe.setBackground(new Color(0,0,0,0));
+        jCheckRememberMe.setForeground(new java.awt.Color(255, 255, 255));
+        jCheckRememberMe.setText("RememberMe");
+        jCheckRememberMe.setFocusable(false);
+        jCheckRememberMe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxRememberMeActionPerformed(evt);
+                jCheckRememberMeActionPerformed(evt);
             }
         });
-        jPanelMain.add(jCheckBoxRememberMe, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 20, 160, -1));
+        jPanelMain.add(jCheckRememberMe, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 20, 160, -1));
 
-        jCheckBoxNonPremium.setBackground(new Color(0,0,0,0));
-        jCheckBoxNonPremium.setForeground(new java.awt.Color(255, 255, 255));
-        jCheckBoxNonPremium.setText("NonPremium");
-        jCheckBoxNonPremium.setAlignmentY(0.0F);
-        jCheckBoxNonPremium.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jCheckBoxNonPremium.setFocusable(false);
-        jCheckBoxNonPremium.addActionListener(new java.awt.event.ActionListener() {
+        jCheckNonPremium.setBackground(new Color(0,0,0,0));
+        jCheckNonPremium.setForeground(new java.awt.Color(255, 255, 255));
+        jCheckNonPremium.setText("NonPremium");
+        jCheckNonPremium.setFocusable(false);
+        jCheckNonPremium.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxNonPremiumActionPerformed(evt);
+                jCheckNonPremiumActionPerformed(evt);
             }
         });
-        jPanelMain.add(jCheckBoxNonPremium, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 50, 160, -1));
+        jPanelMain.add(jCheckNonPremium, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 50, 160, -1));
         jPanelMain.add(skinface, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 50, 80, 80));
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/main1.png"))); // NOI18N
@@ -528,7 +528,7 @@ public class Main extends javax.swing.JFrame {
                 optionsSaveButtonActionPerformed(evt);
             }
         });
-        jPanelOpt.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(642, 303, 140, 30));
+        jPanelOpt.add(optionsSaveButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(642, 297, 140, 30));
 
         setDefaultButton.setBackground(new Color(0,0,0,0));
         setDefaultButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -540,29 +540,29 @@ public class Main extends javax.swing.JFrame {
                 setDefaultButtonActionPerformed(evt);
             }
         });
-        jPanelOpt.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 303, 150, 30));
+        jPanelOpt.add(setDefaultButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 297, 150, 30));
 
-        jCheckBoxLauncher.setBackground(new Color(0,0,0,0));
-        jCheckBoxLauncher.setForeground(new java.awt.Color(255, 255, 255));
-        jCheckBoxLauncher.setText("Keep launcher open");
-        jCheckBoxLauncher.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jCheckBoxLauncher.addActionListener(new java.awt.event.ActionListener() {
+        jCheckLauncher.setBackground(new Color(0,0,0,0));
+        jCheckLauncher.setForeground(new java.awt.Color(255, 255, 255));
+        jCheckLauncher.setText("Keep launcher open");
+        jCheckLauncher.setFocusable(false);
+        jCheckLauncher.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxLauncherActionPerformed(evt);
+                jCheckLauncherActionPerformed(evt);
             }
         });
-        jPanelOpt.add(jCheckBoxLauncher, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, 340, -1));
+        jPanelOpt.add(jCheckLauncher, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, 210, -1));
 
-        jCheckBoxJVMargs.setBackground(new Color(0,0,0,0));
-        jCheckBoxJVMargs.setForeground(new java.awt.Color(255, 255, 255));
-        jCheckBoxJVMargs.setText("JVM args:");
-        jCheckBoxJVMargs.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jCheckBoxJVMargs.addActionListener(new java.awt.event.ActionListener() {
+        jCheckJVMargs.setBackground(new Color(0,0,0,0));
+        jCheckJVMargs.setForeground(new java.awt.Color(255, 255, 255));
+        jCheckJVMargs.setText("JVM args:");
+        jCheckJVMargs.setFocusable(false);
+        jCheckJVMargs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxJVMargsActionPerformed(evt);
+                jCheckJVMargsActionPerformed(evt);
             }
         });
-        jPanelOpt.add(jCheckBoxJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 250, -1, -1));
+        jPanelOpt.add(jCheckJVMargs, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 245, 120, -1));
 
         jTextFieldJVMargs.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -584,6 +584,7 @@ public class Main extends javax.swing.JFrame {
         jSliderMin.setPaintLabels(true);
         jSliderMin.setPaintTicks(true);
         jSliderMin.setSnapToTicks(true);
+        jSliderMin.setFocusable(false);
         jSliderMin.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSliderMinStateChanged(evt);
@@ -593,6 +594,7 @@ public class Main extends javax.swing.JFrame {
 
         jTextFieldMin.setEditable(false);
         jTextFieldMin.setText(new Integer(jSliderMin.getValue()).toString());
+        jTextFieldMin.setFocusable(false);
         jPanelOpt.add(jTextFieldMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 50, 70, -1));
 
         jSliderMax.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
@@ -604,6 +606,7 @@ public class Main extends javax.swing.JFrame {
         jSliderMax.setPaintLabels(true);
         jSliderMax.setPaintTicks(true);
         jSliderMax.setSnapToTicks(true);
+        jSliderMax.setFocusable(false);
         jSliderMax.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSliderMaxStateChanged(evt);
@@ -613,6 +616,7 @@ public class Main extends javax.swing.JFrame {
 
         jTextFieldMax.setEditable(false);
         jTextFieldMax.setText(new Integer(jSliderMax.getValue()).toString());
+        jTextFieldMax.setFocusable(false);
         jPanelOpt.add(jTextFieldMax, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 130, 70, -1));
 
         jLabelMax.setForeground(new java.awt.Color(255, 255, 255));
@@ -678,7 +682,7 @@ public class Main extends javax.swing.JFrame {
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
         Minecraft minecraft;
-        if(jCheckBoxNonPremium.isSelected()){
+        if(jCheckNonPremium.isSelected()){
             String username = loginField.getText();
             minecraft = new Minecraft(username);
             setTextLog("Logged as: "+username+" - NonPremium");
@@ -698,15 +702,23 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        if(jCheckBoxNonPremium.isSelected()){
+        if(jCheckNonPremium.isSelected()){
             if(loginNP()){
                 checkRememberme();
-                download();
+                if(!alreadyDownloaded){
+                    download();
+                }else{
+                    readyToPlay();
+                }
             }
         }else{
             if(login()){
                 checkRememberme();
-                download();
+                if(!alreadyDownloaded){
+                    download();
+                }else{
+                    readyToPlay();
+                }
             }
         }
         changeBackground();     
@@ -743,8 +755,8 @@ public class Main extends javax.swing.JFrame {
         String max = new Integer(imax).toString();
         options.setMin(min);
         options.setMax(max);
-        options.setLauncher(jCheckBoxLauncher.isSelected());
-        options.setJVMflag(jCheckBoxJVMargs.isSelected());
+        options.setLauncher(jCheckLauncher.isSelected());
+        options.setJVMflag(jCheckJVMargs.isSelected());
         options.setJVMargs(jTextFieldJVMargs.getText());
         options.buildOptions();
         options.saveOptions();
@@ -757,29 +769,8 @@ public class Main extends javax.swing.JFrame {
         options.setDefaultOptions();
         jSliderMin.setValue(Integer.parseInt(options.getMin()));
         jSliderMax.setValue(Integer.parseInt(options.getMax()));
-        jCheckBoxLauncher.setSelected(false);
+        jCheckLauncher.setSelected(false);
     }//GEN-LAST:event_setDefaultButtonActionPerformed
-
-    private void jCheckBoxLauncherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxLauncherActionPerformed
-        optionsSaveButton.setVisible(true);
-        changeOptionsBackground(2);
-    }//GEN-LAST:event_jCheckBoxLauncherActionPerformed
-
-    private void jCheckBoxRememberMeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxRememberMeActionPerformed
-        boolean rememberme = jCheckBoxRememberMe.isSelected();
-        options.setRememberMe(rememberme);
-        options.buildOptions();
-        options.saveOptions();
-        refreshOptions();
-        optionsSaveButton.setVisible(false);
-        changeOptionsBackground(1);
-    }//GEN-LAST:event_jCheckBoxRememberMeActionPerformed
-
-    private void jCheckBoxJVMargsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxJVMargsActionPerformed
-        jTextFieldJVMargs.setEnabled(jCheckBoxJVMargs.isSelected());
-        optionsSaveButton.setVisible(true);
-        changeOptionsBackground(2);
-    }//GEN-LAST:event_jCheckBoxJVMargsActionPerformed
 
     private void jTextFieldJVMargsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldJVMargsFocusGained
         optionsSaveButton.setVisible(true);
@@ -810,19 +801,40 @@ public class Main extends javax.swing.JFrame {
         changeOptionsBackground(2);
     }//GEN-LAST:event_jSliderMaxStateChanged
 
-    private void jCheckBoxNonPremiumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxNonPremiumActionPerformed
-        if(jCheckBoxNonPremium.isSelected()){
-            jCheckBoxRememberMe.setSelected(false);
-            jCheckBoxRememberMe.setVisible(false);
+    private void jCheckRememberMeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckRememberMeActionPerformed
+        boolean rememberme = jCheckRememberMe.isSelected();
+        options.setRememberMe(rememberme);
+        options.buildOptions();
+        options.saveOptions();
+        refreshOptions();
+        optionsSaveButton.setVisible(false);
+        changeOptionsBackground(1);
+    }//GEN-LAST:event_jCheckRememberMeActionPerformed
+
+    private void jCheckNonPremiumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckNonPremiumActionPerformed
+        if(jCheckNonPremium.isSelected()){
+            jCheckRememberMe.setSelected(false);
+            jCheckRememberMe.setVisible(false);
             passField.setVisible(false);
         }else{
-            jCheckBoxRememberMe.setVisible(true);
+            jCheckRememberMe.setVisible(true);
             passField.setVisible(true);
         }
-    }//GEN-LAST:event_jCheckBoxNonPremiumActionPerformed
+    }//GEN-LAST:event_jCheckNonPremiumActionPerformed
+
+    private void jCheckLauncherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckLauncherActionPerformed
+        optionsSaveButton.setVisible(true);
+        changeOptionsBackground(2);
+    }//GEN-LAST:event_jCheckLauncherActionPerformed
+
+    private void jCheckJVMargsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckJVMargsActionPerformed
+        jTextFieldJVMargs.setEnabled(jCheckJVMargs.isSelected());
+        optionsSaveButton.setVisible(true);
+        changeOptionsBackground(2);
+    }//GEN-LAST:event_jCheckJVMargsActionPerformed
         
     private void checkRememberme(){
-        jCheckBoxRememberMe.setVisible(false);
+        jCheckRememberMe.setVisible(false);
         if(!options.getRememberMe()){
             File file = new File(packDestination+osSeparator+"user.json");
             file.delete();
@@ -832,9 +844,9 @@ public class Main extends javax.swing.JFrame {
     private void refreshOptions(){
         jSliderMin.setValue(Integer.parseInt(options.getMin()));
         jSliderMax.setValue(Integer.parseInt(options.getMax()));
-        jCheckBoxLauncher.setSelected(options.getLauncher());
-        jCheckBoxRememberMe.setSelected(options.getRememberMe());
-        jCheckBoxJVMargs.setSelected(options.getJVMflag());
+        jCheckLauncher.setSelected(options.getLauncher());
+        jCheckRememberMe.setSelected(options.getRememberMe());
+        jCheckJVMargs.setSelected(options.getJVMflag());
         jTextFieldJVMargs.setEnabled(options.getJVMflag());
         jTextFieldJVMargs.setText(options.getJVMargs());
     }
@@ -886,7 +898,7 @@ public class Main extends javax.swing.JFrame {
                loginButton.setVisible(false);
                loginButton.setEnabled(false);
                logoutButton.setVisible(true);
-               jCheckBoxNonPremium.setVisible(false);
+               jCheckNonPremium.setVisible(false);
                statusLabel.setText("Login success!");
                statusLabel.setVisible(true);
                welcomeLabel.setText("Welcome "+authentication.getLoggedUser().getDisplayName()+"!");
@@ -920,7 +932,7 @@ public class Main extends javax.swing.JFrame {
             loginButton.setVisible(false);
             loginButton.setEnabled(false);
             logoutButton.setVisible(true);
-            jCheckBoxNonPremium.setVisible(false);
+            jCheckNonPremium.setVisible(false);
             statusLabel.setText("Login success!");
             statusLabel.setVisible(true);
             welcomeLabel.setText("Welcome "+loginField.getText()+"!");
@@ -931,7 +943,7 @@ public class Main extends javax.swing.JFrame {
     }
     
     private void logout(){
-        if(jCheckBoxNonPremium.isSelected()){
+        if(jCheckNonPremium.isSelected()){
             loginField.setText("");
             passField.setText("");
             loginField.setVisible(true);
@@ -942,8 +954,8 @@ public class Main extends javax.swing.JFrame {
             welcomeLabel.setVisible(false);
             statusLabel.setText("Logout success!");
             statusLabel.setVisible(true);
-            jCheckBoxNonPremium.setVisible(true);
-            jCheckBoxRememberMe.setVisible(true);
+            jCheckNonPremium.setVisible(true);
+            jCheckRememberMe.setVisible(false);
             skinface.setIcon(null);
             setTextLog("Logout success!");
         }else{
@@ -959,8 +971,8 @@ public class Main extends javax.swing.JFrame {
                 welcomeLabel.setVisible(false);
                 statusLabel.setText("Logout success!");
                 statusLabel.setVisible(true);
-                jCheckBoxNonPremium.setVisible(true);
-                jCheckBoxRememberMe.setVisible(true);
+                jCheckNonPremium.setVisible(true);
+                jCheckRememberMe.setVisible(true);
                 skinface.setIcon(null);
                 setTextLog("Logout success!");
             }
@@ -971,7 +983,7 @@ public class Main extends javax.swing.JFrame {
         final AtomicBoolean running = new AtomicBoolean(false);
         running.set(!running.get());
         if (running.get()) {
-            new Thread() {
+            getPackThread = new Thread() {
                 @Override
                 public void run() {
                     while (running.get()) {
@@ -994,21 +1006,24 @@ public class Main extends javax.swing.JFrame {
                                 } catch (InterruptedException ex) {
                                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                                 }
-                                setTextLog("Ready");
-                                statusLabel.setText("Ready");
-                                playButton.setVisible(true);
-                                //System.out.println("rdy");
+                                alreadyDownloaded = true;
+                                readyToPlay();
                             }else{
-                                setTextLog("Ready");
-                                statusLabel.setText("Ready");
-                                playButton.setVisible(true);
-                                //System.out.println("rdy");
+                                alreadyDownloaded = true;
+                                readyToPlay();
                             }
                         }
                     }
                 }
-            }.start();
+            };
+            getPackThread.start();
         }
+    }
+    
+    private void readyToPlay(){
+        setTextLog("Ready");
+        statusLabel.setText("Ready");
+        playButton.setVisible(true);
     }
 
     private void checkFiles(){
@@ -1171,10 +1186,10 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel backgroundOpt;
     private static javax.swing.JProgressBar dProgressBar;
     private javax.swing.JButton forumButton;
-    private javax.swing.JCheckBox jCheckBoxJVMargs;
-    private javax.swing.JCheckBox jCheckBoxLauncher;
-    private javax.swing.JCheckBox jCheckBoxNonPremium;
-    private javax.swing.JCheckBox jCheckBoxRememberMe;
+    private javax.swing.JRadioButton jCheckJVMargs;
+    private javax.swing.JRadioButton jCheckLauncher;
+    private javax.swing.JRadioButton jCheckNonPremium;
+    private javax.swing.JRadioButton jCheckRememberMe;
     private javax.swing.JLabel jLabelMax;
     private javax.swing.JLabel jLabelMaxMB;
     private javax.swing.JLabel jLabelMin;

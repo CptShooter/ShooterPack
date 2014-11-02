@@ -41,6 +41,8 @@ public class Scan extends Observable  implements Runnable {
     private void setFIL(){
         FolderIgnoreList.add("logs");
         FolderIgnoreList.add("saves");
+        FolderIgnoreList.add("resourcepacks");
+        FolderIgnoreList.add("config");
     }
     
     public void getClientFilesInfo(){
@@ -104,7 +106,7 @@ public class Scan extends Observable  implements Runnable {
                 }
                 if(!flag){
                     listf(file.getAbsolutePath(), files);
-                }               
+                }              
             }
         }
     }
