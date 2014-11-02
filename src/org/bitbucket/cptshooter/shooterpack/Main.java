@@ -243,6 +243,8 @@ public class Main extends javax.swing.JFrame {
             jLabelMinMB.setFont(launcherFont);
             jLabelMaxMB.setFont(launcherFont);
             jTextAutors.setFont(launcherFont);
+            dProgressBar.setFont(launcherFont);
+            sProgressBar.setFont(launcherFont);
         }                
     }
     
