@@ -138,7 +138,7 @@ public class Scan extends Observable  implements Runnable {
     
     public void getServerFilesInfo(){
         JsonReader Json = new JsonReader();
-        String scan = Json.readJsonFromUrl("http://uncrafted.cptshooter.pl/pack/scan.json");
+        String scan = Json.readJsonFromUrl("http://mc.cptshooter.pl/pack/scan.json");
         try {
             JSONObject json = new JSONObject(scan);
             JSONArray names = json.names();

@@ -32,8 +32,9 @@ import javax.swing.JDialog;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "2.0";
-    public static final String BUILD = "03";
+    public static final String VERSION = "2.1";
+    public static final String BUILD = "01";
+    public static final String SERVER_NAME = "TechnicNation";
     
     public static String packDestination;
     public static String osSeparator;
@@ -69,32 +70,30 @@ public class Main extends javax.swing.JFrame {
     public Main() {        
         initComponents();
         //Layout init
-        //titleText.setText("<html><p align='center'>UnCrafted Launcher<br>by CptShooter</p></html>");
+        //titleText.setText("<html><p align='center'>TechnicNation Launcher<br>by CptShooter</p></html>");
         setTextLog("Launcher version: "+VERSION+" build "+BUILD);
         getVersion();
         checkVersion();
         jTextLog.setEditable(false);
-        jTextAutors.setEditable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int locationX = (dim.width-this.getSize().width)/2;
         int locationY = (dim.height-this.getSize().height)/2;
-        this.setLocation(locationX, locationY); 
-        setTextAutors();
+        this.setLocation(locationX, locationY);
         this.getRootPane().setDefaultButton(loginButton);
          
         //OS
         OSValidator OSV = new OSValidator(OS_name);
         if(OSV.check().equalsIgnoreCase("windows")){
             osSeparator = "\\";
-            packDestination = System.getenv("APPDATA")+osSeparator+".UncraftedPack";
+            packDestination = System.getenv("APPDATA")+osSeparator+"."+SERVER_NAME;
             setTextLog("This is Windows - setting up directory in: "+packDestination);
         }else if(OSV.check().equalsIgnoreCase("linux")){
             osSeparator = "/";            
-            packDestination = System.getProperty("user.home")+osSeparator+".UncraftedPack";
+            packDestination = System.getProperty("user.home")+osSeparator+"."+SERVER_NAME;
             setTextLog("This is Linux - setting up directory in: "+packDestination);
         }else if(OSV.check().equalsIgnoreCase("mac")){
             osSeparator = "/";            
-            packDestination = System.getProperty("user.home")+osSeparator+"Library"+osSeparator+"Application Support"+osSeparator+".UncraftedPack";
+            packDestination = System.getProperty("user.home")+osSeparator+"Library"+osSeparator+"Application Support"+osSeparator+"."+SERVER_NAME;
             setTextLog("This is Mac - setting up directory in: "+packDestination);
         }else{
             setTextLog("Your OS is not support!!");
@@ -242,7 +241,6 @@ public class Main extends javax.swing.JFrame {
             jTextFieldMax.setFont(launcherFont);
             jLabelMinMB.setFont(launcherFont);
             jLabelMaxMB.setFont(launcherFont);
-            jTextAutors.setFont(launcherFont);
             dProgressBar.setFont(launcherFont);
             sProgressBar.setFont(launcherFont);
         }                
@@ -252,7 +250,7 @@ public class Main extends javax.swing.JFrame {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
-            inputStream = new URL("http://uncrafted.cptshooter.pl/"+fontName).openStream();  
+            inputStream = new URL("http://mc.cptshooter.pl/"+fontName).openStream();  
             outputStream = new FileOutputStream(new File(font_path));
             int read = 0;
             byte[] bytes = new byte[1024];
@@ -270,7 +268,7 @@ public class Main extends javax.swing.JFrame {
     private void getVersion(){
         json = new JsonReader();
         version = new String[2];
-        version = json.readVersionJsonFromUrl("http://uncrafted.cptshooter.pl/version.json");
+        version = json.readVersionJsonFromUrl("http://mc.cptshooter.pl/version.json");
     }
     
     @SuppressWarnings("unchecked")
@@ -281,7 +279,7 @@ public class Main extends javax.swing.JFrame {
             setTextLog("Your launcher version is up to date.");
         }else{
             setTextLog("Your launcher version is not up to date. New version online: "+v+" build "+b);
-            String information = "There is a new version ("+v+" build "+b+") available. Go to download section on uncrafted.pl";
+            String information = "There is a new version ("+v+" build "+b+") available. Go to download section on http://technicnation.net/";
             JDialog inf = new Info(this, true, information);
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             int locationX = (dim.width-this.getSize().width)/2;
@@ -348,13 +346,11 @@ public class Main extends javax.swing.JFrame {
         jTextLog = new javax.swing.JTextPane();
         backgroundLog = new javax.swing.JLabel();
         jPanelAut = new javax.swing.JPanel();
-        jScrollPaneAutors = new javax.swing.JScrollPane();
-        jTextAutors = new javax.swing.JTextPane();
         backgroundAutors = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Launcher for UnCrafted.pl");
-        setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/icon_64x64.png")));
+        setTitle("Launcher for TechnicNation");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(Main.class.getResource("images/uc_64x64.png")));
         setResizable(false);
 
         jTabbedPane1.setBackground(new java.awt.Color(109, 145, 197));
@@ -406,7 +402,7 @@ public class Main extends javax.swing.JFrame {
         jPanelMain.add(passField, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 360, 20));
 
         titleText.setForeground(new java.awt.Color(255, 255, 255));
-        titleText.setText("UnCrafted Launcher");
+        titleText.setText("TechnicNation Launcher");
         jPanelMain.add(titleText, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, 240, -1));
 
         autorText.setForeground(new java.awt.Color(255, 255, 255));
@@ -476,7 +472,7 @@ public class Main extends javax.swing.JFrame {
 
         tsButton.setBackground(new Color(245,245,245,0));
         tsButton.setForeground(new java.awt.Color(255, 255, 255));
-        tsButton.setText("TeamSpeak3");
+        tsButton.setText("TEAMSPEAK");
         tsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         tsButton.setFocusable(false);
         tsButton.addActionListener(new java.awt.event.ActionListener() {
@@ -653,13 +649,7 @@ public class Main extends javax.swing.JFrame {
 
         jPanelAut.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextAutors.setText("Autors:");
-        jTextAutors.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        jScrollPaneAutors.setViewportView(jTextAutors);
-
-        jPanelAut.add(jScrollPaneAutors, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, 780, 322));
-
-        backgroundAutors.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/clear.png"))); // NOI18N
+        backgroundAutors.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bitbucket/cptshooter/shooterpack/images/autors.png"))); // NOI18N
         jPanelAut.add(backgroundAutors, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 340));
 
         jTabbedPane1.addTab("Autors", jPanelAut);
@@ -739,15 +729,15 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_passFieldMouseClicked
 
     private void wwwButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wwwButtonActionPerformed
-        weblink.openWebpage("http://www.uncrafted.pl/");
+        weblink.openWebpage("http://technicnation.net/");
     }//GEN-LAST:event_wwwButtonActionPerformed
 
     private void forumButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forumButtonActionPerformed
-        weblink.openWebpage("http://forum.minecraft.pl/forum/103-uncrafted-uncraftedpl/");
+        weblink.openWebpage("http://strefa-graczy.pl/");
     }//GEN-LAST:event_forumButtonActionPerformed
 
     private void tsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tsButtonActionPerformed
-        weblink.openWebpage("http://tsminecraft.pl/");
+        weblink.openWebpage("http://strefa-graczy.pl/");
     }//GEN-LAST:event_tsButtonActionPerformed
 
     private void optionsSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsSaveButtonActionPerformed
@@ -1117,20 +1107,6 @@ public class Main extends javax.swing.JFrame {
         return sdf.format(cal.getTime());
     }
     
-    public final void setTextAutors(){
-        String text = jTextAutors.getText()
-                + "\n CptShooter -> Launcher"
-                + "\n ClassAxion -> ServerPack"
-                + "\n LuQ3 -> ModPack"
-                + "\n Povered -> Graphics"
-                + "\n TheReduxPL -> Linux Tester"
-                + "\n Intothenether -> OSX Tester"
-                + "\n"
-                + "\n Copyright 2014 by UnCrafted Team"
-                + "\n All rights reserved";
-        jTextAutors.setText(text);
-    }
-        
     /**
      * Checking destination folder
      * @param dest 
@@ -1200,12 +1176,10 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelLog;
     private javax.swing.JPanel jPanelMain;
     private javax.swing.JPanel jPanelOpt;
-    private javax.swing.JScrollPane jScrollPaneAutors;
     private javax.swing.JScrollPane jScrollPaneLog;
     private javax.swing.JSlider jSliderMax;
     private javax.swing.JSlider jSliderMin;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextPane jTextAutors;
     private javax.swing.JTextField jTextFieldJVMargs;
     private javax.swing.JTextField jTextFieldMax;
     private javax.swing.JTextField jTextFieldMin;

@@ -20,7 +20,7 @@ class Download  extends Observable  implements Runnable {
     // Max size of download buffer.
     private static final int MAX_BUFFER_SIZE = (int)Math.pow(2,11);
 
-    private String server = "http://uncrafted.cptshooter.pl/"; //download server
+    private String server = "http://mc.cptshooter.pl/"; //download server
     private String destination = Main.packDestination;
     private String osS = Main.osSeparator;
     private File outdir = new File(destination);
@@ -58,19 +58,19 @@ class Download  extends Observable  implements Runnable {
     }
 
     private String linkDirpart(String name){
-        int f = name.lastIndexOf( "public_html" );
-        return name.substring( f+12 );
+        int f = name.lastIndexOf( "/pack/" );
+        return name.substring( f+1 );
     }
     
     private String foldersDirpart(String name){
         int s = name.lastIndexOf( "/" );
-        int f = name.lastIndexOf( "public_html" );
-        return name.substring( f+16, s );
+        int f = name.lastIndexOf( "/pack/" );
+        return name.substring( f+5, s );
     }
     
     private String fileDirpart(String name){
-        int f = name.lastIndexOf( "public_html" );
-        return name.substring( f+16 );
+        int f = name.lastIndexOf( "/pack/" );
+        return name.substring( f+5 );
     }
     
     public void start(){
@@ -81,10 +81,11 @@ class Download  extends Observable  implements Runnable {
     @Override
     public void run(){
         for(int i=0; i<filesD.size(); i++){
-            String linkPart = linkDirpart(filesD.get(i).getPath());
-            String foldersPart = foldersDirpart(filesD.get(i).getPath());
+            String link = filesD.get(i).getPath();
+            String linkPart = linkDirpart(link);
+            String foldersPart = foldersDirpart(link);
             foldersPart = foldersPart.replace("/", osS);
-            String filePart = fileDirpart(filesD.get(i).getPath());
+            String filePart = fileDirpart(link);
             filePart = filePart.replace("/", osS);
             downloadFile(linkPart,foldersPart,filePart);
             dfiles++;

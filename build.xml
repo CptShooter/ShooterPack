@@ -73,7 +73,7 @@
     -->
 
 	<target name="-post-jar">
-		<jar jarfile="dist/Uncrafted Launcher v2.0.jar">
+		<jar jarfile="dist/TechnicNation Launcher v2.1.jar">
 			<zipfileset src="${dist.jar}" excludes="META-INF/*" />
 			<zipfileset src="lib/AbsoluteLayout.jar" excludes="META-INF/*" />
 			<zipfileset src="lib/org.json.jar" excludes="META-INF/*" />

@@ -19,10 +19,6 @@ public class Minecraft{
     private String PACK_DIRECTORY = Main.packDestination;
     private String osS = Main.osSeparator;
     
-    //server data
-    private static final String SERVER_IP = "144.76.196.9";
-    private static final String SERVER_PORT = "25574";
-    
     //options
     //memory-allocation
     private String maMin;
@@ -265,8 +261,6 @@ public class Minecraft{
         cmd.add( "--userProperties="+"{}" );
         cmd.add( "--userType="+"mojang" );
         cmd.add( "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker" );
-//      cmd.add( "--server="+SERVER_IP );
-//      cmd.add( "--port="+SERVER_PORT );
         return cmd;        
     }
 }
