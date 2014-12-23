@@ -1,11 +1,22 @@
-UncraftedPack
+Shooter Launcher
 ==========
 
-Minecraft (1.6.4) Launcher dla Uncrafted.pl
+Minecraft (1.7.10) Launcher dla TechnicNation.net
 
 
 Changelog:
 ----------
+
+**2.1** build 01
+
+* nowe grafiki
+* TechnicNation
+* poprawki stylistyczne
+* zmiana Forge
+
+**2.0** build 02-03
+
+* zmiana Forge
 
 **2.0** build 01
 
