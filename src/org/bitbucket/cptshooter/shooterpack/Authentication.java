@@ -58,6 +58,10 @@ public class Authentication {
         return user;
     }
     
+    public void setDisplayName(String nick){
+        user.setDisplayName(nick);
+    }
+    
     /**
      * Connect to Mojang server using USERNAME and PASSWORD
      * Output UserID, AccessToken, ClientToken
@@ -99,13 +103,22 @@ public class Authentication {
 
             ////TEST/////
             //System.out.println( JSONres );  //show JSON output
+            //System.out.println( JSONres.getJSONArray("availableProfiles").length() );
             
             if(getError()==0){
                 user.setAccessToken( JSONres.getString("accessToken") );
                 user.setClientToken( JSONres.getString("clientToken") );
-                user.setUserID(JSONres.getJSONObject("selectedProfile").getString("id"));
-                user.setDisplayName(JSONres.getJSONObject("selectedProfile").getString("name"));
-                user.rememberMe();
+                if(JSONres.getJSONArray("availableProfiles").length()>0){
+                    user.setUserID(JSONres.getJSONObject("selectedProfile").getString("id"));
+                    user.setDisplayName(JSONres.getJSONObject("selectedProfile").getString("name"));
+                    if(JSONres.getJSONObject("selectedProfile").has("legacy")){
+                        user.setUserType("legacy");
+                    }
+                    user.rememberMe();
+                }else{
+                    user.setUserID(null);
+                    user.setDisplayName(login.substring(0, login.indexOf("@")));
+                }
                 return true;
             }else if(getError()==1){                
                 ERROR_MESSAGE = JSONres.getString("errorMessage");

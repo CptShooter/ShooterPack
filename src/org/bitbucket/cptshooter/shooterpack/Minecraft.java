@@ -51,7 +51,7 @@ public class Minecraft{
         GAME_DIRECTORY+osS+"libraries"+osS+"asm-all-5.0.3.jar", //
         GAME_DIRECTORY+osS+"libraries"+osS+"lzma-0.0.1.jar",//
         //Forge libs
-        GAME_DIRECTORY+osS+"libraries"+osS+"forge-1.7.10-10.13.2.1231.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"forge-1.7.10-10.13.2.1236.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"akka-actor_2.11-2.3.3.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"config-1.2.1.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"scala-actors-migration_2.11-1.1.0.jar", //
@@ -96,40 +96,40 @@ public class Minecraft{
         GAME_DIRECTORY+osS+"libraries"+osS+"log4j-core-2.0-beta9.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"twitch-5.16.jar",//
         
+        //LWJGL
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.1.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.1.jar",//        
     };
         
     private final String[] PATH_TO_LIBRARY_WIN = {
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.1.jar",//
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.1.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.1-natives-windows.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-windows.jar",//
-        GAME_DIRECTORY+osS+"libraries"+osS+"twitch-external-platform-4.5-natives-windows-64.jar",//
         GAME_DIRECTORY+osS+"libraries"+osS+"twitch-platform-5.16-natives-windows-64.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"twitch-external-platform-4.5-natives-windows-64.jar",//
     };
     
     private final String[] PATH_TO_LIBRARY_LINUX = {
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.0-natives-linux.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-linux.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.1-natives-linux.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-linux.jar",//
     };
     
     private final String[] PATH_TO_LIBRARY_MAC = {
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl_util-2.9.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-2.9.0.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.0-natives-osx.jar",
-        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-osx.jar",
+        GAME_DIRECTORY+osS+"libraries"+osS+"lwjgl-platform-2.9.1-natives-osx.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"jinput-platform-2.0.5-natives-osx.jar",//
+        GAME_DIRECTORY+osS+"libraries"+osS+"twitch-platform-5.16-natives-osx.jar",//
     };
     
     //user
     private String USER;
     private String ACCESS_TOKEN;   
     private String USER_ID;
+    private String USER_TYPE="mojang";
             
     public Minecraft(String[] user){
         USER = user[0];
         ACCESS_TOKEN = user[1];
         USER_ID = user[2];
+        USER_TYPE = user[3];
     }
     
     public Minecraft(String user){
@@ -172,9 +172,8 @@ public class Minecraft{
         }
     }
        
-    //cmd for Minecraft 1.6.4
     public List createCMD(){
-        //http://s3.amazonaws.com/Minecraft.Download/versions/1.6.4/1.6.4.json
+        //http://s3.amazonaws.com/Minecraft.Download/versions/1.7.10/1.7.10.json
         ArrayList<String> cmd = new ArrayList<>();
         OSValidator OSV = new OSValidator(System.getProperty("os.name"));
         
@@ -247,19 +246,14 @@ public class Minecraft{
         cmd.add( "--gameDir="+GAME_DIRECTORY );
         cmd.add( "--assetsDir="+ASSETS_DIRECTORY );
         cmd.add( "--assetIndex="+MC_VERSION );
-        String uuid = UUID.nameUUIDFromBytes(USER.getBytes()).toString();
-        if(USER_ID==null){
-            cmd.add( "--uuid="+uuid );
-        }else{
+        if(USER_ID!=null){
             cmd.add( "--uuid="+USER_ID );  
         }
-        if(ACCESS_TOKEN==null){
-            cmd.add( "--accessToken="+uuid );
-        }else{
+        if(ACCESS_TOKEN!=null){
             cmd.add( "--accessToken="+ACCESS_TOKEN );
         }
         cmd.add( "--userProperties="+"{}" );
-        cmd.add( "--userType="+"mojang" );
+        cmd.add( "--userType="+USER_TYPE );
         cmd.add( "--tweakClass=cpw.mods.fml.common.launcher.FMLTweaker" );
         return cmd;        
     }

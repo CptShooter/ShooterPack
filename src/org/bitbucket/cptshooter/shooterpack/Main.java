@@ -32,7 +32,7 @@ import javax.swing.JDialog;
  */
 public class Main extends javax.swing.JFrame {
 
-    public static final String VERSION = "2.1";
+    public static final String VERSION = "2.2";
     public static final String BUILD = "01";
     public static final String SERVER_NAME = "TechnicNation";
     
@@ -112,6 +112,7 @@ public class Main extends javax.swing.JFrame {
         jTextFieldJVMargs.setEnabled(false);
         titleText.setVisible(false);
         autorText.setVisible(false);
+        nickField.setVisible(false);
         
         //init
         weblink = new WebLink();
@@ -310,6 +311,7 @@ public class Main extends javax.swing.JFrame {
         jPanelMain = new javax.swing.JPanel();
         dProgressBar = new javax.swing.JProgressBar();
         sProgressBar = new javax.swing.JProgressBar();
+        nickField = new javax.swing.JTextField();
         welcomeLabel = new javax.swing.JLabel();
         loginField = new javax.swing.JTextField();
         passField = new javax.swing.JPasswordField();
@@ -373,6 +375,13 @@ public class Main extends javax.swing.JFrame {
         sProgressBar.setStringPainted(true);
         jPanelMain.add(sProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 490, 30));
 
+        nickField.setBackground(new Color(0,0,0,50));
+        nickField.setForeground(new java.awt.Color(255, 255, 255));
+        nickField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        nickField.setText("nick in game");
+        nickField.setBorder(null);
+        jPanelMain.add(nickField, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 90, 160, 20));
+
         welcomeLabel.setForeground(new java.awt.Color(255, 255, 255));
         welcomeLabel.setText("Status");
         jPanelMain.add(welcomeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 55, 470, 20));
@@ -415,6 +424,14 @@ public class Main extends javax.swing.JFrame {
         loginButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         loginButton.setFocusable(false);
         loginButton.setOpaque(false);
+        loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                loginButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                loginButtonMouseExited(evt);
+            }
+        });
         loginButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginButtonActionPerformed(evt);
@@ -427,6 +444,14 @@ public class Main extends javax.swing.JFrame {
         logoutButton.setText("Logout");
         logoutButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         logoutButton.setFocusable(false);
+        logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                logoutButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                logoutButtonMouseExited(evt);
+            }
+        });
         logoutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logoutButtonActionPerformed(evt);
@@ -439,6 +464,14 @@ public class Main extends javax.swing.JFrame {
         playButton.setText("PLAY");
         playButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         playButton.setFocusable(false);
+        playButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                playButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                playButtonMouseExited(evt);
+            }
+        });
         playButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playButtonActionPerformed(evt);
@@ -451,6 +484,14 @@ public class Main extends javax.swing.JFrame {
         wwwButton.setText("WWW");
         wwwButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         wwwButton.setFocusable(false);
+        wwwButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                wwwButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                wwwButtonMouseExited(evt);
+            }
+        });
         wwwButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 wwwButtonActionPerformed(evt);
@@ -463,6 +504,14 @@ public class Main extends javax.swing.JFrame {
         forumButton.setText("FORUM");
         forumButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         forumButton.setFocusable(false);
+        forumButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                forumButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                forumButtonMouseExited(evt);
+            }
+        });
         forumButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 forumButtonActionPerformed(evt);
@@ -475,6 +524,14 @@ public class Main extends javax.swing.JFrame {
         tsButton.setText("TEAMSPEAK");
         tsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         tsButton.setFocusable(false);
+        tsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tsButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                tsButtonMouseExited(evt);
+            }
+        });
         tsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tsButtonActionPerformed(evt);
@@ -673,15 +730,8 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        Minecraft minecraft;
-        if(jCheckNonPremium.isSelected()){
-            String username = loginField.getText();
-            minecraft = new Minecraft(username);
-            setTextLog("Logged as: "+username+" - NonPremium");
-        }else{
-            minecraft = new Minecraft(user.getAuthForMC());
-            setTextLog("Logged as: "+authentication.getLoggedUser().getDisplayName());
-        }
+        Minecraft minecraft = new Minecraft(user.getAuthForMC());
+        setTextLog("Logged as: "+authentication.getLoggedUser().getDisplayName());
         minecraft.setOptions(options);
         minecraft.run();
         scan = null;
@@ -694,23 +744,12 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        if(jCheckNonPremium.isSelected()){
-            if(loginNP()){
-                checkRememberme();
-                if(!alreadyDownloaded){
-                    download();
-                }else{
-                    readyToPlay();
-                }
-            }
-        }else{
-            if(login()){
-                checkRememberme();
-                if(!alreadyDownloaded){
-                    download();
-                }else{
-                    readyToPlay();
-                }
+        if(login()){
+            checkRememberme();
+            if(!alreadyDownloaded){
+                download();
+            }else{
+                readyToPlay();
             }
         }
         changeBackground();     
@@ -733,7 +772,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_wwwButtonActionPerformed
 
     private void forumButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forumButtonActionPerformed
-        weblink.openWebpage("http://strefa-graczy.pl/");
+        weblink.openWebpage("http://strefa-graczy.pl/forum/");
     }//GEN-LAST:event_forumButtonActionPerformed
 
     private void tsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tsButtonActionPerformed
@@ -807,10 +846,10 @@ public class Main extends javax.swing.JFrame {
         if(jCheckNonPremium.isSelected()){
             jCheckRememberMe.setSelected(false);
             jCheckRememberMe.setVisible(false);
-            passField.setVisible(false);
+            nickField.setVisible(true);
         }else{
             jCheckRememberMe.setVisible(true);
-            passField.setVisible(true);
+            nickField.setVisible(false);
         }
     }//GEN-LAST:event_jCheckNonPremiumActionPerformed
 
@@ -824,6 +863,54 @@ public class Main extends javax.swing.JFrame {
         optionsSaveButton.setVisible(true);
         changeOptionsBackground(2);
     }//GEN-LAST:event_jCheckJVMargsActionPerformed
+
+    private void loginButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseEntered
+       loginButton.setForeground(Color.LIGHT_GRAY);
+    }//GEN-LAST:event_loginButtonMouseEntered
+
+    private void loginButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseExited
+       loginButton.setForeground(Color.WHITE);
+    }//GEN-LAST:event_loginButtonMouseExited
+
+    private void tsButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tsButtonMouseEntered
+        tsButton.setForeground(Color.LIGHT_GRAY);
+    }//GEN-LAST:event_tsButtonMouseEntered
+
+    private void tsButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tsButtonMouseExited
+        tsButton.setForeground(Color.WHITE);
+    }//GEN-LAST:event_tsButtonMouseExited
+
+    private void forumButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_forumButtonMouseEntered
+        forumButton.setForeground(Color.LIGHT_GRAY);
+    }//GEN-LAST:event_forumButtonMouseEntered
+
+    private void forumButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_forumButtonMouseExited
+        forumButton.setForeground(Color.WHITE);
+    }//GEN-LAST:event_forumButtonMouseExited
+
+    private void wwwButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_wwwButtonMouseEntered
+        wwwButton.setForeground(Color.LIGHT_GRAY);
+    }//GEN-LAST:event_wwwButtonMouseEntered
+
+    private void wwwButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_wwwButtonMouseExited
+        wwwButton.setForeground(Color.WHITE);
+    }//GEN-LAST:event_wwwButtonMouseExited
+
+    private void logoutButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutButtonMouseEntered
+        logoutButton.setForeground(Color.LIGHT_GRAY);
+    }//GEN-LAST:event_logoutButtonMouseEntered
+
+    private void logoutButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutButtonMouseExited
+        logoutButton.setForeground(Color.WHITE);
+    }//GEN-LAST:event_logoutButtonMouseExited
+
+    private void playButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playButtonMouseEntered
+        playButton.setForeground(Color.LIGHT_GRAY);
+    }//GEN-LAST:event_playButtonMouseEntered
+
+    private void playButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playButtonMouseExited
+        playButton.setForeground(Color.WHITE);
+    }//GEN-LAST:event_playButtonMouseExited
         
     private void checkRememberme(){
         jCheckRememberMe.setVisible(false);
@@ -884,9 +971,39 @@ public class Main extends javax.swing.JFrame {
                 setTextLog("Login unsuccess - try again");
                return false;
            }else{
+               Premium premium = new Premium();
+               if(premium.isPremium(loginField.getText())){
+                   jCheckNonPremium.setSelected(false);
+               }
+               if(jCheckNonPremium.isSelected()){
+                   String nick = nickField.getText();
+                   if(nick.equals("nick in game")){
+                        setTextLog("Nickname is empty! Setting up "+authentication.getLoggedUser().getDisplayName()+ " as Display Name");
+                   }else{
+                        boolean isPremium = premium.isPremium(nick);
+                        if(isPremium){
+                            setTextLog("Nickname is Premium! Setting up "+authentication.getLoggedUser().getDisplayName()+ " as Display Name");
+                        }else{
+                            authentication.setDisplayName(nick);
+                            setTextLog("Setting up "+nick+" as Display Name");
+                        }
+                   }
+               }else{
+                   boolean isPremium = premium.isPremium(loginField.getText());
+                   if(!isPremium){
+                        authentication.invalidate();
+                        loginField.setText("");
+                        passField.setText("");
+                        statusLabel.setText("Choose Non-Premium login");
+                        statusLabel.setVisible(true);
+                        setTextLog("Account is not Premium - choose Non-Premium login");
+                        return false;
+                   }
+               }
                user = authentication.getLoggedUser();
                loginField.setVisible(false);
                passField.setVisible(false);
+               nickField.setVisible(false);
                loginButton.setVisible(false);
                loginButton.setEnabled(false);
                logoutButton.setVisible(true);
@@ -895,8 +1012,10 @@ public class Main extends javax.swing.JFrame {
                statusLabel.setVisible(true);
                welcomeLabel.setText("Welcome "+authentication.getLoggedUser().getDisplayName()+"!");
                welcomeLabel.setVisible(true);
-               ImageIcon image = getFace(authentication.getLoggedUser().getDisplayName());
-               skinface.setIcon(image);
+               if(authentication.getLoggedUser().getUserID()!=null){
+                    ImageIcon image = getFace(authentication.getLoggedUser().getDisplayName());
+                    skinface.setIcon(image);
+               }
                setTextLog("Login success!");  
                return true;
            }
@@ -915,9 +1034,9 @@ public class Main extends javax.swing.JFrame {
         boolean isPremium = premium.isPremium(loginField.getText());
         if(isPremium){
             loginField.setText("");
-            statusLabel.setText("Account is premium");
+            statusLabel.setText("Nickname is premium");
             statusLabel.setVisible(true);
-            setTextLog("Account is premium, loggin with 'login/password'");
+            setTextLog("Nickname is premium, loggin with 'login/password'");
             return false;
         }else{
             loginField.setVisible(false);
@@ -939,6 +1058,8 @@ public class Main extends javax.swing.JFrame {
             loginField.setText("");
             passField.setText("");
             loginField.setVisible(true);
+            passField.setVisible(true);
+            nickField.setVisible(true);
             loginButton.setVisible(true);
             loginButton.setEnabled(true);
             playButton.setVisible(false);
@@ -1016,6 +1137,11 @@ public class Main extends javax.swing.JFrame {
         setTextLog("Ready");
         statusLabel.setText("Ready");
         playButton.setVisible(true);
+        try {
+            getPackThread.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void checkFiles(){
@@ -1025,7 +1151,7 @@ public class Main extends javax.swing.JFrame {
         scan.checkMD5();
         sProgressBar.setVisible(true);
         final AtomicBoolean running = new AtomicBoolean(false);
-        running.set(!running.get());
+        running.set(!running.get()); 
         if (running.get()) {
             //Thread for Scan
             checkThread = new Thread() {
@@ -1187,6 +1313,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginField;
     private javax.swing.JButton logoutButton;
+    private javax.swing.JTextField nickField;
     private javax.swing.JButton optionsSaveButton;
     private javax.swing.JPasswordField passField;
     private javax.swing.JButton playButton;

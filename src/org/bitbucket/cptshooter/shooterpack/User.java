@@ -18,6 +18,7 @@ public class User {
     private String ACCESS_TOKEN;
     private String CLIENT_TOKEN;
     private String DISPLAY_NAME;
+    private String USER_TYPE = "mojang";
     
     private String destination = Main.packDestination;
     private String osS = Main.osSeparator;
@@ -37,7 +38,7 @@ public class User {
      * @return 
      */
     public String[] getAuthForMC(){
-        String[] auth = {DISPLAY_NAME, ACCESS_TOKEN, USER_ID};
+        String[] auth = {DISPLAY_NAME, ACCESS_TOKEN, USER_ID, USER_TYPE};
         return auth;
     }
     
@@ -79,6 +80,14 @@ public class User {
     
     public String getDisplayName(){
         return DISPLAY_NAME;
+    }
+    
+    public void setUserType(String ut){
+        USER_TYPE = ut;
+    }
+    
+    public String getUserType(){
+        return USER_TYPE;
     }
     
     @Override
